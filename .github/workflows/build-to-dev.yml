@@ -1,6 +1,7 @@
 name: BuildToDev
 
 env:
+  APP_NAME: "educ-grad-course-api"
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
@@ -18,19 +19,17 @@ env:
 
   # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
   IMAGE_TAGS: ""
-  IMAGE_NAME: grad-test-automation
+  IMAGE_NAME: $educ-grad-course-api
 
   DOCKER_ARTIFACTORY_REPO: docker-remote.artifacts.developer.gov.bc.ca
   ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
 
-  APP_NAME: 'grad-test-automation'
+  
   REPO_NAME: "educ-grad-test-automation"
   JOB_NAME: "master"
   APP_NAME_FULL: "grad-test-automation-master"
-  #NAMESPACE: ${{ secrets.NAMESPACE_NO_ENV }}
-  #COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
-  #TARGET_ENV: "dev"
+  TARGET_ENV: "dev"
   MIN_REPLICAS: "1"
   MAX_REPLICAS: "1"
   MIN_CPU: "50m"
@@ -46,7 +45,7 @@ jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
     # ubuntu-20.04 can also be used.
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     environment: test
 
     #outputs:
@@ -54,7 +53,11 @@ jobs:
       #SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
 
     steps:
-    - name: Check for required secrets
+     - name: Check env
+       run: |
+         echo "APP_NAME="${{ env.APP_NAME }} \
+         echo "IMAGE_NAME"=${{ env.IMAGE_NAME }}
+#    - name: Check for required secrets
       uses: actions/github-script@v4
       with:
         script: |
@@ -88,77 +91,77 @@ jobs:
           else {
             core.info(`✅ All the required secrets are set`);
           }
-    - name: Check out repository
-      uses: actions/checkout@v2
+#    - name: Check out repository
+#      uses: actions/checkout@v2
 
-    - name: Determine app name
-      if: env.APP_NAME_FULL == ''
-      run: |
-        echo "APP_NAME_FULL=$(basename $PWD)" | tee -a $GITHUB_ENV
-    - name: Determine image tags
-      if: env.IMAGE_TAGS == ''
-      run: |
-        echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.DOCKER_ARTIFACTORY_REPO }}
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_ACCESS_TOKEN }}
+#    - name: Determine app name
+#      if: env.APP_NAME_FULL == ''
+#      run: |
+#        echo "APP_NAME_FULL=$(basename $PWD)" | tee -a $GITHUB_ENV
+#    - name: Determine image tags
+#      if: env.IMAGE_TAGS == ''
+#      run: |
+#        echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
+#    - name: Login to Artifactory
+#      uses: docker/login-action@v1
+#      with:
+#        registry: ${{ env.DOCKER_ARTIFACTORY_REPO }}
+#        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+#        password: ${{ secrets.ARTIFACTORY_ACCESS_TOKEN }}
 
     # https://github.com/redhat-actions/buildah-build#readme
-    - name: Build from Dockerfile
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: ${{ env.APP_NAME_FULL }}
-        tags: ${{ env.IMAGE_TAGS }}
+#    - name: Build from Dockerfile
+#      id: build-image
+#      uses: redhat-actions/buildah-build@v2
+#      with:
+#        image: ${{ env.APP_NAME_FULL }}
+#        tags: ${{ env.IMAGE_TAGS }}
 
         # If you don't have a Dockerfile/Containerfile, refer to https://github.com/redhat-actions/buildah-build#scratch-build-inputs
         # Or, perform a source-to-image build using https://github.com/redhat-actions/s2i-build
         # Otherwise, point this to your Dockerfile/Containerfile relative to the repository root.
-        dockerfiles: |
-          ./auto_test/custom/Dockerfile
+#        dockerfiles: |
+#          ./auto_test/custom/Dockerfile
     # https://github.com/redhat-actions/push-to-registry#readme
-    - name: Push to registry
-      id: push-image
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ env.IMAGE_REGISTRY_USER }}
-        password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+#    - name: Push to registry
+#      id: push-image
+#      uses: redhat-actions/push-to-registry@v2
+#      with:
+#        image: ${{ steps.build-image.outputs.image }}
+#        tags: ${{ steps.build-image.outputs.tags }}
+#        registry: ${{ env.IMAGE_REGISTRY }}
+#        username: ${{ env.IMAGE_REGISTRY_USER }}
+#        password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
 
     # The path the image was pushed to is now stored in ${{ steps.push-image.outputs.registry-path }}
 
-    - name: Install oc
-      uses: redhat-actions/openshift-tools-installer@v1
-      with:
-        oc: 4.9.8
+#    - name: Install oc
+#      uses: redhat-actions/openshift-tools-installer@v1
+#      with:
+#        oc: 4.9.8
 
       # https://github.com/redhat-actions/oc-login#readme
-    - uses: actions/checkout@v2
-    - name: Deploy
-      run: |
-        set -eux
-        # Login to OpenShift and select project
-        oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
-        oc project ${{ env.OPENSHIFT_NAMESPACE }}
-        # Cancel any rollouts in progress
-        oc rollout cancel dc/${{ env.IMAGE_NAME }} 2> /dev/null \
-        || true && echo "No rollout in progress"
-        
-        oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.REPO_NAME }}-${{ env.JOB_NAME }}:${{ env.TAG }}
-
-        # Process and apply deployment template
-        oc process -f tools/openshift/tests.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p JOB_NAME=${{ env.JOB_NAME }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} | oc create -f -
-        # Start rollout (if necessary) and follow it
-        oc rollout latest dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }} 2> /dev/null \
-        || true && echo "Rollout in progress"
-        oc logs -f dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }}
-        # Get status, returns 0 if rollout is successful
-        oc rollout status dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }}
+#    - uses: actions/checkout@v2
+#    - name: Deploy
+#      run: |
+#        set -eux
+#        # Login to OpenShift and select project
+#        oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
+#        oc project ${{ env.OPENSHIFT_NAMESPACE }}
+#        # Cancel any rollouts in progress
+#        oc rollout cancel dc/${{ env.IMAGE_NAME }} 2> /dev/null \
+#        || true && echo "No rollout in progress"
+#        
+#        oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.REPO_NAME }}-${{ env.JOB_NAME }}:${{ env.TAG }}
+#
+#        # Process and apply deployment template
+#        oc process -f tools/openshift/tests.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p JOB_NAME=${{ env.JOB_NAME }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} | oc create -f -
+#        # Start rollout (if necessary) and follow it
+#        oc rollout latest dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }} 2> /dev/null \
+#        || true && echo "Rollout in progress"
+#        oc logs -f dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }}
+#        # Get status, returns 0 if rollout is successful
+#        oc rollout status dc/${{ env.IMAGE_NAME }}-${{ env.JOB_NAME }}
 #    - name: Deploy
 #      uses: actions/checkout@v2
 #      run: |
