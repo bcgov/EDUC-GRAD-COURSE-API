@@ -1,33 +1,25 @@
 name: BuildToDev
 
 env:
-  APP_NAME: "educ-grad-course-api"
-  # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
-  # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
-  # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
+  APP_NAME: educ-grad-course-api
+
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-  # TODO: Need openshift access token
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  # 🖊️ EDIT to set the kube context's namespace after login. Leave blank to use your user's default namespace.
   OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-  # 🖊️ EDIT to change the image registry settings.
-  # Registries such as GHCR, Quay.io, and Docker Hub are supported.
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
-  # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
   IMAGE_TAGS: ""
-  IMAGE_NAME: $educ-grad-course-api
+  IMAGE_NAME: $APP_NAME
 
   DOCKER_ARTIFACTORY_REPO: docker-remote.artifacts.developer.gov.bc.ca
   ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
-
   
-  REPO_NAME: "educ-grad-test-automation"
+  REPO_NAME: $APP_NAME
   JOB_NAME: "master"
-  APP_NAME_FULL: "grad-test-automation-master"
+  APP_NAME_FULL: $APP_NAME"-master"
   TAG: "latest"
   TARGET_ENV: "dev"
   MIN_REPLICAS: "1"
@@ -45,7 +37,6 @@ on:
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
-    # ubuntu-20.04 can also be used.
     runs-on: ubuntu-latest
     environment: test
 
