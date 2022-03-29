@@ -39,7 +39,8 @@ env:
 
 on:
   # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
-  workflow_dispatch:
+  push:
+    branches: ['develop/chris']
 
 jobs:
   openshift-ci-cd:
