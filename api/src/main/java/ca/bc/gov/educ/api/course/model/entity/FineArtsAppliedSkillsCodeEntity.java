@@ -23,7 +23,7 @@ public class FineArtsAppliedSkillsCodeEntity extends BaseEntity {
     @Column(name = "LABEL", nullable = false, length = 50)
     private String label;
 
-    @Column(name = "DESCRIPTION", nullable = false, length = 355)
+    @Column(name = "DESCRIPTION", nullable = false, length = 500)
     private String description;
 
     @Column(name = "DISPLAY_ORDER", nullable = false, precision = 0)
