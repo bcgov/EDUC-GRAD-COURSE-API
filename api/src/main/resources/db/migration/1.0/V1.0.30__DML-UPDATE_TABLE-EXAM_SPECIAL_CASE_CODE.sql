@@ -1,3 +1,4 @@
+ALTER TABLE EXAM_SPECIAL_CASE_CODE MODIFY DESCRIPTION VARCHAR2(500);
 UPDATE EXAM_SPECIAL_CASE_CODE
 SET LABEL='Aegrotat', DESCRIPTION='Aegrotat Standing. The student has been granted exemption from writing a Provincial Exam due to unpredictable circumstances that render a student unable to write an exam even at a future session. ',
     EFFECTIVE_DATE=TO_DATE('1984-07-01', 'YYYY-MM-DD'), EXPIRY_DATE=TO_DATE('2020-06-30', 'YYYY-MM-DD'), UPDATE_USER='API_COURSE' , UPDATE_DATE=SYSTIMESTAMP
