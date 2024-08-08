@@ -2,7 +2,6 @@ package ca.bc.gov.educ.api.course.model.transformer;
 
 import ca.bc.gov.educ.api.course.model.dto.StudentExam;
 import ca.bc.gov.educ.api.course.model.entity.StudentExamEntity;
-import ca.bc.gov.educ.api.course.util.EducCourseApiUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,30 +20,23 @@ public class StudentExamTransformer {
        return modelMapper.map(studentExamEntity, StudentExam.class);
     }
 
-    public StudentExam transformToDTO ( Optional<StudentExamEntity> courseAchievementEntity ) {
-        StudentExamEntity cae = new StudentExamEntity();
+    public StudentExam transformToDTO (Optional<StudentExamEntity> studentExamEntity ) {
+        StudentExamEntity se = new StudentExamEntity();
 
-        if (courseAchievementEntity.isPresent())
-            cae = courseAchievementEntity.get();
+        if (studentExamEntity.isPresent())
+            se = studentExamEntity.get();
         
-        return modelMapper.map(cae, StudentExam.class);
+        return transformToDTO(se);
     }
 
-    public List<StudentExam> transformToDTO (Iterable<StudentExamEntity> courseAchievementEntities ) {
+    public List<StudentExam> transformToDTO (Iterable<StudentExamEntity> studentExamEntities ) {
+        List<StudentExam> studentExamList = new ArrayList<>();
 
-        List<StudentExam> courseAchievementList = new ArrayList<>();
-
-        for (StudentExamEntity courseAchievementEntity : courseAchievementEntities) {
-            StudentExam courseAchievement =  modelMapper.map(courseAchievementEntity, StudentExam.class);
-           
-            courseAchievement.setPen(courseAchievementEntity.getCourseKey().getPen());
-            courseAchievement.setCourseCode(courseAchievementEntity.getCourseKey().getCourseCode());
-            courseAchievement.setCourseLevel(courseAchievementEntity.getCourseKey().getCourseLevel());
-            courseAchievement.setSessionDate(EducCourseApiUtils.parseTraxDate(courseAchievementEntity.getCourseKey().getSessionDate()));
-            courseAchievementList.add(courseAchievement);
+        for (StudentExamEntity courseAchievementEntity : studentExamEntities) {
+            StudentExam courseAchievement =  transformToDTO(courseAchievementEntity);
+            studentExamList.add(courseAchievement);
         }
-
-        return courseAchievementList;
+        return studentExamList;
     }
 
     public StudentExamEntity transformToEntity(StudentExam studentExam) {

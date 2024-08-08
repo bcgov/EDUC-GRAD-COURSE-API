@@ -1,69 +1,35 @@
 package ca.bc.gov.educ.api.course.model.dto;
 
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
+import java.util.UUID;
 
 @Data
 @Component
 public class StudentExam {
-
-	private String pen;
-    private String courseCode;
-    private String courseName;
-    private String courseLevel;
-    private String sessionDate;
+	private UUID id;
+	private Double schoolPercentage;
     private Double bestSchoolPercentage;
-    private String optIn;
-    private Double completedSchoolPercentage;   
-    private String wroteFlag;    
-    private String specialCase;
-    private Double completedCourseExamPercentage;    
-    private Double completedCourseFinalPercentage;    
-    private String completedCourseLetterGrade;    
-    private Double bestExamPercentage;
-    private Course courseDetails;
-    
-    public String getCourseCode() {
-		return courseCode != null ? courseCode.trim(): null;
-	}
-	public String getCourseName() {
-		return courseName != null ? courseName.trim(): null; 
-	}	
+	private Double examPercentage;
+	private Double bestExamPercentage;
+	private String specialCase;
+    private String toWriteFlag;
 
-	public String getCourseLevel() {
-		return courseLevel != null ? courseLevel.trim(): null;
-	}
-	
-	public String getOptIn() {
-		return optIn != null ? optIn.trim(): null;
-	}
-	
-	public String getCompletedCourseLetterGrade() {
-		return completedCourseLetterGrade != null ? completedCourseLetterGrade.trim(): null;
-	}
-	
-	public Double getCompletedCourseExamPercentage() {
-		if(completedCourseExamPercentage == null) {
+	public Double getSchoolPercentage() {
+		if(schoolPercentage == null) {
 			return Double.valueOf("0");
 		}
-		return completedCourseExamPercentage; 
-	}
-	
-	public Double getCompletedCourseFinalPercentage() {
-		if(completedCourseFinalPercentage == null) {
-			return Double.valueOf("0");
-		}
-		return completedCourseFinalPercentage; 
+		return schoolPercentage;
 	}
 
-	public Double getCompletedSchoolPercentage() {
-		if(completedSchoolPercentage == null) {
+	public Double getExamPercentage() {
+		if(examPercentage == null) {
 			return Double.valueOf("0");
 		}
-		return completedSchoolPercentage; 
+		return examPercentage;
 	}
-	
+
 	public Double getBestSchoolPercentage() {
 		if(bestSchoolPercentage == null) {
 			return Double.valueOf("0");
@@ -71,7 +37,7 @@ public class StudentExam {
 		return bestSchoolPercentage; 
 	}
 	
-	public Double getExamSchoolPercentage() {
+	public Double getBestExamPercentage() {
 		if(bestExamPercentage == null) {
 			return Double.valueOf("0");
 		}
@@ -80,12 +46,8 @@ public class StudentExam {
 	
 	@Override
 	public String toString() {
-		return "StudentExam [pen=" + pen + ", courseCode=" + courseCode + ", courseName=" + courseName
-				+ ", courseLevel=" + courseLevel + ", sessionDate=" + sessionDate + ", bestSchoolPercentage="
-				+ bestSchoolPercentage + ", completedSchoolPercentage=" + completedSchoolPercentage + ", wroteFlag="
-				+ wroteFlag + ", specialCase=" + specialCase + ", completedCourseExamPercentage="
-				+ completedCourseExamPercentage + ", completedCourseFinalPercentage=" + completedCourseFinalPercentage
-				+ ", completedCourseLetterGrade=" + completedCourseLetterGrade + ", bestExamPercentage="
-				+ bestExamPercentage + "]";
+		return "StudentExam [id=" + id + ", schoolPercentage=" + schoolPercentage  + ", bestSchoolPercentage=" + bestSchoolPercentage
+				+ ", examPercentage=" + examPercentage  + ", bestExamPercentage=" + bestExamPercentage
+				+ ", specialCase=" + specialCase + ", toWriteFlag=" + toWriteFlag + "]";
 	}
 }

@@ -19,12 +19,12 @@ import java.io.Serializable;
  */
 @Embeddable
 @Data
-public class StudentExamId implements Serializable {
+public class TraxStudentCourseId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Size(max = 10)
-    @Column(name = "STUD_NO", insertable = false, updatable = false)
+    @Column(name = "PEN", insertable = false, updatable = false)
     private String pen;
     @Size(max = 5)
     @Column(name = "CRSE_CODE", insertable = false, updatable = false)
@@ -35,8 +35,10 @@ public class StudentExamId implements Serializable {
     @Size(max = 9)
     @Column(name = "CRSE_SESSION", insertable = false, updatable = false)
     private String sessionDate;
-
-    public StudentExamId() {
+    @Size(max = 1)
+    @Column(name = "PROV_EXAM_CRSE", insertable = false, updatable = false)
+    private String provExamCourse;
+    public TraxStudentCourseId() {
     }
 
     /**
@@ -46,11 +48,13 @@ public class StudentExamId implements Serializable {
      * @param crseCode
      * @param crseLevel
      * @param crseSession
+     * @param provExamCourse
      */
-    public StudentExamId(String studNo, String crseCode, String crseLevel, String crseSession) {
+    public TraxStudentCourseId(String studNo, String crseCode, String crseLevel, String crseSession, String provExamCourse) {
         this.pen = studNo;
         this.courseCode = crseCode;
         this.courseLevel = crseLevel;
         this.sessionDate = crseSession;
+        this.provExamCourse = provExamCourse;
     }
 }

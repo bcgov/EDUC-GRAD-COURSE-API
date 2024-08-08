@@ -121,10 +121,9 @@ public class CourseController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<AllCourseRequirements>> getAllCoursesRequirement(
     		@RequestParam(value = "pageNo", required = false,defaultValue = "0") Integer pageNo, 
-            @RequestParam(value = "pageSize", required = false,defaultValue = "50") Integer pageSize,
-            @RequestHeader(name="Authorization") String accessToken) {
+            @RequestParam(value = "pageSize", required = false,defaultValue = "50") Integer pageSize) {
     	logger.debug("getAllCoursesRequirement : ");
-        return response.GET(courseRequirementService.getAllCourseRequirementList(pageNo,pageSize,accessToken.replaceAll("Bearer ", "")));
+        return response.GET(courseRequirementService.getAllCourseRequirementList(pageNo,pageSize));
     }
     
     @GetMapping(EducCourseApiConstants.GET_COURSE_REQUIREMENT_BY_RULE_MAPPING)
@@ -170,10 +169,9 @@ public class CourseController {
     public ResponseEntity<List<AllCourseRequirements>> getCoursesRequirementSearch(
             @RequestParam(value = "courseCode", required = false) String courseCode,
             @RequestParam(value = "courseLevel", required = false) String courseLevel,
-            @RequestParam(value = "rule", required = false) String rule,
-            @RequestHeader(name="Authorization") String accessToken) {
+            @RequestParam(value = "rule", required = false) String rule) {
     	logger.debug("getCoursesRequirementSearch : ");
-        return response.GET(courseRequirementService.getCourseRequirementSearchList(courseCode,courseLevel,rule,accessToken.replaceAll("Bearer ", "")));
+        return response.GET(courseRequirementService.getCourseRequirementSearchList(courseCode,courseLevel,rule));
     }
     
     @PostMapping(EducCourseApiConstants.GET_COURSE_REQUIREMENT_BY_COURSE_LIST_MAPPING)

@@ -19,10 +19,12 @@ public class EducCourseApiConstants {
 
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
-    public static final String API_VERSION = "v1";
+    public static final String API_VERSION_V1 = "v1";
+    public static final String API_VERSION_V2 = "v2";
 
     // API Root Mapping
-    public static final String GRAD_COURSE_API_ROOT_MAPPING = "/api/" + API_VERSION+"/course";
+    public static final String GRAD_COURSE_API_ROOT_MAPPING = "/api/" + API_VERSION_V1+"/course";
+    public static final String GRAD_COURSE_API_ROOT_MAPPING_V2 = "/api/" + API_VERSION_V2+"/course";
 
     // Controller Mappings
     public static final String GRAD_COURSE_URL_MAPPING = GRAD_COURSE_API_ROOT_MAPPING;
@@ -33,6 +35,16 @@ public class EducCourseApiConstants {
     // Service Method Mappings
     public static final String GET_STUDENT_COURSE_BY_PEN_MAPPING = "/pen/{pen}";
     public static final String GET_STUDENT_EXAM_BY_PEN_MAPPING = "/pen/{pen}";
+
+    // Controller Mappings - Version 2
+    public static final String GRAD_COURSE_URL_MAPPING_V2 = GRAD_COURSE_API_ROOT_MAPPING_V2;
+    public static final String STUDENT_COURSE_URL_MAPPING_V2 = GRAD_COURSE_API_ROOT_MAPPING_V2 + "/studentcourse";
+    public static final String COURSE_ALGORITHM_URL_MAPPING_V2 = GRAD_COURSE_API_ROOT_MAPPING_V2 + "/course-algorithm";
+
+    // Service Method Mappings - Version 2
+    public static final String GET_STUDENT_COURSES_BY_STUDENT_ID_MAPPING = "/studentid/{studentID}";
+    public static final String STUDENT_COURSE_ID_MAPPING = "{studentCourseID}";
+    public static final String GET_COURSE_BY_COURSE_ID_MAPPING ="/{courseID}";
     
     public static final String GET_COURSE_BY_SEARCH_PARAMS_MAPPING = "/coursesearch";
     public static final String GET_COURSE_DETAILS_BY_CODE_MAPPING = "/{courseCode}";
@@ -81,6 +93,12 @@ public class EducCourseApiConstants {
     //Endpoints
     @Value("${endpoint.grad-program-api.rule-detail.url}")
     private String ruleDetailProgramManagementApiUrl;
+
+    @Value("${endpoint.coreg-api.course-info-by-id.url}")
+    private String courseDetailByCourseIdUrl;
+
+    @Value("${endpoint.coreg-api.course-info-by-external-code.url}")
+    private String courseDetailByExternalCodeUrl;
 
     // Splunk LogHelper Enabled
     @Value("${splunk.log-helper.enabled}")

@@ -18,7 +18,7 @@ public class Course {
     private Date endDate;
     private String workExpFlag;    
     private String genericCourseType;
-    private String coRegID;
+    private String courseID;
 	private Integer numCredits;
     
     public String getCourseCode() {
@@ -42,7 +42,7 @@ public class Course {
     
 	@Override
 	public String toString() {
-		return "Course [courseCode=" + courseCode + ", courseLevel=" + courseLevel + ", courseName=" + courseName
+		return "Course [courseID=" + courseID + ", courseCode=" + courseCode + ", courseLevel=" + courseLevel + ", courseName=" + courseName
 				+ ", language=" + language + ", startDate=" + startDate + ", endDate=" + endDate + ", workExpFlag="
 				+ workExpFlag + ", genericCourseType=" + genericCourseType + "]";
 	}		

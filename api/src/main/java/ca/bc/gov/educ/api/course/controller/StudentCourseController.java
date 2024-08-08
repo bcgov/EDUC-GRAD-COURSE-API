@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.course.controller;
 
-import ca.bc.gov.educ.api.course.model.dto.StudentCourse;
-import ca.bc.gov.educ.api.course.service.StudentCourseService;
+import ca.bc.gov.educ.api.course.model.dto.TraxStudentCourse;
+import ca.bc.gov.educ.api.course.service.TraxStudentCourseService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.GradValidation;
 import ca.bc.gov.educ.api.course.util.PermissionsConstants;
@@ -25,14 +25,14 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping(EducCourseApiConstants.STUDENT_COURSE_URL_MAPPING)
-@OpenAPIDefinition(info = @Info(title = "API for Student Course Data.", description = "This API is for Reading Student Course data.", version = "1"),
+@OpenAPIDefinition(info = @Info(title = "API for Student Course Data from TRAX.", description = "This API is for Reading Student Course data from TRAX.", version = "1"),
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_COURSE_DATA"})})
 public class StudentCourseController {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentCourseController.class);
 
     @Autowired
-    StudentCourseService studentCourseService;
+    TraxStudentCourseService traxStudentCourseService;
 
     @Autowired
     GradValidation validation;
@@ -44,7 +44,7 @@ public class StudentCourseController {
     @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE)
     @Operation(summary = "Find All Student Courses by PEN", description = "Get All Student Courses by PEN", tags = {"Student Courses"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "204", description = "NO CONTENT")})
-    public ResponseEntity<List<StudentCourse>> getStudentCourseByPEN(
+    public ResponseEntity<List<TraxStudentCourse>> getStudentCourseByPEN(
             @PathVariable String pen, @RequestParam(value = "sortForUI", required = false, defaultValue = "false") boolean sortForUI) {
         validation.requiredField(pen, "Pen");
         if (validation.hasErrors()) {
@@ -53,11 +53,11 @@ public class StudentCourseController {
         } else {
             String penNumber = pen.substring(5);
             logger.debug("#Get All Student Course by PEN: *****{}", penNumber);
-            List<StudentCourse> studentCourseList = studentCourseService.getStudentCourseList(pen, sortForUI);
-            if (studentCourseList.isEmpty()) {
+            List<TraxStudentCourse> traxStudentCourseList = traxStudentCourseService.getStudentCourseList(pen, sortForUI);
+            if (traxStudentCourseList.isEmpty()) {
                 return response.NO_CONTENT();
             }
-            return response.GET(studentCourseList);
+            return response.GET(traxStudentCourseList);
         }
     }
 
@@ -67,7 +67,7 @@ public class StudentCourseController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> checkFrenchImmersionCourse(@PathVariable String pen) {
         logger.debug("Check French Immersion Course : pen = {}", pen);
-        return response.GET(studentCourseService.checkFrenchImmersionCourse(pen));
+        return response.GET(traxStudentCourseService.checkFrenchImmersionCourse(pen));
     }
 
     @GetMapping(EducCourseApiConstants.CHECK_FRENCH_IMMERSION_COURSE_BY_PEN_AND_LEVEL_MAPPING)
@@ -78,7 +78,7 @@ public class StudentCourseController {
             @RequestParam(value = "pen") String pen,
             @RequestParam(value = "courseLevel") String courseLevel) {
         logger.debug("Check French Immersion Course : pen = {}, course level [{}]", pen, courseLevel);
-        return response.GET(studentCourseService.checkFrenchImmersionCourse(pen, courseLevel));
+        return response.GET(traxStudentCourseService.checkFrenchImmersionCourse(pen, courseLevel));
     }
 
     @GetMapping(EducCourseApiConstants.CHECK_FRENCH_IMMERSION_COURSE_FOR_EN_BY_PEN_AND_LEVEL_MAPPING)
@@ -89,6 +89,6 @@ public class StudentCourseController {
             @RequestParam(value = "pen") String pen,
             @RequestParam(value = "courseLevel") String courseLevel) {
         logger.debug("Check French Immersion Course for 1986 EN : pen = {}, course level [{}]", pen, courseLevel);
-        return response.GET(studentCourseService.checkFrenchImmersionCourseForEN(pen, courseLevel));
+        return response.GET(traxStudentCourseService.checkFrenchImmersionCourseForEN(pen, courseLevel));
     }
 }

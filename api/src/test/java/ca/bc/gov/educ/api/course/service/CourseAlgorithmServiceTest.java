@@ -6,8 +6,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -25,7 +29,7 @@ public class CourseAlgorithmServiceTest {
     CourseAlgorithmService courseAlgorithmService;
 
     @MockBean
-    private StudentCourseService studentCourseService;
+    private TraxStudentCourseService traxStudentCourseService;
 
     @MockBean
     private CourseRequirementService courseRequirementService;
@@ -33,16 +37,28 @@ public class CourseAlgorithmServiceTest {
     @MockBean
     private CourseRestrictionService courseRestrictionService;
 
+    @MockBean
+    public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+
+    @MockBean
+    public OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+
+    @MockBean
+    public ClientRegistrationRepository clientRegistrationRepository;
+
+    @MockBean
+    public WebClient webClient;
+
     @Test
     public void testGetCourseAlgorithmData_whenGivenPenNumber_thenReturnSuccess() {
 
         // Student Course
-        StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setPen("123456789");
-        studentCourse.setCourseCode("MAIN");
-        studentCourse.setCourseLevel("12");
-        studentCourse.setCourseName("main test course");
-        studentCourse.setLanguage("en");
+        TraxStudentCourse traxStudentCourse = new TraxStudentCourse();
+        traxStudentCourse.setPen("123456789");
+        traxStudentCourse.setCourseCode("MAIN");
+        traxStudentCourse.setCourseLevel("12");
+        traxStudentCourse.setCourseName("main test course");
+        traxStudentCourse.setLanguage("en");
 
         // Course Requirement Code
         CourseRequirementCodeDTO ruleCode = new CourseRequirementCodeDTO();
@@ -68,7 +84,7 @@ public class CourseAlgorithmServiceTest {
 
         // Course Algorithm Data
         CourseAlgorithmData courseAlgorithmData = new CourseAlgorithmData();
-        courseAlgorithmData.setStudentCourses(Arrays.asList(studentCourse));
+        courseAlgorithmData.setTraxStudentCours(Arrays.asList(traxStudentCourse));
         courseAlgorithmData.setCourseRequirements(Arrays.asList(courseRequirement));
         courseAlgorithmData.setCourseRestrictions(Arrays.asList(courseRestriction));
 
@@ -81,14 +97,14 @@ public class CourseAlgorithmServiceTest {
         CourseRestrictions courseRestrictions = new CourseRestrictions();
         courseRestrictions.setCourseRestrictionList(Arrays.asList(courseRestriction));
 
-        when(studentCourseService.getStudentCourseList(studentCourse.getPen(), false)).thenReturn(Arrays.asList(studentCourse));
+        when(traxStudentCourseService.getStudentCourseList(traxStudentCourse.getPen(), false)).thenReturn(Arrays.asList(traxStudentCourse));
         when(courseRequirementService.getCourseRequirementListByCourses(courseList)).thenReturn(courseRequirements);
         when(courseRestrictionService.getCourseRestrictionsListByCourses(courseList)).thenReturn(courseRestrictions);
 
-        var result = courseAlgorithmService.getCourseAlgorithmData(studentCourse.getPen(), false);
+        var result = courseAlgorithmService.getCourseAlgorithmData(traxStudentCourse.getPen(), false);
 
         assertThat(result).isNotNull();
-        assertThat(result.getStudentCourses().isEmpty()).isFalse();
+        assertThat(result.getTraxStudentCours().isEmpty()).isFalse();
         assertThat(result.getCourseRequirements().isEmpty()).isFalse();
         assertThat(result.getCourseRestrictions().isEmpty()).isFalse();
     }

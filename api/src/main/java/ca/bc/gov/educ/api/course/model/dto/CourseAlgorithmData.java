@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @Component
 public class CourseAlgorithmData {
-    List<StudentCourse> studentCourses;
+    List<TraxStudentCourse> traxStudentCours;
     List<CourseRequirement> courseRequirements;
     List<CourseRestriction> courseRestrictions;
 }

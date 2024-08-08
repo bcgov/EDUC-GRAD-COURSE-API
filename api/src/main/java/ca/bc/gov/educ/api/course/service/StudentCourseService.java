@@ -2,128 +2,221 @@ package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.StudentCourse;
+import ca.bc.gov.educ.api.course.model.dto.StudentExam;
+import ca.bc.gov.educ.api.course.model.entity.StudentCourseEntity;
+import ca.bc.gov.educ.api.course.model.entity.StudentExamEntity;
 import ca.bc.gov.educ.api.course.model.transformer.StudentCourseTransformer;
+import ca.bc.gov.educ.api.course.model.transformer.StudentExamTransformer;
+import ca.bc.gov.educ.api.course.repository.StudentExamRepository;
 import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
-import io.github.resilience4j.retry.annotation.Retry;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
+@Slf4j
 public class StudentCourseService {
-    private static final Logger logger = LoggerFactory.getLogger(StudentCourseService.class);
 
-    private final CourseService courseService;
-    private final StudentCourseRepository studentCourseRepo;
+    private static final String CREATE_USER = "createUser";
+    private static final String CREATE_DATE = "createDate";
+
+    private final StudentCourseRepository studentCourseRepository;
+
+    private final StudentExamRepository studentExamRepository;
+
     private final StudentCourseTransformer studentCourseTransformer;
 
-    public StudentCourseService(StudentCourseRepository studentCourseRepo, StudentCourseTransformer studentCourseTransformer, CourseService courseService) {
-        this.studentCourseRepo = studentCourseRepo;
+    private final StudentExamTransformer studentExamTransformer;
+
+    private final ca.bc.gov.educ.api.course.service.v2.CourseService courseService;
+
+    @Autowired
+    public StudentCourseService(StudentCourseRepository studentCourseRepository, StudentExamRepository studentExamRepository, StudentCourseTransformer studentCourseTransformer, StudentExamTransformer studentExamTransformer,
+        @Qualifier("CourseServiceV2")ca.bc.gov.educ.api.course.service.v2.CourseService courseService) {
+        this.studentCourseRepository = studentCourseRepository;
+        this.studentExamRepository = studentExamRepository;
         this.studentCourseTransformer = studentCourseTransformer;
+        this.studentExamTransformer = studentExamTransformer;
         this.courseService = courseService;
     }
 
-    /**
-     * Get all student courses by PEN populated in Student Course DTO
-     *
-     * @param pen           PEN #
-     * @param sortForUI     Sort For UI
-     * @return Student Course
-     */
-    public List<StudentCourse> getStudentCourseList(String pen, boolean sortForUI) {
-        List<StudentCourse> studentCourses  = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public List<StudentCourse> getStudentCourses(UUID studentID, boolean sortForUI) {
+        List<StudentCourse> studentCourses = new ArrayList<>();
         try {
-        	studentCourses = studentCourseTransformer.transformToDTO(studentCourseRepo.findByPen(pen));
-        	studentCourses.forEach(this::populate);
+            studentCourses = studentCourseTransformer.transformToDTO(studentCourseRepository.findByStudentID(studentID));
+            getCourseDetails(studentCourses);
+            getStudentExams(studentCourses);
         } catch (Exception e) {
-            logger.debug(String.format("Exception: %s",e));
+            log.debug(String.format("Exception: %s",e));
         }
         getDataSorted(studentCourses,sortForUI);
         return studentCourses;
     }
 
-    private void populate(StudentCourse studentCourse) {
-		if(StringUtils.isNotBlank(studentCourse.getRelatedCourse())
-			|| StringUtils.isNotBlank(studentCourse.getRelatedLevel())
-			|| StringUtils.isNotBlank(studentCourse.getCustomizedCourseName())
-			|| StringUtils.isNotBlank(studentCourse.getBestSchoolPercent() != null? studentCourse.getBestSchoolPercent().toString() : null)
-			|| StringUtils.isNotBlank(studentCourse.getBestExamPercent() != null? studentCourse.getBestExamPercent().toString() : null)
-			|| StringUtils.isNotBlank(studentCourse.getMetLitNumRequirement())) {
-			studentCourse.setHasRelatedCourse("Y");
-		}else {
-			studentCourse.setHasRelatedCourse("N");
-		}
-		if(studentCourse.getCourseLevel() != null) {
-			if(studentCourse.getCourseLevel().trim().equalsIgnoreCase("")) {
-				getCourseDetails(studentCourse.getCourseCode()," ", studentCourse);
-			}else {
-				getCourseDetails(studentCourse.getCourseCode(), studentCourse.getCourseLevel(), studentCourse);
-			}
-		}
-		if((StringUtils.isNotBlank(studentCourse.getRelatedCourse()) || StringUtils.isNotBlank(studentCourse.getRelatedLevel())) && studentCourse.getRelatedLevel() != null) {
-			checkForMoreOptions(studentCourse);
-		}
-	}
-    
-    private void checkForMoreOptions(StudentCourse sC) {
-		if(sC.getRelatedLevel().trim().equalsIgnoreCase("")) {
-			Course course = courseService.getCourseDetails(sC.getRelatedCourse(), " ");
-			if(course != null) {
-				sC.setRelatedCourseName(course.getCourseName());
-			}
-		} else {
-			Course course = courseService.getCourseDetails(sC.getRelatedCourse(), sC.getRelatedLevel());
-			if(course != null) {
-				sC.setRelatedCourseName(course.getCourseName());
-			}
-		}
-	 }
-    
-    private void getDataSorted(List<StudentCourse> studentCourses, boolean sortForUI) {
-    	if(sortForUI) {
-        	Collections.sort(studentCourses, Comparator.comparing(StudentCourse::getPen)
-                .thenComparing(StudentCourse::getCourseCode)
-                .thenComparing(StudentCourse::getCourseLevel)
-                .thenComparing(StudentCourse::getSessionDate));
-        }else {
-        	Collections.sort(studentCourses, Comparator.comparing(StudentCourse::getPen)
-                .thenComparing(StudentCourse::getCompletedCoursePercentage).reversed()
-                .thenComparing(StudentCourse::getCredits).reversed()
-                .thenComparing(StudentCourse::getCourseLevel).reversed());        
+    @Transactional
+    public StudentCourse saveStudentCourse(StudentCourse studentCourse) {
+        StudentCourse response;
+        StudentExam studentExam = null;
+        UUID studentCourseId = studentCourse.getId();
+        Optional<StudentCourseEntity> studentCourseOptional = studentCourseId == null? Optional.empty() : studentCourseRepository.findById(studentCourseId);
+        StudentCourseEntity sourceObject = studentCourseTransformer.transformToEntity(studentCourse);
+        if (studentCourseOptional.isPresent()) {
+            // StudentCourse
+            StudentCourseEntity entity = studentCourseOptional.get();
+            if (entity.getStudentExamId() != null && !entity.getStudentExamId().equals(studentCourse.getStudentExamId())) {
+                // delete the current student exam
+                studentExamRepository.deleteById(entity.getStudentExamId());
+            }
+            // StudentExam
+            if (studentCourse.getStudentExamId() != null) {
+                studentExam = buildStudentExam(studentCourse);
+                saveStudentExam(studentExam);
+                sourceObject.setStudentExamId(studentExam.getId());
+            }
+            entity.setUpdateDate(null);
+            entity.setUpdateUser(null);
+            BeanUtils.copyProperties(sourceObject, entity, CREATE_USER, CREATE_DATE);
+            entity = studentCourseRepository.saveAndFlush(entity);
+            response = studentCourseTransformer.transformToDTO(entity);
+
+        } else {
+            // StudentExam
+            if ("Y".equalsIgnoreCase(studentCourse.getProvExamCourse())) {
+                studentExam = buildStudentExam(studentCourse);
+                studentExam.setId(UUID.randomUUID());
+                studentExam = saveStudentExam(studentExam);
+                sourceObject.setStudentExamId(studentExam.getId());
+            }
+            // StudentCourse
+            if (sourceObject.getId() == null) {
+                sourceObject.setId(UUID.randomUUID());
+            }
+            sourceObject = studentCourseRepository.saveAndFlush(sourceObject);
+            response = studentCourseTransformer.transformToDTO(sourceObject);
+        }
+        getCourseDetail(response);
+        if (studentExam != null) {
+            populateStudentExamInStudentCourse(response, studentExam);
+        }
+        return response;
+    }
+
+    private StudentExam saveStudentExam(StudentExam studentExam) {
+        Optional<StudentExamEntity> studentExamOptional = studentExamRepository.findById(studentExam.getId());
+        StudentExamEntity sourceObject = studentExamTransformer.transformToEntity(studentExam);
+        if (studentExamOptional.isPresent()) {
+            StudentExamEntity entity = studentExamOptional.get();
+            entity.setUpdateDate(null);
+            entity.setUpdateUser(null);
+            BeanUtils.copyProperties(sourceObject, entity, CREATE_USER, CREATE_DATE);
+            entity = studentExamRepository.saveAndFlush(entity);
+            return studentExamTransformer.transformToDTO(entity);
+        } else {
+            sourceObject = studentExamRepository.saveAndFlush(sourceObject);
+            return studentExamTransformer.transformToDTO(sourceObject);
         }
     }
 
-	private void getCourseDetails(String courseCode, String courseLevel, StudentCourse sC) {
-		Course course = courseService.getCourseDetails(courseCode, courseLevel);
-    	if(course != null) {
-			sC.setCourseName(course.getCourseName());
-			sC.setGenericCourseType(course.getGenericCourseType());
-			sC.setLanguage(course.getLanguage());
-			sC.setWorkExpFlag(course.getWorkExpFlag());
-			sC.setCourseDetails(course);
-			sC.setOriginalCredits(course.getNumCredits());
-		  }
+    @Transactional
+    public int deleteStudentCourse(UUID studentCourseId) {
+        int deleteCount = 0;
+        Optional<StudentCourseEntity> scOptional = studentCourseRepository.findById(studentCourseId);
+        if (scOptional.isPresent()) {
+            StudentCourseEntity sc = scOptional.get();
+            UUID studentExamId = sc.getStudentExamId();
+            studentCourseRepository.delete(sc);
+            deleteCount++;
+            if (studentExamId != null) {
+                studentExamRepository.deleteById(studentExamId);
+                deleteCount++;
+            }
+        }
+        return deleteCount;
     }
 
-	@Retry(name = "generalgetcall")
-	public boolean checkFrenchImmersionCourse(String pen) {
-		return studentCourseRepo.countFrenchImmersionCourses(pen) > 0;
-	}
+    private void getStudentExams(List<StudentCourse> studentCourses) {
+        studentCourses.forEach(sc -> {
+            if (sc.getStudentExamId() != null) {
+                sc.setProvExamCourse("Y");
+                Optional<StudentExamEntity> optional = studentExamRepository.findById(sc.getStudentExamId());
+                optional.ifPresent(studentExamEntity -> populateStudentExamInStudentCourse(sc, studentExamTransformer.transformToDTO(studentExamEntity)));
+            } else {
+                sc.setProvExamCourse("N");
+            }
+        });
+    }
 
-	@Retry(name = "generalgetcall")
-	public boolean checkFrenchImmersionCourse(String pen, String courseLevel) {
-		return studentCourseRepo.countFrenchImmersionCourses(pen, courseLevel) > 0;
-	}
+    private void populateStudentExamInStudentCourse(StudentCourse sc, StudentExam se) {
+        sc.setStudentExamId(se.getId());
+        sc.setSchoolPercent(se.getSchoolPercentage());
+        sc.setBestSchoolPercent(se.getBestSchoolPercentage());
+        sc.setExamPercent(se.getExamPercentage());
+        sc.setBestExamPercent(se.getBestExamPercentage());
+        sc.setSpecialCase(se.getSpecialCase());
+        sc.setToWriteFlag(se.getToWriteFlag());
+    }
 
-	@Retry(name = "generalgetcall")
-	public boolean checkFrenchImmersionCourseForEN(String pen, String courseLevel) {
-		return studentCourseRepo.countFrenchImmersionCourse(pen, courseLevel) > 0;
-	}
+    private StudentExam buildStudentExam(StudentCourse sc) {
+        StudentExam se = new StudentExam();
+        se.setId(sc.getStudentExamId());
+        se.setSchoolPercentage(sc.getSchoolPercent());
+        se.setBestSchoolPercentage(sc.getBestSchoolPercent());
+        se.setExamPercentage(sc.getExamPercent());
+        se.setBestExamPercentage(sc.getBestExamPercent());
+        se.setSpecialCase(sc.getSpecialCase());
+        se.setToWriteFlag(sc.getToWriteFlag());
+        return se;
+    }
 
+    private void getCourseDetails(List<StudentCourse> studentCourses) {
+        for (StudentCourse sc : studentCourses) {
+            getCourseDetail(sc);
+        }
+    }
+
+    private void getCourseDetail(StudentCourse sc) {
+        if (sc.getCourseID() != null && NumberUtils.isCreatable(sc.getCourseID())) {
+            Course course = courseService.getCourseInfo(sc.getCourseID());
+            if (course != null) {
+                sc.setCourseDetails(course);
+                sc.setCourseCode(course.getCourseCode());
+                sc.setCourseLevel(course.getCourseLevel());
+                sc.setCourseName(course.getCourseName());
+                sc.setGenericCourseType(course.getGenericCourseType());
+                sc.setLanguage(course.getLanguage());
+                sc.setWorkExpFlag(course.getWorkExpFlag());
+                sc.setCourseDetails(course);
+                sc.setOriginalCredits(course.getNumCredits());
+            }
+        }
+        if (sc.getRelatedCourseId() != null && NumberUtils.isCreatable(sc.getRelatedCourseId())) {
+            Course relatedCourse = courseService.getCourseInfo(sc.getRelatedCourseId());
+            if (relatedCourse != null) {
+                sc.setRelatedCourse(relatedCourse.getCourseCode());
+                sc.setRelatedLevel(relatedCourse.getCourseLevel());
+                sc.setRelatedCourseName(relatedCourse.getCourseName());
+            }
+        }
+    }
+
+    private void getDataSorted(List<StudentCourse> studentCourses, boolean sortForUI) {
+        if(sortForUI) {
+            Collections.sort(studentCourses, Comparator.comparing(StudentCourse::getStudentID)
+                    .thenComparing(StudentCourse::getCourseCode)
+                    .thenComparing(StudentCourse::getCourseLevel)
+                    .thenComparing(StudentCourse::getSessionDate));
+        }else {
+            Collections.sort(studentCourses, Comparator.comparing(StudentCourse::getStudentID)
+                    .thenComparing(StudentCourse::getCompletedCoursePercentage).reversed()
+                    .thenComparing(StudentCourse::getCredits).reversed()
+                    .thenComparing(StudentCourse::getCourseLevel).reversed());
+        }
+    }
 }

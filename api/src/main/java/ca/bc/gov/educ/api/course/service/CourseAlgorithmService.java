@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class CourseAlgorithmService {
-    private final StudentCourseService studentCourseService;
+    private final TraxStudentCourseService traxStudentCourseService;
     private final CourseRequirementService courseRequirementService;
     private final CourseRestrictionService courseRestrictionService;
 
-    public CourseAlgorithmService(StudentCourseService studentCourseService,
+    public CourseAlgorithmService(TraxStudentCourseService traxStudentCourseService,
                                   CourseRequirementService courseRequirementService,
                                   CourseRestrictionService courseRestrictionService) {
-        this.studentCourseService = studentCourseService;
+        this.traxStudentCourseService = traxStudentCourseService;
         this.courseRequirementService = courseRequirementService;
         this.courseRestrictionService = courseRestrictionService;
     }
@@ -26,11 +26,11 @@ public class CourseAlgorithmService {
         CourseAlgorithmData courseAlgorithmData = new CourseAlgorithmData();
 
         // Student Courses
-        List<StudentCourse> studentCourses = studentCourseService.getStudentCourseList(pen, sortForUI);
-        courseAlgorithmData.setStudentCourses(studentCourses);
-        if (!studentCourses.isEmpty()) {
-            List<String> courseCodes = studentCourses.stream()
-                    .map(StudentCourse::getCourseCode)
+        List<TraxStudentCourse> traxStudentCours = traxStudentCourseService.getStudentCourseList(pen, sortForUI);
+        courseAlgorithmData.setTraxStudentCours(traxStudentCours);
+        if (!traxStudentCours.isEmpty()) {
+            List<String> courseCodes = traxStudentCours.stream()
+                    .map(TraxStudentCourse::getCourseCode)
                     .distinct()
                     .collect(Collectors.toList());
             CourseList courseList = new CourseList();

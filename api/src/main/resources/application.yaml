@@ -40,6 +40,16 @@ spring:
         jwt:
           issuer-uri: ${TOKEN_ISSUER_URL}
           jwk-set-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/certs
+      client:
+        registration:
+          course-api-client:
+            client-id: ${COURSE_CLIENT_NAME}
+            client-secret: ${COURSE_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+        provider:
+          course-api-client:
+            issuer-uri: ${TOKEN_ISSUER_URL}
+            token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
 
 #Logging properties
 logging:
@@ -119,6 +129,11 @@ endpoint:
   grad-program-api:
     rule-detail:
       url : ${GRAD_PROGRAM_API}api/v1/program/programrules/%s
+  coreg-api:
+    course-info-by-id:
+      url: ${EDUC_COREG_API}api/v1/course/information/%s
+    course-info-by-external-code:
+      url: ${EDUC_COREG_API}api/v1/course/information/external/%s
 
 #Splunk LogHelper
 splunk:

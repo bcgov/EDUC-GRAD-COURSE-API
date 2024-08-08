@@ -39,7 +39,7 @@ public class CourseEntity {
     private String genericCourseType;
     
     @Column(name = "CRSE_REG_ID", nullable = true)
-    private String coRegID;
+    private String courseID;
 
     @Column(name = "NUM_CREDITS", nullable = true)
     private Integer numCredits;

@@ -3,49 +3,50 @@ package ca.bc.gov.educ.api.course.model.dto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Data
 @Component
 public class StudentCourse {
-
-	private String pen;
-    private String courseCode;
-    private String courseName;
-	private Integer originalCredits;
-    private String courseLevel;
+	private UUID id;
+	private UUID studentID;
+	private String courseID;
+    private String courseCode; // Course
+    private String courseName; // Course
+	private Integer originalCredits; // Course
+    private String courseLevel; // Course
     private String sessionDate;
-    private String customizedCourseName;
+    private String customizedCourseName; // Course
 	private String gradReqMet;
 	private Double completedCoursePercentage;
 	private String completedCourseLetterGrade;
 	private Double interimPercent;
 	private String interimLetterGrade;
-	private Double bestSchoolPercent; 
-    private Double bestExamPercent;
-	private Double schoolPercent;
-	private Double examPercent;
+	private UUID studentExamId; // Exam
+	private Double bestSchoolPercent; // Exam
+    private Double bestExamPercent; // Exam
+	private Double schoolPercent; // Exam
+	private Double examPercent; // Exam
 	private String equivOrChallenge;
     private String fineArtsAppliedSkills;    
     private String metLitNumRequirement; 
 	private Integer credits;
-	private Integer creditsUsedForGrad;	
-	private String relatedCourse;
-	private String relatedCourseName;
-	private String relatedLevel;
+	private Integer creditsUsedForGrad;
 	private String hasRelatedCourse;
-	private String genericCourseType;
-	private String language;
-	private String workExpFlag;
-	private String specialCase; 
-    private String toWriteFlag;
+	private String relatedCourseId;
+	private String relatedCourse;  // Course
+	private String relatedCourseName; // Course
+	private String relatedLevel; // Course
+	private String genericCourseType; // Course
+	private String language; // Course
+	private String workExpFlag; // Course
+	private String specialCase; // Exam
+    private String toWriteFlag; // Exam
 	private String provExamCourse;
 	private boolean isNotCompleted;
 	private boolean isFailed;
 	private boolean isDuplicate;
 	private Course courseDetails;
-	
-	public String getPen() {
-    	return pen != null ? pen.trim():null;
-    }
 	
 	public String getCourseCode() {
 		return courseCode != null ? courseCode.trim(): null;
@@ -110,17 +111,17 @@ public class StudentCourse {
 
 	@Override
 	public String toString() {
-		return "StudentCourse [pen=" + pen + ", courseCode=" + courseCode + ", courseName=" + courseName
-				+ ", courseLevel=" + courseLevel + ", sessionDate=" + sessionDate + ", customizedCourseName="
-				+ customizedCourseName + ", gradReqMet=" + gradReqMet + ", completedCoursePercentage="
+		return "StudentCourse [studentID=" + studentID + ", courseID=" + courseID + ", courseCode=" + courseCode
+				+ ", courseName=" + courseName + ", courseLevel=" + courseLevel + ", sessionDate=" + sessionDate
+				+ ", customizedCourseName=" + customizedCourseName + ", gradReqMet=" + gradReqMet + ", completedCoursePercentage="
 				+ completedCoursePercentage + ", completedCourseLetterGrade=" + completedCourseLetterGrade
 				+ ", interimPercent=" + interimPercent + ", interimLetterGrade=" + interimLetterGrade
 				+ ", bestSchoolPercent=" + bestSchoolPercent + ", bestExamPercent=" + bestExamPercent
 				+ ", equivOrChallenge=" + equivOrChallenge + ", fineArtsAppliedSkills=" + fineArtsAppliedSkills
 				+ ", metLitNumRequirement=" + metLitNumRequirement + ", credits=" + credits + ", creditsUsedForGrad="
 				+ creditsUsedForGrad + ", relatedCourse=" + relatedCourse + ", relatedCourseName=" + relatedCourseName
-				+ ", relatedLevel=" + relatedLevel + ", hasRelatedCourse=" + hasRelatedCourse + ", genericCourseType="
-				+ genericCourseType + ", language=" + language + ", workExpFlag=" + workExpFlag + ", specialCase="
+				+ ", relatedLevel=" + relatedLevel + ", hasRelatedCourse=" + hasRelatedCourse + ", relatedCourseId=" + relatedCourseId
+				+ ", genericCourseType=" + genericCourseType + ", language=" + language + ", workExpFlag=" + workExpFlag + ", specialCase="
 				+ specialCase + ", toWriteFlag=" + toWriteFlag + ", isNotCompleted=" + isNotCompleted + ", isFailed="
 				+ isFailed + ", isDuplicate=" + isDuplicate + ", courseDetails=" + courseDetails + "]";
 	}		

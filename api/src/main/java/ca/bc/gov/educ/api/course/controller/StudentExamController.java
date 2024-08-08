@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.bc.gov.educ.api.course.model.dto.StudentExam;
-import ca.bc.gov.educ.api.course.service.StudentCourseService;
-import ca.bc.gov.educ.api.course.service.StudentExamService;
+import ca.bc.gov.educ.api.course.model.dto.TraxStudentExam;
+import ca.bc.gov.educ.api.course.service.TraxStudentCourseService;
+import ca.bc.gov.educ.api.course.service.TraxStudentExamService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.GradValidation;
 import ca.bc.gov.educ.api.course.util.PermissionsConstants;
@@ -39,10 +39,10 @@ public class StudentExamController {
     private static final Logger logger = LoggerFactory.getLogger(StudentExamController.class);
 
     @Autowired
-    StudentCourseService studentCourseService;
+    TraxStudentCourseService traxStudentCourseService;
     
     @Autowired
-    StudentExamService studentExamService;
+    TraxStudentExamService traxStudentExamService;
 
     @Autowired
     GradValidation validation;
@@ -54,7 +54,7 @@ public class StudentExamController {
     @PreAuthorize(PermissionsConstants.READ_GRAD_STUDENT_EXAM)
     @Operation(summary = "Find All Student Exams by PEN", description = "Get All Student Exams by PEN", tags = {"Student Exam"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "204", description = "NO CONTENT")})
-    public ResponseEntity<List<StudentExam>> getStudentCourseByPEN(
+    public ResponseEntity<List<TraxStudentExam>> getStudentCourseByPEN(
             @PathVariable String pen, @RequestParam(value = "sortForUI", required = false, defaultValue = "false") boolean sortForUI) {
         validation.requiredField(pen, "Pen");
         if (validation.hasErrors()) {
@@ -63,11 +63,11 @@ public class StudentExamController {
         } else {
             String penNumber = pen.substring(5);
             logger.debug("#Get All Student Exam by PEN: *****{}", penNumber);
-            List<StudentExam> studentExamList = studentExamService.getStudentExamList(pen, sortForUI);
-            if (studentExamList.isEmpty()) {
+            List<TraxStudentExam> traxStudentExamList = traxStudentExamService.getStudentExamList(pen, sortForUI);
+            if (traxStudentExamList.isEmpty()) {
                 return response.NO_CONTENT();
             }
-            return response.GET(studentExamList);
+            return response.GET(traxStudentExamList);
         }
     }
 }

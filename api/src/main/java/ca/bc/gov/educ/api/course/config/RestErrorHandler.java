@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.course.config;
 
 import ca.bc.gov.educ.api.course.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.course.exception.GradBusinessRuleException;
+import ca.bc.gov.educ.api.course.exception.ServiceException;
 import ca.bc.gov.educ.api.course.util.ApiResponseMessage.MessageTypeEnum;
 import ca.bc.gov.educ.api.course.util.ApiResponseModel;
 import ca.bc.gov.educ.api.course.util.GradValidation;
@@ -37,6 +38,11 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
 		validation.ifWarnings(response::addWarningMessages);
 		validation.clear();
 		return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
+	}
+
+	@ExceptionHandler(value = { ServiceException.class })
+	protected ResponseEntity<Object> handleServiceException(ServiceException ex, WebRequest request) {
+		return new ResponseEntity<>(ApiResponseModel.ERROR(null, ex.getLocalizedMessage()), HttpStatus.resolve(ex.getStatusCode()));
 	}
 
 	@ExceptionHandler(value = { JpaObjectRetrievalFailureException.class, DataRetrievalFailureException.class })

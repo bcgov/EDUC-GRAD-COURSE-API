@@ -68,6 +68,11 @@ endpoint:
   grad-program-api:
     rule-detail:
       url : https://educ-grad-program-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/program/programrules/%s
+  coreg-api:
+    course-info-by-id:
+      url: https://educ-coreg-api-e51986-dev.apps.silver.devops.gov.bc.ca/api/v1/course/information/%s
+    course-info-by-external-code:
+      url: https://educ-coreg-api-e51986-dev.apps.silver.devops.gov.bc.ca/api/v1/course/information/external/%s
 
 #Splunk LogHelper
 splunk:

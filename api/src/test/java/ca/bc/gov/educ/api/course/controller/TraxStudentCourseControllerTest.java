@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.course.controller;
 
-import ca.bc.gov.educ.api.course.model.dto.StudentCourse;
-import ca.bc.gov.educ.api.course.service.StudentCourseService;
+import ca.bc.gov.educ.api.course.model.dto.TraxStudentCourse;
+import ca.bc.gov.educ.api.course.service.TraxStudentCourseService;
 import ca.bc.gov.educ.api.course.util.GradValidation;
 import ca.bc.gov.educ.api.course.util.ResponseHelper;
 import org.junit.Test;
@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
-public class StudentCourseControllerTest {
+public class TraxStudentCourseControllerTest {
 
     @Mock
-    private StudentCourseService studentCourseService;
+    private TraxStudentCourseService traxStudentCourseService;
 
     @InjectMocks
     StudentCourseController studentCourseController;
@@ -36,16 +36,16 @@ public class StudentCourseControllerTest {
 
     @Test
     public void testGetStudentCoursesByPEN() {
-        StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setPen("123456789");
-        studentCourse.setCourseCode("main");
-        studentCourse.setCourseLevel("12");
-        studentCourse.setCourseName("main test course");
-        studentCourse.setLanguage("en");
+        TraxStudentCourse traxStudentCourse = new TraxStudentCourse();
+        traxStudentCourse.setPen("123456789");
+        traxStudentCourse.setCourseCode("main");
+        traxStudentCourse.setCourseLevel("12");
+        traxStudentCourse.setCourseName("main test course");
+        traxStudentCourse.setLanguage("en");
 
-        Mockito.when(studentCourseService.getStudentCourseList(studentCourse.getPen(), true)).thenReturn(Arrays.asList(studentCourse));
-        var result = studentCourseController.getStudentCourseByPEN(studentCourse.getPen(), true);
-        Mockito.verify(studentCourseService).getStudentCourseList(studentCourse.getPen(), true);
+        Mockito.when(traxStudentCourseService.getStudentCourseList(traxStudentCourse.getPen(), true)).thenReturn(Arrays.asList(traxStudentCourse));
+        var result = studentCourseController.getStudentCourseByPEN(traxStudentCourse.getPen(), true);
+        Mockito.verify(traxStudentCourseService).getStudentCourseList(traxStudentCourse.getPen(), true);
     }
 
     @Test
@@ -59,27 +59,27 @@ public class StudentCourseControllerTest {
     @Test
     public void checkFrenchImmersionCourse() {
         String pen = "123456789";
-        Mockito.when(studentCourseService.checkFrenchImmersionCourse(pen)).thenReturn(true);
+        Mockito.when(traxStudentCourseService.checkFrenchImmersionCourse(pen)).thenReturn(true);
         studentCourseController.checkFrenchImmersionCourse(pen);
-        Mockito.verify(studentCourseService).checkFrenchImmersionCourse(pen);
+        Mockito.verify(traxStudentCourseService).checkFrenchImmersionCourse(pen);
     }
 
     @Test
     public void checkFrenchImmersionCourseByPenAndCourseLevel() {
         String pen = "123456789";
         String courseLevel = "11";
-        Mockito.when(studentCourseService.checkFrenchImmersionCourse(pen, courseLevel)).thenReturn(true);
+        Mockito.when(traxStudentCourseService.checkFrenchImmersionCourse(pen, courseLevel)).thenReturn(true);
         studentCourseController.checkFrenchImmersionCourse(pen, courseLevel);
-        Mockito.verify(studentCourseService).checkFrenchImmersionCourse(pen, courseLevel);
+        Mockito.verify(traxStudentCourseService).checkFrenchImmersionCourse(pen, courseLevel);
     }
 
     @Test
     public void checkFrenchImmersionCourseFor1986ENByPenAndCourseLevel() {
         String pen = "123456789";
         String courseLevel = "11";
-        Mockito.when(studentCourseService.checkFrenchImmersionCourseForEN(pen, courseLevel)).thenReturn(true);
+        Mockito.when(traxStudentCourseService.checkFrenchImmersionCourseForEN(pen, courseLevel)).thenReturn(true);
         studentCourseController.checkFrenchImmersionCourseForEN(pen, courseLevel);
-        Mockito.verify(studentCourseService).checkFrenchImmersionCourseForEN(pen, courseLevel);
+        Mockito.verify(traxStudentCourseService).checkFrenchImmersionCourseForEN(pen, courseLevel);
     }
 
 }

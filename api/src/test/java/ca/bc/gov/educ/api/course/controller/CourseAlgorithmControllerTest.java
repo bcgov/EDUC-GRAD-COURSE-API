@@ -35,12 +35,12 @@ public class CourseAlgorithmControllerTest {
     @Test
     public void testGetCourseAlgorithmDataByPen() {
         // Student Course
-        StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setPen("123456789");
-        studentCourse.setCourseCode("MAIN");
-        studentCourse.setCourseLevel("12");
-        studentCourse.setCourseName("main test course");
-        studentCourse.setLanguage("en");
+        TraxStudentCourse traxStudentCourse = new TraxStudentCourse();
+        traxStudentCourse.setPen("123456789");
+        traxStudentCourse.setCourseCode("MAIN");
+        traxStudentCourse.setCourseLevel("12");
+        traxStudentCourse.setCourseName("main test course");
+        traxStudentCourse.setLanguage("en");
 
         // Course Requirement Code
         CourseRequirementCodeDTO courseRequirementCodeDTO = new CourseRequirementCodeDTO();
@@ -66,13 +66,13 @@ public class CourseAlgorithmControllerTest {
 
         // Course Algorithm Data
         CourseAlgorithmData courseAlgorithmData = new CourseAlgorithmData();
-        courseAlgorithmData.setStudentCourses(Arrays.asList(studentCourse));
+        courseAlgorithmData.setTraxStudentCours(Arrays.asList(traxStudentCourse));
         courseAlgorithmData.setCourseRequirements(Arrays.asList(courseRequirement));
         courseAlgorithmData.setCourseRestrictions(Arrays.asList(courseRestriction));
 
-        Mockito.when(courseAlgorithmService.getCourseAlgorithmData(studentCourse.getPen(), false)).thenReturn(courseAlgorithmData);
-        courseAlgorithmController.getCourseAlgorithmData(studentCourse.getPen());
-        Mockito.verify(courseAlgorithmService).getCourseAlgorithmData(studentCourse.getPen(), false);
+        Mockito.when(courseAlgorithmService.getCourseAlgorithmData(traxStudentCourse.getPen(), false)).thenReturn(courseAlgorithmData);
+        courseAlgorithmController.getCourseAlgorithmData(traxStudentCourse.getPen());
+        Mockito.verify(courseAlgorithmService).getCourseAlgorithmData(traxStudentCourse.getPen(), false);
     }
 
 }
