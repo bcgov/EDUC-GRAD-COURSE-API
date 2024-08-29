@@ -64,6 +64,8 @@ objects:
                     name: educ-grad-course-api-config-map
                 - secretRef:
                     name: api-course-db-secret
+                - secretRef:
+                    name: course-client-secret
               resources:
                 requests:
                   cpu: "${MIN_CPU}"
