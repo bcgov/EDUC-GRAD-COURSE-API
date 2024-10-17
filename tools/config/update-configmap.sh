@@ -56,6 +56,11 @@ oc create -n "$GRAD_NAMESPACE"-"$envValue" configmap "$APP_NAME"-config-map \
   --from-literal=ENABLE_FLYWAY="true" \
   --from-literal=GRAD_PROGRAM_API="http://educ-grad-program-api.$GRAD_NAMESPACE-$envValue.svc.cluster.local:8080/" \
   --from-literal=MAX_RETRY_ATTEMPTS="3" \
+  --from-literal=CONNECTION_TIMEOUT='30000' \
+  --from-literal=MAXIMUM_POOL_SIZE='10' \
+  --from-literal=MIN_IDLE='10' \
+  --from-literal=IDLE_TIMEOUT='300000' \
+  --from-literal=MAX_LIFETIME='420000' \
   --dry-run=client -o yaml | oc apply -f -
 
 echo Creating config map "$APP_NAME"-flb-sc-config-map
