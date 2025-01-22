@@ -13,9 +13,9 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -30,6 +30,7 @@ import java.util.Date;
 @OpenAPIDefinition(info = @Info(title = "API for Course Algorithm Data.",
         description = "This API is for Course Algorithm data.", version = "1"),
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_COURSE_DATA","READ_GRAD_COURSE_REQUIREMENT_DATA"})})
+@AllArgsConstructor
 public class CourseAlgorithmController {
 
     private static Logger logger = LoggerFactory.getLogger(CourseAlgorithmController.class);
@@ -39,13 +40,10 @@ public class CourseAlgorithmController {
         binder.registerCustomEditor(Date.class, null,  new GradDateEditor());
     }
 
-    @Autowired
     CourseAlgorithmService courseAlgorithmService;
 
-    @Autowired
     GradValidation validation;
 
-    @Autowired
     ResponseHelper response;
 
     @GetMapping(EducCourseApiConstants.GET_COURSE_ALGORITHM_DATA_BY_PEN_MAPPING)

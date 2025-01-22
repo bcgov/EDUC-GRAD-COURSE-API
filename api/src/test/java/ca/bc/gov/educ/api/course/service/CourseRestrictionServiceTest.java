@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -63,8 +62,7 @@ public class CourseRestrictionServiceTest {
 
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getAllCourseRestrictionList();
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -87,7 +85,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictions();
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRestrictionList().size()).isEqualTo(1);
+        assertThat(result.getCourseRestrictionList()).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.getCourseRestrictionList().get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -109,10 +107,10 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
         courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
 
-        when(courseRestrictionRepository.findByMainCourseAndMainCourseLevel(eq("MAIN"), eq("12"))).thenReturn(Arrays.asList(courseRestriction));
+        when(courseRestrictionRepository.findByMainCourseAndMainCourseLevel("MAIN", "12")).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictions("MAIN", "12");
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRestrictionList().size()).isEqualTo(1);
+        assertThat(result.getCourseRestrictionList()).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.getCourseRestrictionList().get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -132,10 +130,9 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
         courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
 
-        when(courseRestrictionRepository.searchForCourseRestriction(eq(StringUtils.toRootUpperCase(StringUtils.strip("MAIN*", "*"))), eq(StringUtils.toRootUpperCase(StringUtils.strip("1*", "*"))))).thenReturn(Arrays.asList(courseRestriction));
+        when(courseRestrictionRepository.searchForCourseRestriction(StringUtils.toRootUpperCase(StringUtils.strip("MAIN*", "*")), StringUtils.toRootUpperCase(StringUtils.strip("1*", "*")))).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictionsSearchList("MAIN*", "1*");
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -161,7 +158,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findByMainCourseIn(courseList.getCourseCodes())).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictionsListByCourses(courseList);
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRestrictionList().size()).isEqualTo(1);
+        assertThat(result.getCourseRestrictionList()).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.getCourseRestrictionList().get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -181,10 +178,10 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
         courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
 
-        when(courseRestrictionRepository.findByMainCourseAndRestrictedCourse(eq("MAIN"), eq("REST"))).thenReturn(Arrays.asList(courseRestriction));
+        when(courseRestrictionRepository.findByMainCourseAndRestrictedCourse("MAIN","REST")).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictionsByMainCourseAndRestrictedCourse("MAIN", "REST");
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRestrictionList().size()).isEqualTo(1);
+        assertThat(result.getCourseRestrictionList()).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.getCourseRestrictionList().get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());
@@ -205,7 +202,7 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
-                eq("MAIN"), eq("12"), eq("REST"), eq("12"))).thenReturn(Optional.of(courseRestriction));
+                "MAIN", "12", "REST", "12")).thenReturn(Optional.of(courseRestriction));
         var result = courseRestrictionService.getCourseRestriction("MAIN", "12", "REST", "12");
         assertThat(result).isNotNull();
         assertThat(result.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
@@ -233,7 +230,7 @@ public class CourseRestrictionServiceTest {
         courseRestrictionEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
-                eq("MAIN"), eq("12"), eq("REST"), eq("12"))).thenReturn(Optional.empty());
+                "MAIN", "12", "REST", "12")).thenReturn(Optional.empty());
         when(courseRestrictionRepository.save(any(CourseRestrictionsEntity.class))).thenReturn(courseRestrictionEntity);
 
         var result = courseRestrictionService.saveCourseRestriction(courseRestriction);
@@ -263,7 +260,7 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictedCourseLevel("12");
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
-                eq("MAIN"), eq("12"), eq("REST"), eq("12"))).thenReturn(Optional.of(courseRestrictionEntity));
+               "MAIN", "12","REST", "12")).thenReturn(Optional.of(courseRestrictionEntity));
         when(courseRestrictionRepository.save(any(CourseRestrictionsEntity.class))).thenReturn(courseRestrictionEntity);
 
         var result = courseRestrictionService.saveCourseRestriction(courseRestriction);

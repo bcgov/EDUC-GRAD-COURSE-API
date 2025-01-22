@@ -5,7 +5,6 @@ import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseAlgorithmService {
@@ -32,7 +31,7 @@ public class CourseAlgorithmService {
             List<String> courseCodes = traxStudentCours.stream()
                     .map(TraxStudentCourse::getCourseCode)
                     .distinct()
-                    .collect(Collectors.toList());
+                    .toList();
             CourseList courseList = new CourseList();
             courseList.setCourseCodes(courseCodes);
 

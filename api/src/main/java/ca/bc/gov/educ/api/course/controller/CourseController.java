@@ -5,10 +5,10 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +43,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @OpenAPIDefinition(info = @Info(title = "API for Course Management.",
         description = "This API is for Managing Course data.", version = "1"),
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_COURSE_DATA","READ_GRAD_COURSE_REQUIREMENT_DATA"})})
+@AllArgsConstructor
 public class CourseController {
 
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
@@ -52,19 +53,14 @@ public class CourseController {
 	    binder.registerCustomEditor(Date.class, null,  new GradDateEditor());
 	}
     
-    @Autowired
     CourseService courseService;
     
-    @Autowired
     CourseRequirementService courseRequirementService;
     
-    @Autowired
     CourseRestrictionService courseRestrictionService;
     
-    @Autowired
 	GradValidation validation;
     
-    @Autowired
 	ResponseHelper response;
 
     @GetMapping

@@ -2,9 +2,9 @@ package ca.bc.gov.educ.api.course.controller;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,20 +34,17 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RequestMapping(EducCourseApiConstants.STUDENT_EXAM_URL_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for Student Exam Data.", description = "This API is for Reading Student Exam data.", version = "1"),
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_COURSE_DATA"})})
+@AllArgsConstructor
 public class StudentExamController {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentExamController.class);
 
-    @Autowired
     TraxStudentCourseService traxStudentCourseService;
     
-    @Autowired
     TraxStudentExamService traxStudentExamService;
 
-    @Autowired
     GradValidation validation;
 
-    @Autowired
     ResponseHelper response;
 
     @GetMapping(EducCourseApiConstants.GET_STUDENT_EXAM_BY_PEN_MAPPING)

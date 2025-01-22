@@ -1,7 +1,6 @@
 package ca.bc.gov.educ.api.course.repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import ca.bc.gov.educ.api.course.model.entity.CourseRequirementCodeEntity;

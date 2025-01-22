@@ -29,6 +29,7 @@ import java.util.UUID;
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_COURSE_DATA"})})
 public class StudentCourseController {
 
+    @SuppressWarnings("unused")
     private static final String BEARER = "Bearer ";
 
     StudentCourseService studentCourseService;

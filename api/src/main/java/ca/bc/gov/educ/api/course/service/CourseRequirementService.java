@@ -9,11 +9,11 @@ import ca.bc.gov.educ.api.course.util.JsonTransformer;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaSpecification;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.resilience4j.retry.annotation.Retry;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,31 +28,24 @@ import ca.bc.gov.educ.api.course.util.criteria.GradCriteria.OperationEnum;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 
 @Service
+@AllArgsConstructor
 public class CourseRequirementService {
 
-    @Autowired
     private CourseRequirementRepository courseRequirementRepository;
 
-    @Autowired
     private CourseRequirementTransformer courseRequirementTransformer;
 
-    @Autowired
     private CourseRequirementCodeRepository courseRequirementCodeRepository;
     
-    @Autowired
-    CourseRequirements courseRequirements;
+    private CourseRequirements courseRequirements;
 
-    @Autowired
-    CourseService courseService;
+    private CourseService courseService;
 
-    @Autowired
-    EducCourseApiConstants constants;
+    private EducCourseApiConstants constants;
 
-    @Autowired
-    RESTService restService;
+    private RESTService restService;
 
-    @Autowired
-    JsonTransformer jsonTransformer;
+    private JsonTransformer jsonTransformer;
 
     private static Logger logger = LoggerFactory.getLogger(CourseRequirementService.class);
 
