@@ -5,11 +5,11 @@ import java.util.*;
 
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
 import io.github.resilience4j.retry.annotation.Retry;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.bc.gov.educ.api.course.model.dto.CourseList;
@@ -19,16 +19,14 @@ import ca.bc.gov.educ.api.course.model.transformer.CourseRestrictionsTransformer
 import ca.bc.gov.educ.api.course.repository.CourseRestrictionRepository;
 
 @Service
+@AllArgsConstructor
 public class CourseRestrictionService {
 
-    @Autowired
     private CourseRestrictionRepository courseRestrictionRepository;
 
-    @Autowired
     private CourseRestrictionsTransformer courseRestrictionTransformer;
-    
-    @Autowired
-    CourseRestrictions courseRestrictions;
+
+	private CourseRestrictions courseRestrictions;
 
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CourseRestrictionService.class);

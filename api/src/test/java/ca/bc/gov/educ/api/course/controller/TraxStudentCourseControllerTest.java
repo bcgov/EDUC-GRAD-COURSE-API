@@ -44,7 +44,7 @@ public class TraxStudentCourseControllerTest {
         traxStudentCourse.setLanguage("en");
 
         Mockito.when(traxStudentCourseService.getStudentCourseList(traxStudentCourse.getPen(), true)).thenReturn(Arrays.asList(traxStudentCourse));
-        var result = studentCourseController.getStudentCourseByPEN(traxStudentCourse.getPen(), true);
+        studentCourseController.getStudentCourseByPEN(traxStudentCourse.getPen(), true);
         Mockito.verify(traxStudentCourseService).getStudentCourseList(traxStudentCourse.getPen(), true);
     }
 

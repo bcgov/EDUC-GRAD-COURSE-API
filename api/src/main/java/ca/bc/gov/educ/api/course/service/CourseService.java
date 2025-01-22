@@ -9,10 +9,10 @@ import ca.bc.gov.educ.api.course.util.criteria.CriteriaHelper;
 import ca.bc.gov.educ.api.course.util.criteria.GradCriteria.OperationEnum;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaSpecification;
 import io.github.resilience4j.retry.annotation.Retry;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class CourseService {
 
 	private static final String START_DATE = "startDate";
@@ -27,10 +28,8 @@ public class CourseService {
 	private static final String LANGUAGE= "language";
 	private static final String COURSE_NAME= "courseName";
 	
-    @Autowired
     private CourseRepository courseRepo;
 
-    @Autowired
     private CourseTransformer courseTransformer;
 
     @SuppressWarnings("unused")
@@ -56,18 +55,12 @@ public class CourseService {
 
     @Retry(name = "generalgetcall")
     public boolean hasFrenchLanguageCourse(String courseCode, String courseLevel) {
-        if (this.courseRepo.countTabCourses(courseCode, courseLevel, "F") > 0L) {
-            return true;
-        }
-        return false;
+        return this.courseRepo.countTabCourses(courseCode, courseLevel, "F") > 0L;
     }
 
     @Retry(name = "generalgetcall")
     public boolean hasBlankLanguageCourse(String courseCode, String courseLevel) {
-        if (this.courseRepo.countTabCourses(courseCode, courseLevel, " ") > 0L) {
-            return true;
-        }
-        return false;
+        return this.courseRepo.countTabCourses(courseCode, courseLevel, " ") > 0L;
     }
 
     @Retry(name = "generalgetcall")

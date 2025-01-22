@@ -87,8 +87,7 @@ public class TraxTraxStudentCourseServiceTest {
         when(courseService.getCourseDetails(traxStudentCourseEntity.getRelatedCourse(), traxStudentCourseEntity.getRelatedLevel())).thenReturn(course);
 
         var result = traxStudentCourseService.getStudentCourseList(traxStudentCourseId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentCourse responseTraxStudentCourse = result.get(0);
         assertThat(responseTraxStudentCourse.getCourseCode()).isEqualTo(course.getCourseCode());
         assertThat(responseTraxStudentCourse.getGenericCourseType()).isEqualTo(course.getGenericCourseType());
@@ -118,8 +117,7 @@ public class TraxTraxStudentCourseServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), " ")).thenReturn(course);
 
         var result = traxStudentCourseService.getStudentCourseList(traxStudentCourseId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentCourse responseTraxStudentCourse = result.get(0);
         assertThat(responseTraxStudentCourse.getCourseCode()).isEqualTo(course.getCourseCode());
         assertThat(responseTraxStudentCourse.getGenericCourseType()).isEqualTo(course.getGenericCourseType());

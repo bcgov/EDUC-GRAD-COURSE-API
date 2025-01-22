@@ -54,7 +54,6 @@ public class RESTServiceGETTest {
     private static final String TEST_URL_403 = "https://httpstat.us/403";
     private static final String TEST_URL_503 = "https://httpstat.us/503";
 
-    private static final String ACCESS_TOKEN = "123";
     private static final String OK_RESPONSE = "200 OK";
 
     @Before
@@ -87,21 +86,8 @@ public class RESTServiceGETTest {
     }
 
     @Test(expected = ServiceException.class)
-    public void testGetOverride_Given5xxErrorFromService_ExpectServiceError(){
-        when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_503, String.class);
-    }
-
-    @Test(expected = ServiceException.class)
     public void testGet_Given4xxErrorFromService_ExpectServiceError(){
         when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
         this.restService.get(TEST_URL_403, String.class);
     }
-
-    @Test(expected = ServiceException.class)
-    public void testGetOverride_Given4xxErrorFromService_ExpectServiceError(){
-        when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_403, String.class);
-    }
-
 }

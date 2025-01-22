@@ -157,7 +157,6 @@ public class StudentCourseServiceTest {
         responseEntity.setId(UUID.randomUUID());
         responseEntity.setCustomizedCourseName(course.getCourseName());
 
-//        when(courseServiceV2.getCourseInfo(course.getCourseID())).thenReturn(course);
         when(studentCourseRepository.saveAndFlush(any())).thenReturn(responseEntity);
 
         var result = studentCourseService.saveStudentCourse(sc);

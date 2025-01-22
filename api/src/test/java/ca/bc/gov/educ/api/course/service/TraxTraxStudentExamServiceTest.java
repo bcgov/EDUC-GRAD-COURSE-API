@@ -85,8 +85,6 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), course.getCourseLevel())).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }
@@ -115,8 +113,7 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), " ")).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }
@@ -145,8 +142,7 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), course.getCourseLevel())).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), false);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }

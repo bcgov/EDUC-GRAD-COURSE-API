@@ -20,7 +20,6 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,7 +64,7 @@ public class CourseControllerTest {
         course.setCourseLevel("12");
         course.setCourseName("Test1 Name");
 
-        Mockito.when(courseService.getCourseDetails(eq("MAIN"), eq("12"))).thenReturn(course);
+        Mockito.when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
         courseController.getCourseDetails("MAIN", "12");
         Mockito.verify(courseService).getCourseDetails("MAIN", "12");
     }
@@ -97,31 +96,6 @@ public class CourseControllerTest {
         courseController.getCourseDetailsByCourse("Test");
         Mockito.verify(courseService).getCourseDetails("Test", " ");
     }
-
-    /*@Test
-    public void testGetAllCoursesRequirement() {
-        // All Course Requirements
-        AllCourseRequirements allCourseRequirements = new AllCourseRequirements();
-        allCourseRequirements.setCourseRequirementId(UUID.randomUUID());
-        allCourseRequirements.setCourseCode("MAIN");
-        allCourseRequirements.setCourseLevel("12");
-        allCourseRequirements.setRequirementName("REQ");
-        allCourseRequirements.setRequirementProgram("2018-EN");
-        allCourseRequirements.setRuleCode("RuleCd");
-
-        Authentication authentication = Mockito.mock(Authentication.class);
-        OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-        // Mockito.whens() for your authorization object
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.getDetails()).thenReturn(details);
-        SecurityContextHolder.setContext(securityContext);
-
-        Mockito.when(courseRequirementService.getAllCourseRequirementList(1,5, null)).thenReturn(Arrays.asList(allCourseRequirements));
-        courseController.getAllCoursesRequirement(1,5);
-        Mockito.verify(courseRequirementService).getAllCourseRequirementList(1,5,null);
-    }*/
-
 
     @Test
     public void testGetAllCoursesRequirementByRule() {
@@ -191,30 +165,6 @@ public class CourseControllerTest {
         courseController.getCourseRequirements("MAIN", "12");
         Mockito.verify(courseRequirementService).getCourseRequirements("MAIN", "12");
     }
-
-    /*@Test
-    public void testGetCoursesRequirementSearch() {
-        // All Course Requirements
-        AllCourseRequirements allCourseRequirements = new AllCourseRequirements();
-        allCourseRequirements.setCourseRequirementId(UUID.randomUUID());
-        allCourseRequirements.setCourseCode("MAIN");
-        allCourseRequirements.setCourseLevel("12");
-        allCourseRequirements.setRequirementName("REQ");
-        allCourseRequirements.setRequirementProgram("2018-EN");
-        allCourseRequirements.setRuleCode("RuleCd");
-
-        Authentication authentication = Mockito.mock(Authentication.class);
-        OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-        // Mockito.whens() for your authorization object
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.getDetails()).thenReturn(details);
-        SecurityContextHolder.setContext(securityContext);
-
-        Mockito.when(courseRequirementService.getCourseRequirementSearchList("MAIN", "12", "RuleCd", null)).thenReturn(Arrays.asList(allCourseRequirements));
-        courseController.getCoursesRequirementSearch("MAIN", "12", "RuleCd");
-        Mockito.verify(courseRequirementService).getCourseRequirementSearchList("MAIN", "12", "RuleCd", null);
-    }*/
 
     @Test
     public void testGetCoursesRequirementByCourse() {

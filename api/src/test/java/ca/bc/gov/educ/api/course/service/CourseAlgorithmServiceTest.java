@@ -104,8 +104,8 @@ public class CourseAlgorithmServiceTest {
         var result = courseAlgorithmService.getCourseAlgorithmData(traxStudentCourse.getPen(), false);
 
         assertThat(result).isNotNull();
-        assertThat(result.getStudentCourses().isEmpty()).isFalse();
-        assertThat(result.getCourseRequirements().isEmpty()).isFalse();
-        assertThat(result.getCourseRestrictions().isEmpty()).isFalse();
+        assertThat(result.getStudentCourses()).isNotEmpty();
+        assertThat(result.getCourseRequirements()).isNotEmpty();
+        assertThat(result.getCourseRestrictions()).isNotEmpty();
     }
 }

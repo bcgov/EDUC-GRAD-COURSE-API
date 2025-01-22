@@ -7,6 +7,7 @@ class EducGradCourseApiApplicationTests {
 
 	//@Test
 	void contextLoads() {
+		//Placeholder method
 	}
 
 }

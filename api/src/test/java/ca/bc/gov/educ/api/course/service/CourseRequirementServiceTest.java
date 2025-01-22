@@ -13,10 +13,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -77,7 +75,7 @@ public class CourseRequirementServiceTest {
 
     @After
     public void tearDown() {
-
+        //Placeholder method
     }
 
     @Test
@@ -104,20 +102,16 @@ public class CourseRequirementServiceTest {
         ruleDetails.setProgramCode("2018-EN");
         ruleDetails.setRequirementName("Test");
 
-        Pageable paging = PageRequest.of(1, 5);
         Page<CourseRequirementEntity> pagedResult = new PageImpl<>(Arrays.asList(courseRequirementEntity));
 
         when(courseRequirementRepository.findAll(any(Pageable.class))).thenReturn(pagedResult);
         when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
 
-        ParameterizedTypeReference<List<GradRuleDetails>> responseType = new ParameterizedTypeReference<List<GradRuleDetails>>() {
-        };
 
         when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity.getRuleCode().getCourseRequirementCode()), List.class)).thenReturn(Arrays.asList(ruleDetails));
 
         var result = courseRequirementService.getAllCourseRequirementList(1,5);
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotNull().hasSize(1);
         AllCourseRequirements allCourseRequirements = result.get(0);
         assertThat(allCourseRequirements.getCourseName()).isEqualTo(course.getCourseName());
         assertThat(allCourseRequirements.getRequirementName()).isEqualTo(ruleDetails.getRequirementName());
@@ -155,17 +149,15 @@ public class CourseRequirementServiceTest {
         ruleDetails.setProgramCode("2018-EN");
         ruleDetails.setRequirementName("Test");
 
-        Pageable paging = PageRequest.of(1, 5);
         Page<CourseRequirementEntity> pagedResult = new PageImpl<>(Arrays.asList(courseRequirementEntity));
 
-        when(courseRequirementCodeRepository.findById(eq(ruleCodeValue))).thenReturn(Optional.of(courseRequirementCodeEntity));
+        when(courseRequirementCodeRepository.findById(ruleCodeValue)).thenReturn(Optional.of(courseRequirementCodeEntity));
         when(courseRequirementRepository.findByRuleCode(eq(courseRequirementCodeEntity), any(Pageable.class))).thenReturn(pagedResult);
         when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
 
         var result = courseRequirementService.getAllCourseRequirementListByRule(ruleCodeValue, 1, 5);
 
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         CourseRequirement responseCourseRequirement = result.get(0);
         assertThat(responseCourseRequirement.getCourseRequirementId()).isEqualTo(courseRequirementEntity.getCourseRequirementId());
         assertThat(responseCourseRequirement.getCourseCode()).isEqualTo(courseRequirementEntity.getCourseCode());
@@ -189,7 +181,7 @@ public class CourseRequirementServiceTest {
         when(courseRequirementRepository.findAll()).thenReturn(Arrays.asList(courseRequirementEntity));
         var result = courseRequirementService.getCourseRequirements();
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRequirementList().size()).isEqualTo(1);
+        assertThat(result.getCourseRequirementList()).hasSize(1);
         CourseRequirement courseRequirement = result.getCourseRequirementList().get(0);
         assertThat(courseRequirement.getCourseRequirementId()).isEqualTo(courseRequirementEntity.getCourseRequirementId());
     }
@@ -211,7 +203,7 @@ public class CourseRequirementServiceTest {
         when(courseRequirementRepository.findByCourseCodeAndCourseLevel("MAIN", "12")).thenReturn(Arrays.asList(courseRequirementEntity));
         var result = courseRequirementService.getCourseRequirements("MAIN", "12");
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRequirementList().size()).isEqualTo(1);
+        assertThat(result.getCourseRequirementList()).hasSize(1);
         CourseRequirement courseRequirement = result.getCourseRequirementList().get(0);
         assertThat(courseRequirement.getCourseRequirementId()).isEqualTo(courseRequirementEntity.getCourseRequirementId());
     }
@@ -232,7 +224,6 @@ public class CourseRequirementServiceTest {
 
         when(courseRequirementRepository.countByCourseCodeAndCourseLevelAndRuleCode("MAIN", "12", "RuleCd")).thenReturn(1L);
         var result = courseRequirementService.checkCourseRequirementExists("MAIN", "12", "RuleCd");
-        assertThat(result).isNotNull();
         assertThat(result).isTrue();
     }
 
@@ -359,7 +350,7 @@ public class CourseRequirementServiceTest {
         when(courseRequirementRepository.findByCourseCodeIn(courseList.getCourseCodes())).thenReturn(Arrays.asList(courseRequirementEntity));
         var result = courseRequirementService.getCourseRequirementListByCourses(courseList);
         assertThat(result).isNotNull();
-        assertThat(result.getCourseRequirementList().size()).isEqualTo(1);
+        assertThat(result.getCourseRequirementList()).hasSize(1);
         CourseRequirement courseRequirement = result.getCourseRequirementList().get(0);
         assertThat(courseRequirement.getCourseRequirementId()).isEqualTo(courseRequirementEntity.getCourseRequirementId());
     }
@@ -393,8 +384,7 @@ public class CourseRequirementServiceTest {
         when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity.getRuleCode().getCourseRequirementCode()), List.class)).thenReturn(Arrays.asList(ruleDetails));
 
         var result = courseRequirementService.getCourseRequirementSearchList("MAIN", "12", "RuleCd");
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         AllCourseRequirements allCourseRequirements = result.get(0);
         assertThat(allCourseRequirements.getCourseName()).isEqualTo(course.getCourseName());
         assertThat(allCourseRequirements.getRequirementName()).isEqualTo(ruleDetails.getRequirementName());
