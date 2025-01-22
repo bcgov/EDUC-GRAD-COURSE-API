@@ -24,10 +24,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <resilience4j.version>1.7.1</resilience4j.version>
-        <springdoc.version>1.6.9</springdoc.version>
-        <log4j.version>2.18.0</log4j.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
-        <springdoc.version>1.6.9</springdoc.version>
+        <log4j.version>2.24.3</log4j.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <springdoc.version>1.6.11</springdoc.version>
     </properties>
 
     <parent>
@@ -137,7 +136,7 @@
         <dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.6</version>
+			<version>3.2.2</version>
 		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -199,7 +198,7 @@
         <plugin>
           <groupId>org.hibernate.orm.tooling</groupId>
           <artifactId>hibernate-enhance-maven-plugin</artifactId>
-          <version>6.1.1.Final</version>
+          <version>6.6.5.Final</version>
         </plugin>
         <plugin>
           <groupId>org.springframework.boot</groupId>
@@ -283,7 +282,7 @@
           <plugin>
             <groupId>org.hibernate.orm.tooling</groupId>
             <artifactId>hibernate-enhance-maven-plugin</artifactId>
-            <version>6.1.1.Final</version>
+            <version>6.6.5.Final</version>
             <executions>
               <execution>
                 <configuration>
