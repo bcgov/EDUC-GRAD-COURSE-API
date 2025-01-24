@@ -1,0 +1,17 @@
+meta {
+  name: Search for a Course Requirements
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/courserequirementsearch
+  body: none
+  auth: none
+}
+
+params:query {
+  ~courseCode: 
+  ~courseLevel: 
+  ~rule: 
+}

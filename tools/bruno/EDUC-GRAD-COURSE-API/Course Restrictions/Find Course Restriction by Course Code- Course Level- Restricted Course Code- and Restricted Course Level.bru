@@ -1,0 +1,18 @@
+meta {
+  name: Find Course Restriction by Course Code- Course Level- Restricted Course Code- and Restricted Course Level
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/get-course-restriction
+  body: none
+  auth: none
+}
+
+params:query {
+  courseCode: 
+  courseLevel: 
+  restrictedCourseCode: 
+  restrictedCourseLevel: 
+}

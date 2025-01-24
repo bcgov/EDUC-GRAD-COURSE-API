@@ -1,0 +1,16 @@
+meta {
+  name: Find all Course Requirements by Course Code and Level
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/course-requirement
+  body: none
+  auth: none
+}
+
+params:query {
+  ~courseCode: 
+  ~courseLevel: 
+}

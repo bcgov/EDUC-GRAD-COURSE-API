@@ -1,0 +1,20 @@
+meta {
+  name: Search for a Course
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/coursesearch
+  body: none
+  auth: none
+}
+
+params:query {
+  ~courseCode: 
+  ~courseLevel: 
+  ~courseName: 
+  ~language: 
+  ~startDate: 
+  ~endDate: 
+}
