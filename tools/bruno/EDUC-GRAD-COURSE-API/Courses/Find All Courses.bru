@@ -1,0 +1,16 @@
+meta {
+  name: Find All Courses
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course
+  body: none
+  auth: none
+}
+
+params:query {
+  ~pageNo: 
+  ~pageSize: 
+}

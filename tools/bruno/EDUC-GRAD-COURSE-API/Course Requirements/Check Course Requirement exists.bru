@@ -1,0 +1,17 @@
+meta {
+  name: Check Course Requirement exists
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/check-course-requirement
+  body: none
+  auth: none
+}
+
+params:query {
+  ~courseCode: 
+  ~courseLevel: 
+  ~ruleCode: 
+}

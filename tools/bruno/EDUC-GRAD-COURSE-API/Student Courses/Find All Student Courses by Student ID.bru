@@ -1,0 +1,19 @@
+meta {
+  name: Find All Student Courses by Student ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v2/course/studentcourse/studentid/:studentID
+  body: none
+  auth: none
+}
+
+params:query {
+  ~sortForUI: 
+}
+
+params:path {
+  studentID: 
+}
