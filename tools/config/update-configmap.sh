@@ -10,6 +10,7 @@ SPLUNK_TOKEN=$6
 APP_LOG_LEVEL=$7
 
 SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
+NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 FLB_CONFIG="[SERVICE]
    Flush        1
    Daemon       Off
@@ -61,6 +62,8 @@ oc create -n "$GRAD_NAMESPACE"-"$envValue" configmap "$APP_NAME"-config-map \
   --from-literal=MIN_IDLE='10' \
   --from-literal=IDLE_TIMEOUT='300000' \
   --from-literal=MAX_LIFETIME='420000' \
+  --from-literal=NATS_MAX_RECONNECT=60 \
+  --from-literal=NATS_URL=$NATS_URL \
   --dry-run=client -o yaml | oc apply -f -
 
 echo Creating config map "$APP_NAME"-flb-sc-config-map
