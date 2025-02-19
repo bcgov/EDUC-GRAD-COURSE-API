@@ -11,6 +11,7 @@ import io.nats.client.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_API_TOPIC;
  */
 @Component
 @Slf4j
+@Profile("!test")
 public class MessageSubscriber {
     private final Executor messageProcessingThreads;
     private final EventHandlerDelegatorService eventHandlerDelegatorServiceV1;

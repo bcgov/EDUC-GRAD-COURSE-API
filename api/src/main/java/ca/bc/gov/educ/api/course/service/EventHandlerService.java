@@ -71,10 +71,9 @@ public class EventHandlerService {
     public byte[] handleGetStudentCourseEvent(Event event) throws JsonProcessingException {
         // always synchronous
         // pen
-        // val trax = traxStudentCourseService.getStudentCourseList(event.getEventPayload(), false);
-        // student id
-        val studentCourseList = studentCourseService.getStudentCourses(UUID.fromString(event.getEventPayload()), false);
-        log.debug("Optional course code list " + studentCourseList);
+         val studentCourseList = traxStudentCourseService.getStudentCourseList(event.getEventPayload(), false);
+        // student id - for when v2 is complete
+        //val studentCourseList = studentCourseService.getStudentCourses(UUID.fromString(event.getEventPayload()), false);
         log.debug("Returning " + studentCourseList);
         return JsonUtilWithJavaTime.getJsonBytesFromObject(studentCourseList);
     }

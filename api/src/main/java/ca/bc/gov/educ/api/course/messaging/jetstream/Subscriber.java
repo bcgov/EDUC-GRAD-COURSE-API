@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -28,6 +29,7 @@ import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_EVENTS_TOPI
 @Component
 @DependsOn("publisher")
 @Slf4j
+@Profile("!test")
 public class Subscriber {
     private final JetStreamEventHandlerService jetStreamEventHandlerService;
     private final Connection natsConnection;

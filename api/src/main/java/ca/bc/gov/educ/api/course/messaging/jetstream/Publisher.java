@@ -13,6 +13,7 @@ import io.nats.client.api.StreamConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_EVENTS_TOPI
  */
 @Component("publisher")
 @Slf4j
+@Profile("!test")
 public class Publisher {
     private final JetStream jetStream;
 
