@@ -32,6 +32,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-5Jun-
       - name: Run unit tests
+        env:
+          SPRING_PROFILES_ACTIVE: test
         run: mvn -f pom.xml clean package
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@0.29.0
