@@ -4,19 +4,17 @@ import ca.bc.gov.educ.api.course.messaging.jetstream.Subscriber;
 import ca.bc.gov.educ.api.course.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.course.struct.Event;
 import ca.bc.gov.educ.api.course.util.JsonUtil;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
-import java.time.Duration;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_API_TOPIC;
 
@@ -28,21 +26,16 @@ import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_API_TOPIC;
 @Slf4j
 @Profile("!test")
 public class MessageSubscriber {
-    private final Executor messageProcessingThreads;
+
+    private final ExecutorService messageProcessingThreads;
     private final EventHandlerDelegatorService eventHandlerDelegatorServiceV1;
     private final Connection connection;
 
-    /**
-     * Instantiates a new Message subscriber.
-     *
-     * @param connection                     the nats connection
-     * @param eventHandlerDelegatorServiceV1 the event handler delegator service v 1
-     */
     @Autowired
-    public MessageSubscriber(final Connection connection, EventHandlerDelegatorService eventHandlerDelegatorServiceV1) {
+    public MessageSubscriber(final Connection connection, final EventHandlerDelegatorService eventHandlerDelegatorServiceV1, @Qualifier("nats-message-subscriber") ExecutorService messageProcessingThreads) {
         this.eventHandlerDelegatorServiceV1 = eventHandlerDelegatorServiceV1;
         this.connection = connection;
-        messageProcessingThreads = new EnhancedQueueExecutor.Builder().setThreadFactory(new ThreadFactoryBuilder().setNameFormat("nats-message-subscriber-%d").build()).setCorePoolSize(10).setMaximumPoolSize(10).setKeepAliveTime(Duration.ofSeconds(60)).build();
+        this.messageProcessingThreads = messageProcessingThreads;
     }
 
     /**
@@ -81,6 +74,4 @@ public class MessageSubscriber {
             }
         };
     }
-
-
 }

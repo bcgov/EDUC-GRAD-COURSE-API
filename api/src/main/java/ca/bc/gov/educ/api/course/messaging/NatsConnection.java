@@ -1,13 +1,12 @@
 package ca.bc.gov.educ.api.course.messaging;
 
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.nats.client.Connection;
 import io.nats.client.ConnectionListener;
 import io.nats.client.Nats;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.concurrent.ExecutorService;
 
 /**
  * The type Nats connection.
@@ -30,24 +30,23 @@ public class NatsConnection implements Closeable {
      * Instantiates a new Nats connection.
      *
      * @param applicationProperties the application properties
+     * @param coreNatsExecutor      the injected Executor from MessagingConfig (qualified as "core-nats")
      * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
     @Autowired
-    public NatsConnection(final EducCourseApiConstants applicationProperties) throws IOException, InterruptedException {
-        this.natsCon = connectToNats(applicationProperties.getNatsUrl(), applicationProperties.getNatsMaxReconnect());
+    public NatsConnection(final EducCourseApiConstants applicationProperties, @Qualifier("core-nats") ExecutorService coreNatsExecutor) throws IOException, InterruptedException {
+        this.natsCon = connectToNats(applicationProperties.getNatsUrl(), applicationProperties.getNatsMaxReconnect(), coreNatsExecutor);
     }
 
-    private Connection connectToNats(String stanUrl, int maxReconnects) throws IOException, InterruptedException {
+    private Connection connectToNats(String stanUrl, int maxReconnects, ExecutorService executor) throws IOException, InterruptedException {
         io.nats.client.Options natsOptions = new io.nats.client.Options.Builder()
                 .connectionListener(this::connectionListener)
                 .maxPingsOut(5)
                 .pingInterval(Duration.ofSeconds(2))
                 .connectionName("COREG-API")
                 .connectionTimeout(Duration.ofSeconds(5))
-                .executor(new EnhancedQueueExecutor.Builder()
-                        .setThreadFactory(new ThreadFactoryBuilder().setNameFormat("core-nats-%d").build())
-                        .setCorePoolSize(10).setMaximumPoolSize(50).setKeepAliveTime(Duration.ofSeconds(60)).build())
+                .executor(executor) // use the injected executor here
                 .maxReconnects(maxReconnects)
                 .reconnectWait(Duration.ofSeconds(2))
                 .servers(new String[]{stanUrl})
@@ -58,7 +57,6 @@ public class NatsConnection implements Closeable {
     private void connectionListener(Connection connection, ConnectionListener.Events events) {
         log.info("NATS -> {}", events.toString());
     }
-
 
     @Override
     public void close() {
