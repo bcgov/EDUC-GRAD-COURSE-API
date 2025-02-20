@@ -57,7 +57,7 @@ public class Publisher {
             if (exception.getErrorCode() == 404) { // the stream does not exist , lets create it.
                 natsConnection.jetStreamManagement().addStream(streamConfiguration);
             } else {
-                log.info("exception", exception);
+                log.info("Error updating student event stream: ", exception);
             }
         }
 

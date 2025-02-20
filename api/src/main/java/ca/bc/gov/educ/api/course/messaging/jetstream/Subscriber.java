@@ -22,6 +22,7 @@ import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 
 import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_EVENTS_TOPIC;
+import static ca.bc.gov.educ.api.course.util.EducCourseApiConstants.EVENTS_TOPIC_DURABLE;
 
 /**
  * The type Subscriber.
@@ -48,7 +49,7 @@ public class Subscriber {
 
 
     /**
-     * This subscription will makes sure the messages are required to acknowledge manually to Jet Stream.
+     * This subscription will make sure the messages are required to acknowledge manually to Jet Stream.
      * Subscribe.
      *
      * @throws IOException the io exception
@@ -56,12 +57,11 @@ public class Subscriber {
     @PostConstruct
     public void subscribe() throws IOException, JetStreamApiException {
         log.debug("Attempting to subscribe to GRAD_COURSE_EVENTS_TOPIC...");
-        val qName = "GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE";
         val autoAck = false;
         PushSubscribeOptions options = PushSubscribeOptions.builder().stream(EducCourseApiConstants.STREAM_NAME)
-                .durable("GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE")
+                .durable(EVENTS_TOPIC_DURABLE)
                 .configuration(ConsumerConfiguration.builder().deliverPolicy(DeliverPolicy.New).build()).build();
-        this.natsConnection.jetStream().subscribe(GRAD_COURSE_EVENTS_TOPIC.toString(), qName, this.natsConnection.createDispatcher(), this::onGradCourseEventsTopicMessage,
+        this.natsConnection.jetStream().subscribe(GRAD_COURSE_EVENTS_TOPIC.toString(), EVENTS_TOPIC_DURABLE, this.natsConnection.createDispatcher(), this::onGradCourseEventsTopicMessage,
                 autoAck, options);
 
         log.debug("Subscription successfully established for GRAD_COURSE_EVENTS_TOPIC.");

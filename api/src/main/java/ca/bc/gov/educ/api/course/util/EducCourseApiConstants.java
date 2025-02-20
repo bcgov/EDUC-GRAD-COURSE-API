@@ -92,7 +92,8 @@ public class EducCourseApiConstants {
 
     // Messaging
     public static final String GRAD_COURSE_API = "GRAD-COURSE-API";
-    public static final String STREAM_NAME= "GRAD_COURSE_EVENTS";
+    public static final String STREAM_NAME = "GRAD_COURSE_EVENTS";
+    public static final String EVENTS_TOPIC_DURABLE = "GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE";
 
     //Endpoints
     @Value("${endpoint.grad-program-api.rule-detail.url}")

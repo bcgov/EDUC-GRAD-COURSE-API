@@ -22,7 +22,6 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
-@SuppressWarnings("java:S3864")
 public class EventHandlerService {
 
     /**
@@ -72,6 +71,7 @@ public class EventHandlerService {
         // always synchronous
         // pen
          val studentCourseList = traxStudentCourseService.getStudentCourseList(event.getEventPayload(), false);
+         // TODO - please notify edx team before changing
         // student id - for when v2 is complete
         //val studentCourseList = studentCourseService.getStudentCourses(UUID.fromString(event.getEventPayload()), false);
         log.debug("Returning " + studentCourseList);
