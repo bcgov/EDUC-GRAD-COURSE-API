@@ -18,6 +18,8 @@
             src/main/java/ca/bc/gov/educ/api/course/model/**,
             src/main/java/ca/bc/gov/educ/api/course/config/**,
             src/main/java/ca/bc/gov/educ/api/course/util/**
+            src/main/java/ca/bc/gov/educ/api/course/messaging/**
+            src/main/java/ca/bc/gov/educ/api/course/constants/**
         </sonar.exclusions>
         <java.version>18</java.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>

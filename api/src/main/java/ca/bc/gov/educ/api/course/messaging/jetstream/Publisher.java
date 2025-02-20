@@ -4,7 +4,7 @@ import ca.bc.gov.educ.api.course.constants.EventOutcome;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
 import ca.bc.gov.educ.api.course.model.GradCourseStatusEvent;
-import ca.bc.gov.educ.api.course.properties.ApplicationProperties;
+import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.JsonUtil;
 import io.nats.client.Connection;
 import io.nats.client.JetStream;
@@ -50,7 +50,7 @@ public class Publisher {
      * @throws JetStreamApiException the jet stream api exception
      */
     private void createOrUpdateStudentEventStream(final Connection natsConnection) throws IOException, JetStreamApiException {
-        val streamConfiguration = StreamConfiguration.builder().name(ApplicationProperties.STREAM_NAME).replicas(1).maxMessages(10000).addSubjects(GRAD_COURSE_EVENTS_TOPIC.toString()).build();
+        val streamConfiguration = StreamConfiguration.builder().name(EducCourseApiConstants.STREAM_NAME).replicas(1).maxMessages(10000).addSubjects(GRAD_COURSE_EVENTS_TOPIC.toString()).build();
         try {
             natsConnection.jetStreamManagement().updateStream(streamConfiguration);
         } catch (final JetStreamApiException exception) {

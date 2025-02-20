@@ -66,7 +66,7 @@ public class MessageSubscriber {
             if (message != null) {
                 try {
                     var eventString = new String(message.getData());
-                    ca.bc.gov.educ.api.course.helpers.LogHelper.logMessagingEventDetails(eventString);
+                    ca.bc.gov.educ.api.course.util.LogHelper.logMessagingEventDetails(eventString);
                     var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
                     if (event.getPayloadVersion() == null) {
                         event.setPayloadVersion("V1");

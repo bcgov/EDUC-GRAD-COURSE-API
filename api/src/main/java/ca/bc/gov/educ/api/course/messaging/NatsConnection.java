@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.course.messaging;
 
-import ca.bc.gov.educ.api.course.properties.ApplicationProperties;
+import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.nats.client.Connection;
 import io.nats.client.ConnectionListener;
@@ -34,7 +34,7 @@ public class NatsConnection implements Closeable {
      * @throws InterruptedException the interrupted exception
      */
     @Autowired
-    public NatsConnection(final ApplicationProperties applicationProperties) throws IOException, InterruptedException {
+    public NatsConnection(final EducCourseApiConstants applicationProperties) throws IOException, InterruptedException {
         this.natsCon = connectToNats(applicationProperties.getNatsUrl(), applicationProperties.getNatsMaxReconnect());
     }
 

@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.course.messaging.jetstream;
 
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
-import ca.bc.gov.educ.api.course.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.course.service.JetStreamEventHandlerService;
 import ca.bc.gov.educ.api.course.struct.Event;
+import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.JsonUtil;
 import io.nats.client.Connection;
 import io.nats.client.JetStreamApiException;
@@ -58,7 +58,7 @@ public class Subscriber {
         log.debug("Attempting to subscribe to GRAD_COURSE_EVENTS_TOPIC...");
         val qName = "GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE";
         val autoAck = false;
-        PushSubscribeOptions options = PushSubscribeOptions.builder().stream(ApplicationProperties.STREAM_NAME)
+        PushSubscribeOptions options = PushSubscribeOptions.builder().stream(EducCourseApiConstants.STREAM_NAME)
                 .durable("GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE")
                 .configuration(ConsumerConfiguration.builder().deliverPolicy(DeliverPolicy.New).build()).build();
         this.natsConnection.jetStream().subscribe(GRAD_COURSE_EVENTS_TOPIC.toString(), qName, this.natsConnection.createDispatcher(), this::onGradCourseEventsTopicMessage,
@@ -78,7 +78,7 @@ public class Subscriber {
         log.debug("Received message Subject:: {} , SID :: {} , sequence :: {}, pending :: {} ", message.getSubject(), message.getSID(), message.metaData().consumerSequence(), message.metaData().pendingCount());
         try {
             val eventString = new String(message.getData());
-            ca.bc.gov.educ.api.course.helpers.LogHelper.logMessagingEventDetails(eventString);
+            ca.bc.gov.educ.api.course.util.LogHelper.logMessagingEventDetails(eventString);
             ChoreographedEvent event = JsonUtil.getJsonObjectFromString(ChoreographedEvent.class, eventString);
             log.debug("Received event: eventType = {}, eventPayload = {}", event.getEventType(), event.getEventPayload());
             jetStreamEventHandlerService.updateEventStatus(event);
