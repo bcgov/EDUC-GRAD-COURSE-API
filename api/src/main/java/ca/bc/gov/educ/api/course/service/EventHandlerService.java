@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 
 /**
  * The type Event handler service.
@@ -25,26 +23,12 @@ import java.util.UUID;
 public class EventHandlerService {
 
     /**
-     * The constant NO_RECORD_SAGA_ID_EVENT_TYPE.
-     */
-    public static final String NO_RECORD_SAGA_ID_EVENT_TYPE = "no record found for the saga id and event type combination, processing.";
-    /**
-     * The constant RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE.
-     */
-    public static final String RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE = "record found for the saga id and event type combination, might be a duplicate or replay," +
-            " just updating the db status so that it will be polled and sent back again.";
-    /**
      * The constant PAYLOAD_LOG.
      */
     public static final String PAYLOAD_LOG = "payload is :: {}";
-    /**
-     * The constant EVENT_PAYLOAD.
-     */
-    public static final String EVENT_PAYLOAD = "event is :: {}";
 
     @Getter(PRIVATE)
     private final StudentCourseRepository studentCourseRepository;
-    private final StudentCourseService studentCourseService;
     private final TraxStudentCourseService traxStudentCourseService;
 
     /**
@@ -52,9 +36,8 @@ public class EventHandlerService {
      *
      */
     @Autowired
-    public EventHandlerService(StudentCourseRepository studentCourseRepository, StudentCourseService studentCourseService, TraxStudentCourseService traxStudentCourseService) {
+    public EventHandlerService(StudentCourseRepository studentCourseRepository, TraxStudentCourseService traxStudentCourseService) {
         this.studentCourseRepository = studentCourseRepository;
-        this.studentCourseService = studentCourseService;
         this.traxStudentCourseService = traxStudentCourseService;
     }
 

@@ -3,8 +3,6 @@ package ca.bc.gov.educ.api.course.service;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
 import ca.bc.gov.educ.api.course.model.StatusEvent;
 import ca.bc.gov.educ.api.course.repository.StatusEventRepository;
-import ca.bc.gov.educ.api.course.repository.TraxStudentCourseRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static ca.bc.gov.educ.api.course.constants.EventOutcome.COURSE_FOUND;
-import static ca.bc.gov.educ.api.course.constants.EventOutcome.COURSE_NOT_FOUND;
 import static ca.bc.gov.educ.api.course.constants.EventStatus.DB_COMMITTED;
 import static ca.bc.gov.educ.api.course.constants.EventStatus.MESSAGE_PUBLISHED;
 import static ca.bc.gov.educ.api.course.constants.EventType.GET_STUDENT_COURSE;
@@ -38,12 +35,6 @@ public class JetStreamEventHandlerServiceTest {
     StatusEventRepository statusEventRepository;
 
     @MockBean
-    private CourseService courseService;
-
-    @MockBean
-    private TraxStudentCourseRepository studentCourseRepo;
-
-    @MockBean
     public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
     @MockBean
@@ -55,23 +46,23 @@ public class JetStreamEventHandlerServiceTest {
     @MockBean
     public WebClient webClient;
 
-    static final String pen = "123456789";
+    static final String PEN = "123456789";
 
     @Test
-    public void testUpdateEventStatus_givenDataInDB_shouldUpdateStatus() throws JsonProcessingException {
+    public void testUpdateEventStatus_givenDataInDB_shouldUpdateStatus() {
         var studentEvent = statusEventRepository.save(createStudentEvent());
         ChoreographedEvent choreographedEvent = new ChoreographedEvent();
         choreographedEvent.setEventID(studentEvent.getEventId().toString());
         choreographedEvent.setEventOutcome(COURSE_FOUND);
         choreographedEvent.setEventType(GET_STUDENT_COURSE);
-        choreographedEvent.setEventPayload(pen);
+        choreographedEvent.setEventPayload(PEN);
         jetStreamEventHandlerService.updateEventStatus(choreographedEvent);
         var results = statusEventRepository.findByEventStatus(MESSAGE_PUBLISHED.toString());
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isNotNull();
     }
 
-    private StatusEvent createStudentEvent() throws JsonProcessingException {
+    private StatusEvent createStudentEvent() {
         return StatusEvent.builder()
                 .eventId(UUID.randomUUID())
                 .createDate(LocalDateTime.now())
@@ -79,7 +70,7 @@ public class JetStreamEventHandlerServiceTest {
                 .eventOutcome(COURSE_FOUND.toString())
                 .eventStatus(DB_COMMITTED.toString())
                 .eventType(GET_STUDENT_COURSE.toString())
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .updateDate(LocalDateTime.now())
                 .updateUser("TEST")
                 .build();

@@ -8,7 +8,6 @@ import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.TraxStudentCourse;
 import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
-import ca.bc.gov.educ.api.course.repository.TraxStudentCourseRepository;
 import ca.bc.gov.educ.api.course.struct.Event;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,15 +45,6 @@ public class EventHandlerServiceTest {
     @Mock
     private StudentCourseRepository studentCourseRepository;
 
-    @Mock
-    private StudentCourseService studentCourseService;
-
-    @MockBean
-    private CourseService courseService;
-
-    @MockBean
-    private TraxStudentCourseRepository studentCourseRepo;
-
     @MockBean
     public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
@@ -70,20 +60,20 @@ public class EventHandlerServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        eventHandlerServiceUnderTest = new EventHandlerService(studentCourseRepository, studentCourseService, traxStudentCourseService);
+        eventHandlerServiceUnderTest = new EventHandlerService(studentCourseRepository, traxStudentCourseService);
     }
 
-    static final String pen = "123456789";
+    static final String PEN = "123456789";
 
     @Test
     public void testHandleGetStudentCourseEvent_whenNoCourseFound_returnsEmptyList() throws Exception {
         Event event = Event.builder()
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
-        when(traxStudentCourseService.getStudentCourseList(pen, false)).thenReturn(Collections.emptyList());
+        when(traxStudentCourseService.getStudentCourseList(PEN, false)).thenReturn(Collections.emptyList());
 
         byte[] responseBytes = eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event);
         List<?> courses = new ObjectMapper().readValue(responseBytes, new TypeReference<List<Object>>() {});
@@ -95,7 +85,7 @@ public class EventHandlerServiceTest {
         Event event = Event.builder()
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
         List<TraxStudentCourse> dummyCourses = List.of(
@@ -113,10 +103,10 @@ public class EventHandlerServiceTest {
                 )
         );
 
-        when(traxStudentCourseService.getStudentCourseList(pen, false)).thenReturn(dummyCourses);
+        when(traxStudentCourseService.getStudentCourseList(PEN, false)).thenReturn(dummyCourses);
 
         byte[] responseBytes = eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event);
-        List<TraxStudentCourse> courses = new ObjectMapper().readValue(responseBytes, new TypeReference<List<TraxStudentCourse>>() {});
+        List<TraxStudentCourse> courses = new ObjectMapper().readValue(responseBytes, new TypeReference<>() {});
         assertThat(courses).hasSize(2);
         assertThat(courses.get(0).getCourseCode()).isEqualTo("CLE");
     }
@@ -126,15 +116,13 @@ public class EventHandlerServiceTest {
         Event event = Event.builder()
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
-        when(traxStudentCourseService.getStudentCourseList(pen, false))
+        when(traxStudentCourseService.getStudentCourseList(PEN, false))
                 .thenThrow(new RuntimeException("Test exception"));
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event);
-        });
+        Exception exception = assertThrows(RuntimeException.class, () -> eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event));
         assertThat(exception.getMessage()).isEqualTo("Test exception");
     }
 }

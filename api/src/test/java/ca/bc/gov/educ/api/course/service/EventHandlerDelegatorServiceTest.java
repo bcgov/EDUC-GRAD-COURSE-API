@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
-import ca.bc.gov.educ.api.course.messaging.jetstream.Publisher;
 import ca.bc.gov.educ.api.course.struct.Event;
 import io.nats.client.Message;
 import java.nio.charset.StandardCharsets;
@@ -36,18 +35,15 @@ public class EventHandlerDelegatorServiceTest {
     private EventHandlerService eventHandlerService;
 
     @Mock
-    private Publisher publisher;
-
-    @Mock
     private Message message;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        eventHandlerDelegatorService = new EventHandlerDelegatorService(messagePublisher, eventHandlerService, publisher);
+        eventHandlerDelegatorService = new EventHandlerDelegatorService(messagePublisher, eventHandlerService);
     }
 
-    static final String pen = "123456789";
+    static final String PEN = "123456789";
 
     @Test
     public void testHandleEvent_synchronousCase() throws Exception {
@@ -58,7 +54,7 @@ public class EventHandlerDelegatorServiceTest {
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
                 .replyTo(replyToChannel)
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
         byte[] dummyResponse = "response".getBytes(StandardCharsets.UTF_8);
@@ -78,7 +74,7 @@ public class EventHandlerDelegatorServiceTest {
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
                 .replyTo(asyncReplyChannel)
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
         byte[] dummyResponse = "response".getBytes(StandardCharsets.UTF_8);
@@ -95,7 +91,7 @@ public class EventHandlerDelegatorServiceTest {
                 .eventType(EventType.GET_STUDENT_COURSE)
                 .sagaId(UUID.randomUUID())
                 .replyTo("channel")
-                .eventPayload(pen)
+                .eventPayload(PEN)
                 .build();
 
         when(eventHandlerService.handleGetStudentCourseEvent(event))
