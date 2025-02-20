@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.course.repository;
 
-import ca.bc.gov.educ.api.course.model.GradCourseStatusEvent;
+import ca.bc.gov.educ.api.course.model.StatusEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,16 +12,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The interface GradCourse event repository.
+ * The interface Student event repository.
  */
-public interface GradCourseStatusEventRepository extends JpaRepository<GradCourseStatusEvent, UUID> {
+public interface StatusEventRepository extends JpaRepository<StatusEvent, UUID> {
     /**
      * Find by saga id optional.
      *
      * @param sagaId the saga id
      * @return the optional
      */
-    Optional<GradCourseStatusEvent> findBySagaId(UUID sagaId);
+    Optional<StatusEvent> findBySagaId(UUID sagaId);
 
     /**
      * Find by saga id and event type optional.
@@ -30,7 +30,7 @@ public interface GradCourseStatusEventRepository extends JpaRepository<GradCours
      * @param eventType the event type
      * @return the optional
      */
-    Optional<GradCourseStatusEvent> findBySagaIdAndEventType(UUID sagaId, String eventType);
+    Optional<StatusEvent> findBySagaIdAndEventType(UUID sagaId, String eventType);
 
     /**
      * Find by event status list.
@@ -38,10 +38,10 @@ public interface GradCourseStatusEventRepository extends JpaRepository<GradCours
      * @param eventStatus the event status
      * @return the list
      */
-    List<GradCourseStatusEvent> findByEventStatus(String eventStatus);
+    List<StatusEvent> findByEventStatus(String eventStatus);
 
     @Transactional
     @Modifying
-    @Query("delete from GradCourseStatusEvent where createDate <= :createDate")
+    @Query("delete from StatusEvent where createDate <= :createDate")
     void deleteByCreateDateBefore(LocalDateTime createDate);
 }

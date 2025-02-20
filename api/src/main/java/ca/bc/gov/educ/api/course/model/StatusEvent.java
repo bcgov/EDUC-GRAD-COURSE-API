@@ -25,7 +25,7 @@ import java.util.UUID;
 @Table(name = "STATUS_EVENT")
 @Data
 @DynamicUpdate
-public class GradCourseStatusEvent {
+public class StatusEvent {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator", parameters = {
@@ -95,7 +95,7 @@ public class GradCourseStatusEvent {
     /**
      * The type Student event builder.
      */
-    public static class GradCourseStatusEventBuilder {
+    public static class StatusEventBuilder {
         /**
          * The Event payload bytes.
          */
@@ -107,7 +107,7 @@ public class GradCourseStatusEvent {
          * @param eventPayload the event payload
          * @return the student event . student event builder
          */
-        public GradCourseStatusEventBuilder eventPayload(String eventPayload) {
+        public StatusEventBuilder eventPayload(String eventPayload) {
             this.eventPayloadBytes = eventPayload.getBytes(StandardCharsets.UTF_8);
             return this;
         }

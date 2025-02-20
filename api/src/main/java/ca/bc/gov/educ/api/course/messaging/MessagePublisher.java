@@ -3,7 +3,6 @@ package ca.bc.gov.educ.api.course.messaging;
 import io.nats.client.Connection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@Profile("!test")
 public class MessagePublisher {
 
 

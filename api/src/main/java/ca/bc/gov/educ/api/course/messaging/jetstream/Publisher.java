@@ -3,7 +3,7 @@ package ca.bc.gov.educ.api.course.messaging.jetstream;
 import ca.bc.gov.educ.api.course.constants.EventOutcome;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
-import ca.bc.gov.educ.api.course.model.GradCourseStatusEvent;
+import ca.bc.gov.educ.api.course.model.StatusEvent;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.JsonUtil;
 import io.nats.client.Connection;
@@ -13,7 +13,6 @@ import io.nats.client.api.StreamConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import static ca.bc.gov.educ.api.course.constants.Topics.GRAD_COURSE_EVENTS_TOPI
  */
 @Component("publisher")
 @Slf4j
-@Profile("!test")
 public class Publisher {
     private final JetStream jetStream;
 
@@ -69,7 +67,7 @@ public class Publisher {
      *
      * @param event the event
      */
-    public void dispatchChoreographyEvent(final GradCourseStatusEvent event) {
+    public void dispatchChoreographyEvent(final StatusEvent event) {
         if (event != null && event.getEventId() != null) {
             val choreographedEvent = new ChoreographedEvent();
             choreographedEvent.setEventType(EventType.valueOf(event.getEventType()));

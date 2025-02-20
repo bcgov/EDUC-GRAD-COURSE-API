@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
-import ca.bc.gov.educ.api.course.repository.GradCourseStatusEventRepository;
+import ca.bc.gov.educ.api.course.repository.StatusEventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,17 +18,17 @@ import static ca.bc.gov.educ.api.course.constants.EventStatus.MESSAGE_PUBLISHED;
 @Slf4j
 public class JetStreamEventHandlerService {
 
-    private final GradCourseStatusEventRepository gradCourseStatusEventRepository;
+    private final StatusEventRepository StatusEventRepository;
 
 
     /**
      * Instantiates a new Stan event handler service.
      *
-     * @param gradCourseStatusEventRepository the coreg status event repository
+     * @param StatusEventRepository the coreg status event repository
      */
     @Autowired
-    public JetStreamEventHandlerService(GradCourseStatusEventRepository gradCourseStatusEventRepository) {
-        this.gradCourseStatusEventRepository = gradCourseStatusEventRepository;
+    public JetStreamEventHandlerService(StatusEventRepository StatusEventRepository) {
+        this.StatusEventRepository = StatusEventRepository;
     }
 
     /**
@@ -40,11 +40,11 @@ public class JetStreamEventHandlerService {
     public void updateEventStatus(ChoreographedEvent choreographedEvent) {
         if (choreographedEvent != null && choreographedEvent.getEventID() != null) {
             var eventID = UUID.fromString(choreographedEvent.getEventID());
-            var eventOptional = gradCourseStatusEventRepository.findById(eventID);
+            var eventOptional = StatusEventRepository.findById(eventID);
             if (eventOptional.isPresent()) {
                 var gradCourseEvent = eventOptional.get();
                 gradCourseEvent.setEventStatus(MESSAGE_PUBLISHED.toString());
-                gradCourseStatusEventRepository.save(gradCourseEvent);
+                StatusEventRepository.save(gradCourseEvent);
             }
         }
     }

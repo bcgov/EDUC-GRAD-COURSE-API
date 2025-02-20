@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.Closeable;
@@ -21,7 +20,6 @@ import java.util.concurrent.ExecutorService;
  */
 @Component
 @Slf4j
-@Profile("!test")
 public class NatsConnection implements Closeable {
 
     private final Connection natsCon;

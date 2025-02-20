@@ -17,7 +17,6 @@ import static ca.bc.gov.educ.api.course.service.EventHandlerService.PAYLOAD_LOG;
  */
 @Service
 @Slf4j
-@Profile("!test")
 @SuppressWarnings({"java:S3864", "java:S3776"})
 public class EventHandlerDelegatorService {
 
