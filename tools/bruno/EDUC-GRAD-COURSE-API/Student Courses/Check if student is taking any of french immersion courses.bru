@@ -1,0 +1,15 @@
+meta {
+  name: Check if student is taking any of french immersion courses
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/studentcourse/check-french-immersion-course/pen/:pen
+  body: none
+  auth: none
+}
+
+params:path {
+  pen: 
+}

@@ -75,4 +75,19 @@ public final class LogHelper {
       log.error(EXCEPTION, exception);
     }
   }
+
+  /**
+   * the event is a json string.
+   *
+   * @param event the json string
+   */
+  public static void logMessagingEventDetails(final String event) {
+    try {
+      MDC.putCloseable("messageEvent", event);
+      log.info("");
+      MDC.clear();
+    } catch (final Exception exception) {
+      log.error(EXCEPTION, exception);
+    }
+  }
 }

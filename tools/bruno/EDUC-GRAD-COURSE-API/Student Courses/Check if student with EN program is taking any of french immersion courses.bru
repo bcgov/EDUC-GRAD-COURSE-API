@@ -1,0 +1,16 @@
+meta {
+  name: Check if student with EN program is taking any of french immersion courses
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/studentcourse/check-french-immersion-course-for-en
+  body: none
+  auth: none
+}
+
+params:query {
+  pen: 
+  courseLevel: 
+}

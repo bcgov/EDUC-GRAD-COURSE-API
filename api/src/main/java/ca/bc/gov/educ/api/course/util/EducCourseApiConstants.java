@@ -90,6 +90,11 @@ public class EducCourseApiConstants {
     public static final String TRAX_DATE_FORMAT = "yyyyMM";
     public static final DateFormat DEFAULT_DATE_FORMAT_INSTANCE = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
+    // Messaging
+    public static final String GRAD_COURSE_API = "GRAD-COURSE-API";
+    public static final String STREAM_NAME = "GRAD_COURSE_EVENTS";
+    public static final String EVENTS_TOPIC_DURABLE = "GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE";
+
     //Endpoints
     @Value("${endpoint.grad-program-api.rule-detail.url}")
     private String ruleDetailProgramManagementApiUrl;
@@ -104,4 +109,10 @@ public class EducCourseApiConstants {
     @Value("${splunk.log-helper.enabled}")
     private boolean splunkLogHelperEnabled;
 
+    // NATS
+    @Value("${nats.url}")
+    private String natsUrl;
+
+    @Value("${nats.maxReconnect}")
+    private Integer natsMaxReconnect;
 }

@@ -1,0 +1,66 @@
+meta {
+  name: Update a Student Course
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/api/v2/course/studentcourse
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": "",
+    "studentID": "",
+    "courseID": "",
+    "courseCode": "",
+    "courseName": "",
+    "originalCredits": "",
+    "courseLevel": "",
+    "sessionDate": "",
+    "customizedCourseName": "",
+    "gradReqMet": "",
+    "completedCoursePercentage": "",
+    "completedCourseLetterGrade": "",
+    "interimPercent": "",
+    "interimLetterGrade": "",
+    "studentExamId": "",
+    "bestSchoolPercent": "",
+    "bestExamPercent": "",
+    "schoolPercent": "",
+    "examPercent": "",
+    "equivOrChallenge": "",
+    "fineArtsAppliedSkills": "",
+    "metLitNumRequirement": "",
+    "credits": "",
+    "creditsUsedForGrad": "",
+    "hasRelatedCourse": "",
+    "relatedCourseId": "",
+    "relatedCourse": "",
+    "relatedCourseName": "",
+    "relatedLevel": "",
+    "genericCourseType": "",
+    "language": "",
+    "workExpFlag": "",
+    "specialCase": "",
+    "toWriteFlag": "",
+    "provExamCourse": "",
+    "courseDetails": {
+      "courseCode": "",
+      "courseLevel": "",
+      "courseName": "",
+      "language": "",
+      "startDate": "",
+      "endDate": "",
+      "workExpFlag": "",
+      "genericCourseType": "",
+      "courseID": "",
+      "numCredits": ""
+    },
+    "failed": "",
+    "notCompleted": "",
+    "duplicate": ""
+  }
+}
