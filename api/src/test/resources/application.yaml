@@ -29,6 +29,8 @@ spring:
         jwt:
           issuer-uri: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master
           jwk-set-uri: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master/protocol/openid-connect/certs
+  main:
+    allow-bean-definition-overriding: true
 
 #Logging properties
 logging:
@@ -78,3 +80,10 @@ endpoint:
 splunk:
   log-helper:
     enabled: false
+
+#Nats
+#we use MockConfiguration instead with the default test profile
+nats:
+  url: test
+  maxReconnect: 60
+

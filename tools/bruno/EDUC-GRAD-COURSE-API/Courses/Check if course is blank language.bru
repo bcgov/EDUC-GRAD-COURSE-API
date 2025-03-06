@@ -1,0 +1,16 @@
+meta {
+  name: Check if course is blank language
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/check-blank-language-course
+  body: none
+  auth: none
+}
+
+params:query {
+  courseCode: 
+  courseLevel: 
+}

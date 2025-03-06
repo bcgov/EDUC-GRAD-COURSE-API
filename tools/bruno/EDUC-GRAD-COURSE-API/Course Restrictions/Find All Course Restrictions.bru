@@ -1,0 +1,16 @@
+meta {
+  name: Find All Course Restrictions
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/courserestrictionsearch
+  body: none
+  auth: none
+}
+
+params:query {
+  ~mainCourseCode: 
+  ~mainCourseLevel: 
+}

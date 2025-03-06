@@ -1,0 +1,37 @@
+meta {
+  name: Save Course Requirement
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/course/save-course-requirement
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "createUser": "",
+    "createDate": "",
+    "updateUser": "",
+    "updateDate": "",
+    "courseRequirementId": "",
+    "courseCode": "",
+    "courseLevel": "",
+    "ruleCode": {
+      "createUser": "",
+      "createDate": "",
+      "updateUser": "",
+      "updateDate": "",
+      "courseRequirementCode": "",
+      "label": "",
+      "description": "",
+      "effectiveDate": "",
+      "expiryDate": ""
+    },
+    "courseName": "",
+    "startDate": "",
+    "endDate": ""
+  }
+}

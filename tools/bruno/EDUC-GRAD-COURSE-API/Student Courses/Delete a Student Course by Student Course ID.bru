@@ -1,0 +1,15 @@
+meta {
+  name: Delete a Student Course by Student Course ID
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/v2/course/studentcourse/:studentCourseID
+  body: none
+  auth: none
+}
+
+params:path {
+  studentCourseID: 
+}

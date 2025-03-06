@@ -1,9 +1,13 @@
 package ca.bc.gov.educ.api.course.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Component
 public class TraxStudentCourse {
 	private String pen;
@@ -41,7 +45,7 @@ public class TraxStudentCourse {
 	private boolean isFailed;
 	private boolean isDuplicate;
 	private Course courseDetails;
-	
+
 	public String getPen() {
     	return pen != null ? pen.trim():null;
     }

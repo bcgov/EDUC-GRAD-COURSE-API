@@ -1,0 +1,16 @@
+meta {
+  name: Check if course is french language
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/check-french-language-course
+  body: none
+  auth: none
+}
+
+params:query {
+  courseCode: 
+  courseLevel: 
+}
