@@ -62,6 +62,7 @@ public final class LogHelper {
      * @param url
      * @param responseCode
      * @param correlationID
+     * @param requestSource
      */
     public static void logClientHttpReqResponseDetails(@NonNull final HttpMethod method, final String url, final int responseCode, final List<String> correlationID, final List<String> requestSource, final boolean logging) {
         if (!logging) return;

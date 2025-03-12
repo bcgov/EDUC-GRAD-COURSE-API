@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.course.config;
 
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
+import ca.bc.gov.educ.api.course.util.LogHelper;
 import ca.bc.gov.educ.api.course.util.ThreadLocalStateUtil;
 import io.netty.handler.logging.LogLevel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.time.Duration;
 @Configuration
 public class RestWebClient {
 
+    LogHelper logHelper;
     @Autowired
     EducCourseApiConstants constants;
 
@@ -49,6 +51,7 @@ public class RestWebClient {
                                 .maxInMemorySize(50 * 1024 * 1024))
                         .build())
                 .apply(filter.oauth2Configuration())
+                .filter(this.log())
                 .build();
     }
 
@@ -76,6 +79,19 @@ public class RestWebClient {
                     .build();
             return next.exchange(modifiedRequest);
         };
+    }
+
+    private ExchangeFilterFunction log() {
+        return (clientRequest, next) -> next
+                .exchange(clientRequest)
+                .doOnNext((clientResponse -> logHelper.logClientHttpReqResponseDetails(
+                        clientRequest.method(),
+                        clientRequest.url().toString(),
+                        clientResponse.statusCode().value(),
+                        clientRequest.headers().get(EducCourseApiConstants.CORRELATION_ID),
+                        clientRequest.headers().get(EducCourseApiConstants.REQUEST_SOURCE),
+                        constants.isSplunkLogHelperEnabled())
+                ));
     }
 
 }
