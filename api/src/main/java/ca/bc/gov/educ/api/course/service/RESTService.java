@@ -41,7 +41,6 @@ public class RESTService {
             obj = webClient
                     .get()
                     .uri(url)
-                    .headers(h -> h.set(EducCourseApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .retrieve()
                     // if 5xx errors, throw Service error
                     .onStatus(HttpStatusCode::is5xxServerError,
@@ -71,7 +70,6 @@ public class RESTService {
         try {
             obj = webClient.post()
                     .uri(url)
-                    .headers(h -> h.set(EducCourseApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .body(BodyInserters.fromValue(body))
                     .retrieve()
                     .onStatus(HttpStatusCode::is5xxServerError,

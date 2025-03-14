@@ -1,12 +1,14 @@
 package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.exception.ServiceException;
+import ca.bc.gov.educ.api.course.util.ThreadLocalStateUtil;
 import io.netty.channel.ConnectTimeoutException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,9 +67,11 @@ public class RESTServicePOSTTest {
 
     @Before
     public void setUp(){
+        Mockito.reset(webClient, responseMock, requestHeadersMock, requestBodyMock, requestBodyUriMock);
+        ThreadLocalStateUtil.clear();
         when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(any(String.class))).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyUriMock.uri(any(String.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.contentType(any())).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
@@ -76,6 +80,8 @@ public class RESTServicePOSTTest {
 
     @Test
     public void testPost_GivenProperData_Expect200Response(){
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
         byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class);
         Assert.assertArrayEquals(TEST_BYTES, response);
@@ -83,6 +89,8 @@ public class RESTServicePOSTTest {
 
     @Test
     public void testPostOverride_GivenProperData_Expect200Response(){
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
         byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class);
         Assert.assertArrayEquals(TEST_BYTES, response);
@@ -90,12 +98,16 @@ public class RESTServicePOSTTest {
 
     @Test(expected = ServiceException.class)
     public void testPost_Given4xxErrorFromService_ExpectServiceError() {
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
         this.restService.post(TEST_URL, TEST_BODY, byte[].class);
     }
 
     @Test(expected = ServiceException.class)
     public void testPostOverride_Given4xxErrorFromService_ExpectServiceError() {
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
         this.restService.post(TEST_URL, TEST_BODY, byte[].class);
     }
@@ -111,6 +123,8 @@ public class RESTServicePOSTTest {
 
     @Test(expected = ServiceException.class)
     public void testPost_Given5xxErrorFromService_ExpectWebClientRequestError(){
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
         when(requestBodyUriMock.uri(TEST_URL)).thenReturn(requestBodyMock);
         when(requestBodyMock.retrieve()).thenReturn(responseMock);
 
