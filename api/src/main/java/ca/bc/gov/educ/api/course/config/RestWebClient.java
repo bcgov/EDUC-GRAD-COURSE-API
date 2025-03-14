@@ -23,13 +23,12 @@ import java.time.Duration;
 @Configuration
 public class RestWebClient {
 
-    LogHelper logHelper;
-    @Autowired
     EducCourseApiConstants constants;
-
     private final HttpClient httpClient;
 
-    public RestWebClient() {
+    @Autowired
+    public RestWebClient(EducCourseApiConstants constants) {
+        this.constants = constants;
         this.httpClient = HttpClient.create(ConnectionProvider.create("course-api")).compress(true)
                 .resolver(spec -> spec.queryTimeout(Duration.ofMillis(200)).trace("DNS", LogLevel.TRACE));
         this.httpClient.warmup().block();
@@ -84,7 +83,7 @@ public class RestWebClient {
     private ExchangeFilterFunction log() {
         return (clientRequest, next) -> next
                 .exchange(clientRequest)
-                .doOnNext((clientResponse -> logHelper.logClientHttpReqResponseDetails(
+                .doOnNext((clientResponse -> LogHelper.logClientHttpReqResponseDetails(
                         clientRequest.method(),
                         clientRequest.url().toString(),
                         clientResponse.statusCode().value(),
