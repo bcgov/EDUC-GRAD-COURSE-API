@@ -82,7 +82,7 @@ jobs:
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
           ${{ vars.APP_LOG_LEVEL }}
-          ${{secrets.EDUC_COREG_API_URL_ROOT}}
+          ${{ secrets.EDUC_COREG_API_URL_ROOT }}
           
           # Start rollout (if necessary) and follow it
           oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
