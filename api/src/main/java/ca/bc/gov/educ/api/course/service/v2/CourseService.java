@@ -7,7 +7,9 @@ import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.EducCourseApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -15,22 +17,24 @@ import java.nio.charset.StandardCharsets;
 /**
  * Utilize CoReg(Course Registration) API
  */
-@Service("CourseServiceV2")
+@Service("courseServiceV2")
 @Slf4j
 public class CourseService {
 
     private final RESTService restService;
     private final EducCourseApiConstants constants;
+    private final WebClient gradCoregClient;
 
     @Autowired
-    public CourseService(RESTService restService, EducCourseApiConstants constants) {
+    public CourseService(RESTService restService, EducCourseApiConstants constants, @Qualifier("gradCoregClient") WebClient gradCoregClient) {
         this.restService = restService;
         this.constants = constants;
+        this.gradCoregClient = gradCoregClient;
     }
 
     public Course getCourseInfo(String courseID) {
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), courseID);
-        Courses course = restService.get(url, Courses.class);
+        Courses course = restService.get(url, Courses.class, gradCoregClient);
         if (course != null) {
             return EducCourseApiUtils.convertCoregCourseIntoGradCourse(course);
         }
@@ -45,7 +49,7 @@ public class CourseService {
             log.error(e.getMessage());
         }
         String url = String.format(constants.getCourseDetailByExternalCodeUrl(), externalCode);
-        Courses course = restService.get(url, Courses.class);
+        Courses course = restService.get(url, Courses.class, gradCoregClient);
         if (course != null) {
             return EducCourseApiUtils.convertCoregCourseIntoGradCourse(course);
         }

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +44,7 @@ public class RESTServiceGETTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
+    @Qualifier("default")
     WebClient webClient;
 
     @MockBean
@@ -75,39 +77,39 @@ public class RESTServiceGETTest {
     @Test
     public void testGet_GivenProperData_Expect200Response(){
         when(this.responseMock.bodyToMono(String.class)).thenReturn(Mono.just(OK_RESPONSE));
-        String response = this.restService.get(TEST_URL_200, String.class);
+        String response = this.restService.get(TEST_URL_200, String.class, webClient);
         Assert.assertEquals("200 OK", response);
     }
 
     @Test
     public void testGetOverride_GivenProperData_Expect200Response(){
         when(this.responseMock.bodyToMono(String.class)).thenReturn(Mono.just(OK_RESPONSE));
-        String response = this.restService.get(TEST_URL_200, String.class);
+        String response = this.restService.get(TEST_URL_200, String.class, webClient);
         Assert.assertEquals(OK_RESPONSE, response);
     }
 
     @Test(expected = ServiceException.class)
     public void testGet_Given5xxErrorFromService_ExpectServiceError(){
         when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_503, String.class);
+        this.restService.get(TEST_URL_503, String.class, webClient);
     }
 
     @Test(expected = ServiceException.class)
     public void testGetOverride_Given5xxErrorFromService_ExpectServiceError(){
         when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_503, String.class);
+        this.restService.get(TEST_URL_503, String.class, webClient);
     }
 
     @Test(expected = ServiceException.class)
     public void testGet_Given4xxErrorFromService_ExpectServiceError(){
         when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_403, String.class);
+        this.restService.get(TEST_URL_403, String.class, webClient);
     }
 
     @Test(expected = ServiceException.class)
     public void testGetOverride_Given4xxErrorFromService_ExpectServiceError(){
         when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
-        this.restService.get(TEST_URL_403, String.class);
+        this.restService.get(TEST_URL_403, String.class, webClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -117,7 +119,7 @@ public class RESTServiceGETTest {
 
         Throwable cause = new RuntimeException("Simulated cause");
         when(responseMock.bodyToMono(String.class)).thenReturn(Mono.error(new ConnectTimeoutException("Connection closed")));
-        restService.get(TEST_URL_503, String.class);
+        restService.get(TEST_URL_503, String.class, webClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -127,7 +129,7 @@ public class RESTServiceGETTest {
 
         Throwable cause = new RuntimeException("Simulated cause");
         when(responseMock.bodyToMono(String.class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.GET, null, new HttpHeaders())));
-        restService.get(TEST_URL_503, String.class);
+        restService.get(TEST_URL_503, String.class, webClient);
     }
 
 }

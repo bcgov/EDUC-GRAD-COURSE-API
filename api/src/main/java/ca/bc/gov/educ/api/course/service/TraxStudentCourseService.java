@@ -105,7 +105,6 @@ public class TraxStudentCourseService {
 			sC.setCourseName(course.getCourseName());
 			sC.setGenericCourseType(course.getGenericCourseType());
 			sC.setLanguage(course.getLanguage());
-			sC.setWorkExpFlag(course.getWorkExpFlag());
 			sC.setCourseDetails(course);
 			sC.setOriginalCredits(course.getNumCredits());
 		  }

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import ca.bc.gov.educ.api.course.repository.CourseRequirementRepository;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaHelper;
 import ca.bc.gov.educ.api.course.util.criteria.GradCriteria.OperationEnum;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CourseRequirementService {
@@ -59,8 +61,19 @@ public class CourseRequirementService {
     private static final String COURSE_REQUIREMENT_ID = "courseRequirementId";
     private static final String CREATE_USER = "createUser";
     private static final String CREATE_DATE = "createDate";
+    private final WebClient courseApiClient;
 
-     /**
+    public CourseRequirementService(CourseRequirementRepository courseRequirementRepository,
+                                    CourseRequirementTransformer courseRequirementTransformer,
+                                    CourseRequirementCodeRepository courseRequirementCodeRepository,
+                                    @Qualifier("courseApiClient") WebClient courseApiClient) {
+        this.courseRequirementRepository = courseRequirementRepository;
+        this.courseRequirementTransformer = courseRequirementTransformer;
+        this.courseRequirementCodeRepository = courseRequirementCodeRepository;
+        this.courseApiClient = courseApiClient;
+    }
+
+    /**
      * Get all course requirements in Course Requirement DTO
      * @param pageSize 
      * @param pageNo 
@@ -275,7 +288,8 @@ public class CourseRequirementService {
     }
 
     private List<GradRuleDetails> getRuleDetails(String ruleCode) {
-        List<Map> response = restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), ruleCode), List.class);
+        List<Map> response = restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), ruleCode),
+                List.class, courseApiClient);
         return jsonTransformer.convertValue(response, new TypeReference<>(){});
     }
 

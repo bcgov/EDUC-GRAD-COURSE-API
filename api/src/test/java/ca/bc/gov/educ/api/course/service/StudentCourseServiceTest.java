@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -64,6 +65,7 @@ public class StudentCourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
+    @Qualifier("default")
     public WebClient webClient;
 
     @Test
