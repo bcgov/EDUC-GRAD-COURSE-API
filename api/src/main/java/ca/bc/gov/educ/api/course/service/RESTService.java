@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
+import java.io.IOException;
 import java.time.Duration;
 
 @Service
@@ -39,7 +41,6 @@ public class RESTService {
             obj = webClient
                     .get()
                     .uri(url)
-                    .headers(h -> h.set(EducCourseApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .retrieve()
                     // if 5xx errors, throw Service error
                     .onStatus(HttpStatusCode::is5xxServerError,
@@ -48,7 +49,7 @@ public class RESTService {
                     // only does retry if initial error was 5xx as service may be temporarily down
                     // 4xx errors will always happen if 404, 401, 403 etc, so does not retry
                     .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                            .filter(ServiceException.class::isInstance)
+                            .filter(ex -> ex instanceof ServiceException || ex instanceof IOException || ex instanceof WebClientRequestException)
                             .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                                 throw new ServiceException(getErrorMessage(url, SERVICE_FAILED_ERROR), HttpStatus.SERVICE_UNAVAILABLE.value());
                             }))
@@ -69,14 +70,13 @@ public class RESTService {
         try {
             obj = webClient.post()
                     .uri(url)
-                    .headers(h -> h.set(EducCourseApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .body(BodyInserters.fromValue(body))
                     .retrieve()
                     .onStatus(HttpStatusCode::is5xxServerError,
                             clientResponse -> Mono.error(new ServiceException(getErrorMessage(url, ERROR_5xx), clientResponse.statusCode().value())))
                     .bodyToMono(clazz)
                     .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                            .filter(ServiceException.class::isInstance)
+                            .filter(ex -> ex instanceof ServiceException || ex instanceof IOException || ex instanceof WebClientRequestException)
                             .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                                 throw new ServiceException(getErrorMessage(url, SERVICE_FAILED_ERROR), HttpStatus.SERVICE_UNAVAILABLE.value());
                             }))
