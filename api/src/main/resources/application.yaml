@@ -54,7 +54,7 @@ spring:
           course-api-client:
             issuer-uri: ${TOKEN_ISSUER_URL}
             token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
-          coreg-grad-client:
+          grad-coreg-client:
             issuer-uri: ${TOKEN_ISSUER_URL}
             token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
 
@@ -134,6 +134,8 @@ springdoc:
 
 #Ebdpoints
 endpoint:
+  keycloak:
+    token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
   grad-program-api:
     rule-detail:
       url : ${GRAD_PROGRAM_API}api/v1/program/programrules/%s
