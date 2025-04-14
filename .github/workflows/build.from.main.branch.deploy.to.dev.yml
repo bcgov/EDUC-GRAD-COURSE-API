@@ -10,6 +10,7 @@ env:
   COMMON_NAMESPACE: ${{ vars.COMMON_NAMESPACE }}
   GRAD_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}
   BUSINESS_NAMESPACE: ${{ vars.GRAD_BUSINESS_NAMESPACE }}
+  COREG_NAMEPSACE: ${{ vars.COREG_NAMEPSACE }}
 
   # 🖊️ EDIT to change the image registry settings.
   # Registries such as GHCR, Quay.io, and Docker Hub are supported.
@@ -122,8 +123,8 @@ jobs:
           ${{ env.COMMON_NAMESPACE }} \
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
-          ${{ vars.APP_LOG_LEVEL }}
-          ${{ secrets.EDUC_COREG_API_URL_ROOT }}
+          ${{ vars.APP_LOG_LEVEL }} \
+          ${{ env.COREG_NAMEPACE }}
           
           # OVERRIDE Configmaps
           curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/override-configmap-dev.sh \
@@ -135,8 +136,7 @@ jobs:
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
           ${{ vars.APP_LOG_LEVEL }}
-          ${{ secrets.EDUC_COREG_API_URL_ROOT }}
-
+          
           # Start rollout (if necessary) and follow it
           oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
           

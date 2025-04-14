@@ -9,6 +9,7 @@ env:
   OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-test
   COMMON_NAMESPACE: ${{ vars.COMMON_NAMESPACE }}
   BUSINESS_NAMESPACE: ${{ vars.GRAD_BUSINESS_NAMESPACE }}
+  COREG_NAMEPSACE: ${{ vars.COREG_NAMEPSACE }}
 
   SPRING_BOOT_IMAGE_NAME: educ-grad-course-api
 
@@ -81,8 +82,8 @@ jobs:
           ${{ env.COMMON_NAMESPACE }} \
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
-          ${{ vars.APP_LOG_LEVEL }}
-          ${{ secrets.EDUC_COREG_API_URL_ROOT }}
+          ${{ vars.APP_LOG_LEVEL }} \
+          ${{ env.COREG_NAMESPACE }}
           
           # Start rollout (if necessary) and follow it
           oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}

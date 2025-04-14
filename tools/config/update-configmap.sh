@@ -8,7 +8,7 @@ COMMON_NAMESPACE=$4
 BUSINESS_NAMESPACE=$5
 SPLUNK_TOKEN=$6
 APP_LOG_LEVEL=$7
-EDUC_COREG_API_URL_ROOT=$8
+COREG_NAMESPACE=$8
 
 SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
 NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
@@ -57,7 +57,7 @@ oc create -n "$GRAD_NAMESPACE"-"$envValue" configmap "$APP_NAME"-config-map \
   --from-literal=APP_LOG_LEVEL="$APP_LOG_LEVEL" \
   --from-literal=ENABLE_FLYWAY="true" \
   --from-literal=GRAD_PROGRAM_API="http://educ-grad-program-api.$GRAD_NAMESPACE-$envValue.svc.cluster.local:8080/" \
-  --from-literal=EDUC_COREG_API_URL_ROOT="$EDUC_COREG_API_URL_ROOT" \
+  --from-literal=EDUC_COREG_API="http://coreg-api-master.$COREG_NAMESPACE-$envValue.svc.cluster.local:8080/" \
   --from-literal=MAX_RETRY_ATTEMPTS="3" \
   --from-literal=CONNECTION_TIMEOUT='30000' \
   --from-literal=MAXIMUM_POOL_SIZE='10' \
