@@ -86,7 +86,7 @@ jobs:
           ${{ env.COMMON_NAMESPACE }} \
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
-          ${{ vars.APP_LOG_LEVEL }}
+          ${{ vars.APP_LOG_LEVEL }} \
           ${{ env.COREG_NAMESPACE }}
           
           # Start rollout (if necessary) and follow it
