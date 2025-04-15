@@ -10,6 +10,36 @@ SPLUNK_TOKEN=$6
 APP_LOG_LEVEL=$7
 COREG_NAMESPACE=$8
 
+SOAM_KC_REALM_ID="master"
+SOAM_KC=soam-$envValue.apps.silver.devops.gov.bc.ca
+
+SOAM_KC_LOAD_USER_ADMIN=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
+SOAM_KC_LOAD_USER_PASS=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
+
+echo Fetching SOAM token
+TKN=$(curl -s \
+  -d "client_id=admin-cli" \
+  -d "username=$SOAM_KC_LOAD_USER_ADMIN" \
+  -d "password=$SOAM_KC_LOAD_USER_PASS" \
+  -d "grant_type=password" \
+  "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/token" | jq -r '.access_token')
+
+echo
+echo Retrieving client ID for educ-grad-course-api-client
+GradCourse_APIServiceClientID=$(curl -sX GET "https://$SOAM_KC/auth/admin/realms/$SOAM_KC_REALM_ID/clients" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TKN" |
+  jq '.[] | select(.clientId=="educ-grad-course-api-client")' | jq -r '.id')
+
+echo
+echo Adding client scope COREG_READ_COURSE to client educ-grad-course-api-client
+GradCourse_APIServiceClientSecret=$(curl -sX PUT "https://$SOAM_KC/auth/admin/realms/$SOAM_KC_REALM_ID/clients/$GradCourse_APIServiceClientID/default-client-scopes/COREG_READ_COURSE" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TKN" )
+
+###########################################################
+#Setup for config-map
+###########################################################
 SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
 NATS_URL="nats://nats.${COMMON_NAMESPACE}-${envValue}.svc.cluster.local:4222"
 FLB_CONFIG="[SERVICE]
