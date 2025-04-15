@@ -34,7 +34,7 @@ public class CourseController {
     ResponseHelper response;
 
     @Autowired
-    public CourseController(@Qualifier("CourseServiceV2") CourseService courseService, GradValidation validation, ResponseHelper response) {
+    public CourseController(@Qualifier("courseServiceV2") CourseService courseService, GradValidation validation, ResponseHelper response) {
         this.courseService = courseService;
         this.validation = validation;
         this.response = response;

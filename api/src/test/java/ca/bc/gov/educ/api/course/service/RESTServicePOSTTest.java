@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -57,6 +58,7 @@ public class RESTServicePOSTTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
+    @Qualifier("default")
     public WebClient webClient;
 
 
@@ -83,7 +85,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
-        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
         Assert.assertArrayEquals(TEST_BYTES, response);
     }
 
@@ -92,7 +94,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
-        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
         Assert.assertArrayEquals(TEST_BYTES, response);
     }
 
@@ -101,7 +103,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -109,7 +111,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -118,7 +120,7 @@ public class RESTServicePOSTTest {
         when(requestBodyMock.retrieve()).thenReturn(responseMock);
 
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new ConnectTimeoutException("Connection closed")));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -130,7 +132,7 @@ public class RESTServicePOSTTest {
 
         Throwable cause = new RuntimeException("Simulated cause");
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.POST, null, new HttpHeaders())));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
     }
 
 }

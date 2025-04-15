@@ -22,6 +22,4 @@ public class GradCourseApiConfig {
         modelMapper.typeMap(TraxStudentCourse.class, TraxStudentCourseEntity.class);
         return modelMapper;
     }
-
-    
 }
