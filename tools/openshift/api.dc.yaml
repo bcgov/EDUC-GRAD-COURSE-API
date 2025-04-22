@@ -65,6 +65,8 @@ objects:
                     name: api-course-db-secret
                 - secretRef:
                     name: course-client-secret
+                - secretRef:
+                    name: grad-coreg-client-secret
               resources:
                 requests:
                   cpu: "${MIN_CPU}"
