@@ -58,8 +58,12 @@ public class RESTServicePOSTTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    @Qualifier("default")
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
 
     private static final byte[] TEST_BYTES = "The rain in Spain stays mainly on the plain.".getBytes();
@@ -69,9 +73,9 @@ public class RESTServicePOSTTest {
 
     @Before
     public void setUp(){
-        Mockito.reset(webClient, responseMock, requestHeadersMock, requestBodyMock, requestBodyUriMock);
+        Mockito.reset(courseApiWebClient, responseMock, requestHeadersMock, requestBodyMock, requestBodyUriMock);
         ThreadLocalStateUtil.clear();
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.courseApiWebClient.post()).thenReturn(this.requestBodyUriMock);
         when(this.requestBodyUriMock.uri(any(String.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.contentType(any())).thenReturn(this.requestBodyMock);
@@ -85,7 +89,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
-        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
         Assert.assertArrayEquals(TEST_BYTES, response);
     }
 
@@ -94,7 +98,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
-        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
         Assert.assertArrayEquals(TEST_BYTES, response);
     }
 
@@ -103,7 +107,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -111,7 +115,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -120,7 +124,7 @@ public class RESTServicePOSTTest {
         when(requestBodyMock.retrieve()).thenReturn(responseMock);
 
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new ConnectTimeoutException("Connection closed")));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
     }
 
     @Test(expected = ServiceException.class)
@@ -132,7 +136,7 @@ public class RESTServicePOSTTest {
 
         Throwable cause = new RuntimeException("Simulated cause");
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.POST, null, new HttpHeaders())));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class, webClient);
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, courseApiWebClient);
     }
 
 }

@@ -48,8 +48,12 @@ public class TraxTraxStudentCourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    @Qualifier("default")
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Mock
     private WebClient.RequestHeadersSpec requestHeadersMock;

@@ -7,11 +7,15 @@ meta {
 get {
   url: {{baseUrl}}/api/v1/course/courserequirementsearch
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:query {
   ~courseCode: 
   ~courseLevel: 
   ~rule: 
+}
+
+auth:bearer {
+  token: {{token}}
 }

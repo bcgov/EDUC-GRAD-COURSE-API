@@ -49,8 +49,12 @@ public class CourseRestrictionServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    @Qualifier("default")
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Test
     public void testGetAllCourseRestrictionList() {

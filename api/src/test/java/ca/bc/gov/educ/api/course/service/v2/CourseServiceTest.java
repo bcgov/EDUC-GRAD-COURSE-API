@@ -51,12 +51,12 @@ public class CourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    @Qualifier("default")
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
 
     @MockBean
     @Qualifier("gradCoregApiClient")
-    public WebClient coregWebClient;
+    public WebClient coregApiWebClient;
 
     @Test
     public void testGetCourseInfoByCourseID_when_itDoesNot_Exist() {
@@ -68,7 +68,7 @@ public class CourseServiceTest {
         course.setNumCredits(4);
 
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), course.getCourseID());
-        when(restService.get(url, Courses.class,webClient)).thenReturn(null);
+        when(restService.get(url, Courses.class, courseApiWebClient)).thenReturn(null);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseID());
         assertThat(result).isNull();
@@ -106,7 +106,7 @@ public class CourseServiceTest {
         coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
 
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), course.getCourseID());
-        when(restService.get(url, Courses.class, coregWebClient)).thenReturn(coregCourse);
+        when(restService.get(url, Courses.class, coregApiWebClient)).thenReturn(coregCourse);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseID());
         assertThat(result).isNotNull();
@@ -147,7 +147,7 @@ public class CourseServiceTest {
         credit2.setCreditValue("4");
         coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
 
-        when(restService.get(anyString(), eq(Courses.class), eq(coregWebClient))).thenReturn(coregCourse);
+        when(restService.get(anyString(), eq(Courses.class), eq(coregApiWebClient))).thenReturn(coregCourse);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseCode(), course.getCourseLevel());
         assertThat(result).isNotNull();
