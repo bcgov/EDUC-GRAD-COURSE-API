@@ -62,38 +62,6 @@ public class RESTService {
         return obj;
     }
 
-    /**
-     * NOTE: Soon to be deprecated in favour of calling get method without access token below.
-     * @param url
-     * @param body
-     * @param clazz
-     * @param accessToken
-     * @return
-     * @param <T>
-     */
-    public <T> T post(String url, Object body, Class<T> clazz, String accessToken) {
-        T obj;
-        try {
-            obj = webClient.post()
-                    .uri(url)
-                    .headers(h -> { h.setBearerAuth(accessToken); h.set(EducCourseApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()); })
-                    .body(BodyInserters.fromValue(body))
-                    .retrieve()
-                    .onStatus(HttpStatusCode::is5xxServerError,
-                            clientResponse -> Mono.error(new ServiceException(getErrorMessage(url, SERVER_ERROR), clientResponse.statusCode().value())))
-                    .bodyToMono(clazz)
-                    .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                            .filter(ServiceException.class::isInstance)
-                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                                throw new ServiceException(getErrorMessage(url, SERVICE_FAILED_ERROR), HttpStatus.SERVICE_UNAVAILABLE.value());
-                            }))
-                    .block();
-        } catch (Exception e) {
-            throw new ServiceException(getErrorMessage(url, e.getLocalizedMessage()), HttpStatus.SERVICE_UNAVAILABLE.value(), e);
-        }
-        return obj;
-    }
-
     public <T> T post(String url, Object body, Class<T> clazz, WebClient webClient) {
         T obj;
         if (webClient == null)
