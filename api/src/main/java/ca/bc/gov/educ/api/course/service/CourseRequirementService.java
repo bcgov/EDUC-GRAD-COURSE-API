@@ -5,6 +5,7 @@ import java.util.*;
 import ca.bc.gov.educ.api.course.model.dto.*;
 import ca.bc.gov.educ.api.course.model.entity.CourseRequirementCodeEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRequirementCodeRepository;
+import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.JsonTransformer;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaSpecification;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,7 +46,7 @@ public class CourseRequirementService {
     CourseRequirements courseRequirements;
 
     @Autowired
-    CourseService courseService;
+    CourseService courseServiceV2;
 
     @Autowired
     EducCourseApiConstants constants;
@@ -94,7 +95,7 @@ public class CourseRequirementService {
             	AllCourseRequirements obj = new AllCourseRequirements();
             	BeanUtils.copyProperties(cR, obj);
                 obj.setRuleCode(cR.getRuleCode().getCourseRequirementCode());
-            	Course course = courseService.getCourseDetails(cR.getCourseCode(), cR.getCourseLevel());
+            	Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(), cR.getCourseLevel());
         		if(course != null) {
         			obj.setCourseName(course.getCourseName());
         		}
@@ -156,7 +157,7 @@ public class CourseRequirementService {
                 Page<CourseRequirementEntity> pagedResult = courseRequirementRepository.findByRuleCode(ruleOptional.get(), paging);
                 courseReqList = courseRequirementTransformer.transformToDTO(pagedResult.getContent());
                 courseReqList.forEach(cR -> {
-                    Course course = courseService.getCourseDetails(cR.getCourseCode(),
+                    Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(),
                             cR.getCourseLevel().equalsIgnoreCase("") ? " " : cR.getCourseLevel());
                     if (course != null) {
                         cR.setCourseName(course.getCourseName());
@@ -209,7 +210,7 @@ public class CourseRequirementService {
         		AllCourseRequirements obj = new AllCourseRequirements();
             	BeanUtils.copyProperties(cR, obj);
                 obj.setRuleCode(cR.getRuleCode().getCourseRequirementCode());
-            	Course course = courseService.getCourseDetails(cR.getCourseCode(), cR.getCourseLevel());
+            	Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(), cR.getCourseLevel());
         		if(course != null) {
         			obj.setCourseName(course.getCourseName());
         		}

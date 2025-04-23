@@ -55,7 +55,7 @@ public class CourseServiceTest {
     public WebClient webClient;
 
     @MockBean
-    @Qualifier("gradCoregClient")
+    @Qualifier("gradCoregApiClient")
     public WebClient coregWebClient;
 
     @Test

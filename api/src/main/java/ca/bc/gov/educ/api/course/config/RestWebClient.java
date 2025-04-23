@@ -7,8 +7,7 @@ import io.netty.handler.logging.LogLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
@@ -36,24 +35,11 @@ public class RestWebClient {
         this.httpClient.warmup().block();
     }
 
-    @Bean
-    public WebClient webClient() {
-        //extend buffer to 50MB
-        Integer CODEC_50_MB_SIZE = 50 * 1024 * 1024;
-        HttpClient client = HttpClient.create();
-        client.warmup().block();
-        return WebClient.builder().codecs(clientCodecConfigurer -> {
-            var codec = new Jackson2JsonDecoder();
-            codec.setMaxInMemorySize(CODEC_50_MB_SIZE);
-            clientCodecConfigurer.customCodecs().register(codec);
-            clientCodecConfigurer.customCodecs().register(new Jackson2JsonEncoder());
-        }).build();
-    }
-
+    @Primary
     @Bean("courseApiClient")
     public WebClient getCourseApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        filter.setDefaultClientRegistrationId("course-api-client");
+        filter.setDefaultClientRegistrationId("grad-course-api-client");
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         return WebClient.builder()
@@ -70,10 +56,10 @@ public class RestWebClient {
                 .build();
     }
 
-    @Bean("gradCoregClient")
+    @Bean("gradCoregApiClient")
     public WebClient getCoregGradClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        filter.setDefaultClientRegistrationId("grad-coreg-client");
+        filter.setDefaultClientRegistrationId("grad-coreg-api-client");
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         return WebClient.builder()

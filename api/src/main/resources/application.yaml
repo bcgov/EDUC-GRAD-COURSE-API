@@ -43,18 +43,18 @@ spring:
       client:
         registration:
           course-api-client:
-            client-id: ${COURSE_API_CLIENT_NAME}
-            client-secret: ${COURSE_API_CLIENT_SECRET}
+            client-id: ${GRAD_COURSE_API_CLIENT_NAME}
+            client-secret: ${GRAD_COURSE_API_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-          grad-coreg-client:
-            client-id: ${GRAD_COREG_CLIENT_NAME}
-            client-secret: ${GRAD_COREG_CLIENT_SECRET}
+          grad-coreg-api-client:
+            client-id: ${GRAD_COREG_API_CLIENT_NAME}
+            client-secret: ${GRAD_COREG_API_CLIENT_SECRET}
             authorization-grant-type: client_credentials
         provider:
           course-api-client:
             issuer-uri: ${TOKEN_ISSUER_URL}
             token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
-          grad-coreg-client:
+          grad-coreg-api-client:
             issuer-uri: ${TOKEN_ISSUER_URL}
             token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
 

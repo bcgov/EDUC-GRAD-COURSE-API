@@ -7,9 +7,9 @@ meta {
 get {
   url: {{baseUrl}}/api/v1/course/:courseCode
   body: none
-  auth: none
+  auth: bearer
 }
 
-params:path {
-  courseCode: 
+auth:bearer {
+  token: {{token}}
 }

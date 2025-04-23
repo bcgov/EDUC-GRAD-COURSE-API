@@ -7,10 +7,14 @@ meta {
 get {
   url: {{baseUrl}}/api/v1/course
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:query {
   ~pageNo: 
   ~pageSize: 
+}
+
+auth:bearer {
+  token: {{token}}
 }

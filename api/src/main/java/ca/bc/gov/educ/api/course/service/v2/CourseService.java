@@ -23,18 +23,18 @@ public class CourseService {
 
     private final RESTService restService;
     private final EducCourseApiConstants constants;
-    private final WebClient gradCoregClient;
+    private final WebClient gradCoregApiClient;
 
     @Autowired
-    public CourseService(RESTService restService, EducCourseApiConstants constants, @Qualifier("gradCoregClient") WebClient gradCoregClient) {
+    public CourseService(RESTService restService, EducCourseApiConstants constants, @Qualifier("gradCoregApiClient") WebClient gradCoregApiClient) {
         this.restService = restService;
         this.constants = constants;
-        this.gradCoregClient = gradCoregClient;
+        this.gradCoregApiClient = gradCoregApiClient;
     }
 
     public Course getCourseInfo(String courseID) {
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), courseID);
-        Courses course = restService.get(url, Courses.class, gradCoregClient);
+        Courses course = restService.get(url, Courses.class, gradCoregApiClient);
         if (course != null) {
             return EducCourseApiUtils.convertCoregCourseIntoGradCourse(course);
         }
@@ -49,7 +49,7 @@ public class CourseService {
             log.error(e.getMessage());
         }
         String url = String.format(constants.getCourseDetailByExternalCodeUrl(), externalCode);
-        Courses course = restService.get(url, Courses.class, gradCoregClient);
+        Courses course = restService.get(url, Courses.class, gradCoregApiClient);
         if (course != null) {
             return EducCourseApiUtils.convertCoregCourseIntoGradCourse(course);
         }
