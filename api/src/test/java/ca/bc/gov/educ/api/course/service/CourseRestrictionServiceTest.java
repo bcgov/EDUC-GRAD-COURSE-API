@@ -69,8 +69,7 @@ public class CourseRestrictionServiceTest {
 
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getAllCourseRestrictionList();
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());

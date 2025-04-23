@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
@@ -91,8 +90,7 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), course.getCourseLevel())).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }
@@ -120,8 +118,7 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), " ")).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }
@@ -149,8 +146,7 @@ public class TraxTraxStudentExamServiceTest {
         when(courseService.getCourseDetails(course.getCourseCode(), course.getCourseLevel())).thenReturn(course);
 
         var result = traxStudentExamService.getStudentExamList(traxStudentExamId.getPen(), false);
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentExam responseTraxStudentExam = result.get(0);
         assertThat(responseTraxStudentExam.getCourseCode()).isEqualTo(course.getCourseCode());
     }

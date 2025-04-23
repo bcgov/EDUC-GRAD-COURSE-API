@@ -67,8 +67,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAll()).thenReturn(Arrays.asList(course1, course2));
         var result = courseService.getCourseList();
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(2);
+        assertThat(result).isNotNull().hasSize(2);
 
         Course responseCourse1 = result.get(0);
         assertThat(responseCourse1.getCourseCode()).isEqualTo(course1.getCourseKey().getCourseCode());
@@ -107,8 +106,7 @@ public class CourseServiceTest {
         when(courseRepository.findAll(any(Specification.class), any(Sort.class))).thenReturn(Arrays.asList(course));
         var result = courseService.getCourseSearchList(courseKey.getCourseCode(), courseKey.getCourseLevel(), null, null,
                 course.getStartDate(), course.getEndDate());
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotNull().hasSize(1);
         Course responseCourse = result.get(0);
         assertThat(responseCourse.getCourseCode()).isEqualTo(courseKey.getCourseCode());
         assertThat(responseCourse.getCourseLevel()).isEqualTo(courseKey.getCourseLevel());
