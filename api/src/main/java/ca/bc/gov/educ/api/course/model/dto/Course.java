@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.Data;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Component
 public class Course {
 
@@ -23,9 +25,6 @@ public class Course {
     private String genericCourseType;
     private String courseID;
 	private Integer numCredits;
-
-	public Course(String cle, String s, String s1, String s2, Date date, Date date1, String s3, String number, int i) {
-	}
 
 	public String getCourseCode() {
 		return courseCode != null ? courseCode.trim(): null;
@@ -45,11 +44,5 @@ public class Course {
 	public String getGenericCourseType() {
 		return genericCourseType != null ? genericCourseType.trim(): null;
 	}
-    
-	@Override
-	public String toString() {
-		return "Course [courseID=" + courseID + ", courseCode=" + courseCode + ", courseLevel=" + courseLevel +
-				", courseName=" + courseName + ", language=" + language + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", genericCourseType=" + genericCourseType + "]";
-	}		
+
 }
