@@ -57,8 +57,8 @@ public class RESTService {
             // catches IOExceptions and the like
             throw new ServiceException(
                     getErrorMessage(url, e.getLocalizedMessage()),
-                    (e instanceof WebClientResponseException) ? ((WebClientResponseException) e).getStatusCode().value() : HttpStatus.SERVICE_UNAVAILABLE.value(),
-                    e);
+                    (e instanceof WebClientResponseException) ? ((WebClientResponseException) e).getStatusCode().value()
+                            : HttpStatus.SERVICE_UNAVAILABLE.value(), e);
         }
         return obj;
     }
@@ -83,7 +83,11 @@ public class RESTService {
                             }))
                     .block();
         } catch (Exception e) {
-            throw new ServiceException(getErrorMessage(url, e.getLocalizedMessage()), HttpStatus.SERVICE_UNAVAILABLE.value(), e);
+            throw new ServiceException(getErrorMessage(
+                    url,
+                    e.getLocalizedMessage()),
+                    (e instanceof WebClientResponseException) ? ((WebClientResponseException) e).getStatusCode().value()
+                            : HttpStatus.SERVICE_UNAVAILABLE.value(), e);
         }
         return obj;
     }
