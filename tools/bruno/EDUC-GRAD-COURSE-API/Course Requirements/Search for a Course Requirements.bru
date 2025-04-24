@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/course/courserequirementsearch
+  url: {{baseUrl}}/api/v1/course/courserequirementsearch?courseCode=EPHAS&rule=111
   body: none
   auth: none
 }
 
 params:query {
-  ~courseCode: 
+  courseCode: EPHAS
+  rule: 111
   ~courseLevel: 
-  ~rule: 
 }

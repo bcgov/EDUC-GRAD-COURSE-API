@@ -5,6 +5,7 @@ import java.util.*;
 import ca.bc.gov.educ.api.course.model.dto.*;
 import ca.bc.gov.educ.api.course.model.entity.CourseRequirementCodeEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRequirementCodeRepository;
+import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.JsonTransformer;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaSpecification;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import ca.bc.gov.educ.api.course.repository.CourseRequirementRepository;
 import ca.bc.gov.educ.api.course.util.criteria.CriteriaHelper;
 import ca.bc.gov.educ.api.course.util.criteria.GradCriteria.OperationEnum;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CourseRequirementService {
@@ -43,7 +46,7 @@ public class CourseRequirementService {
     CourseRequirements courseRequirements;
 
     @Autowired
-    CourseService courseService;
+    CourseService courseServiceV2;
 
     @Autowired
     EducCourseApiConstants constants;
@@ -59,8 +62,19 @@ public class CourseRequirementService {
     private static final String COURSE_REQUIREMENT_ID = "courseRequirementId";
     private static final String CREATE_USER = "createUser";
     private static final String CREATE_DATE = "createDate";
+    private final WebClient courseApiClient;
 
-     /**
+    public CourseRequirementService(CourseRequirementRepository courseRequirementRepository,
+                                    CourseRequirementTransformer courseRequirementTransformer,
+                                    CourseRequirementCodeRepository courseRequirementCodeRepository,
+                                    @Qualifier("courseApiClient") WebClient courseApiClient) {
+        this.courseRequirementRepository = courseRequirementRepository;
+        this.courseRequirementTransformer = courseRequirementTransformer;
+        this.courseRequirementCodeRepository = courseRequirementCodeRepository;
+        this.courseApiClient = courseApiClient;
+    }
+
+    /**
      * Get all course requirements in Course Requirement DTO
      * @param pageSize 
      * @param pageNo 
@@ -81,7 +95,7 @@ public class CourseRequirementService {
             	AllCourseRequirements obj = new AllCourseRequirements();
             	BeanUtils.copyProperties(cR, obj);
                 obj.setRuleCode(cR.getRuleCode().getCourseRequirementCode());
-            	Course course = courseService.getCourseDetails(cR.getCourseCode(), cR.getCourseLevel());
+            	Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(), cR.getCourseLevel());
         		if(course != null) {
         			obj.setCourseName(course.getCourseName());
         		}
@@ -143,7 +157,7 @@ public class CourseRequirementService {
                 Page<CourseRequirementEntity> pagedResult = courseRequirementRepository.findByRuleCode(ruleOptional.get(), paging);
                 courseReqList = courseRequirementTransformer.transformToDTO(pagedResult.getContent());
                 courseReqList.forEach(cR -> {
-                    Course course = courseService.getCourseDetails(cR.getCourseCode(),
+                    Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(),
                             cR.getCourseLevel().equalsIgnoreCase("") ? " " : cR.getCourseLevel());
                     if (course != null) {
                         cR.setCourseName(course.getCourseName());
@@ -196,7 +210,7 @@ public class CourseRequirementService {
         		AllCourseRequirements obj = new AllCourseRequirements();
             	BeanUtils.copyProperties(cR, obj);
                 obj.setRuleCode(cR.getRuleCode().getCourseRequirementCode());
-            	Course course = courseService.getCourseDetails(cR.getCourseCode(), cR.getCourseLevel());
+            	Course course = courseServiceV2.getCourseInfo(cR.getCourseCode(), cR.getCourseLevel());
         		if(course != null) {
         			obj.setCourseName(course.getCourseName());
         		}
@@ -275,7 +289,8 @@ public class CourseRequirementService {
     }
 
     private List<GradRuleDetails> getRuleDetails(String ruleCode) {
-        List<Map> response = restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), ruleCode), List.class);
+        List<Map> response = restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), ruleCode),
+                List.class, courseApiClient);
         return jsonTransformer.convertValue(response, new TypeReference<>(){});
     }
 

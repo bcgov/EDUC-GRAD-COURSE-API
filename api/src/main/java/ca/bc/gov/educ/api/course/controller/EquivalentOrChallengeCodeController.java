@@ -33,7 +33,7 @@ public class EquivalentOrChallengeCodeController {
 
     @GetMapping(EducCourseApiConstants.EQUIVALENT_OR_CHALLENGE_CODES_MAPPING)
     @PreAuthorize(PermissionsConstants.READ_EQUIVALENT_OR_CHALLENGE_CODE)
-    @Operation(summary = "Find All Equivalent Or Challenge Codes", description = "Find All Equivalent Or Challenge Codes", tags = {"Equivalent Or Challenge Codes"})
+    @Operation(summary = "Find All Equivalent Or Challenge Codes", description = "Find All Equivalent Or Challenge Codes", tags = {"Equivalent Or Challenge Code"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<EquivalentOrChallengeCode>> getEquivalentOrChallengeCodes() {
         return ResponseEntity.ok().body(equivalentOrChallengeCodeService.getEquivalentOrChallengeCodeList());

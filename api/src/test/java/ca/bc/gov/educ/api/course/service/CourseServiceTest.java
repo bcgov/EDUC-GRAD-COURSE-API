@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.course.repository.CourseRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Sort;
@@ -46,7 +47,12 @@ public class CourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Test
     public void testGetCourseList() {
@@ -61,8 +67,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAll()).thenReturn(Arrays.asList(course1, course2));
         var result = courseService.getCourseList();
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).isNotNull().hasSize(2);
 
         Course responseCourse1 = result.get(0);
         assertThat(responseCourse1.getCourseCode()).isEqualTo(course1.getCourseKey().getCourseCode());
@@ -101,8 +106,7 @@ public class CourseServiceTest {
         when(courseRepository.findAll(any(Specification.class), any(Sort.class))).thenReturn(Arrays.asList(course));
         var result = courseService.getCourseSearchList(courseKey.getCourseCode(), courseKey.getCourseLevel(), null, null,
                 course.getStartDate(), course.getEndDate());
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         Course responseCourse = result.get(0);
         assertThat(responseCourse.getCourseCode()).isEqualTo(courseKey.getCourseCode());
         assertThat(responseCourse.getCourseLevel()).isEqualTo(courseKey.getCourseLevel());

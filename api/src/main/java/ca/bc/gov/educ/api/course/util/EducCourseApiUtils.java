@@ -138,7 +138,6 @@ public class EducCourseApiUtils {
         course.setCourseName(source.getCourseTitle());
         course.setGenericCourseType("N/A"); // Setting generic course type later
         course.setLanguage(source.getCourseCharacteristics().getDescription());
-        course.setWorkExpFlag(" ");
         course.setStartDate(DateUtils.toSqlDate(source.getStartDate()));
         course.setEndDate(DateUtils.toSqlDate(source.getEndDate()));
         // Number of Credits

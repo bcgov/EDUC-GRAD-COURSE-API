@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -47,7 +48,12 @@ public class TraxTraxStudentCourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Mock
     private WebClient.RequestHeadersSpec requestHeadersMock;
@@ -80,15 +86,13 @@ public class TraxTraxStudentCourseServiceTest {
         course.setCourseName("test main course");
         course.setGenericCourseType("gct");
         course.setLanguage("en");
-        course.setWorkExpFlag("Y");
 
         when(studentCourseRepo.findByPen(traxStudentCourseId.getPen())).thenReturn(Arrays.asList(traxStudentCourseEntity));
         when(courseService.getCourseDetails(course.getCourseCode(), course.getCourseLevel())).thenReturn(course);
         when(courseService.getCourseDetails(traxStudentCourseEntity.getRelatedCourse(), traxStudentCourseEntity.getRelatedLevel())).thenReturn(course);
 
         var result = traxStudentCourseService.getStudentCourseList(traxStudentCourseId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentCourse responseTraxStudentCourse = result.get(0);
         assertThat(responseTraxStudentCourse.getCourseCode()).isEqualTo(course.getCourseCode());
         assertThat(responseTraxStudentCourse.getGenericCourseType()).isEqualTo(course.getGenericCourseType());
@@ -112,14 +116,12 @@ public class TraxTraxStudentCourseServiceTest {
         course.setCourseName("test main course");
         course.setGenericCourseType("gct");
         course.setLanguage("en");
-        course.setWorkExpFlag("Y");
 
         when(studentCourseRepo.findByPen(traxStudentCourseId.getPen())).thenReturn(Arrays.asList(traxStudentCourseEntity));
         when(courseService.getCourseDetails(course.getCourseCode(), " ")).thenReturn(course);
 
         var result = traxStudentCourseService.getStudentCourseList(traxStudentCourseId.getPen(), true);
-        assertThat(result).isNotNull();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotNull().isNotEmpty();
         TraxStudentCourse responseTraxStudentCourse = result.get(0);
         assertThat(responseTraxStudentCourse.getCourseCode()).isEqualTo(course.getCourseCode());
         assertThat(responseTraxStudentCourse.getGenericCourseType()).isEqualTo(course.getGenericCourseType());

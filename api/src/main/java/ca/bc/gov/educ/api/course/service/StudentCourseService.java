@@ -38,7 +38,7 @@ public class StudentCourseService {
 
     @Autowired
     public StudentCourseService(StudentCourseRepository studentCourseRepository, StudentExamRepository studentExamRepository, StudentCourseTransformer studentCourseTransformer, StudentExamTransformer studentExamTransformer,
-        @Qualifier("CourseServiceV2")ca.bc.gov.educ.api.course.service.v2.CourseService courseService) {
+        @Qualifier("courseServiceV2")ca.bc.gov.educ.api.course.service.v2.CourseService courseService) {
         this.studentCourseRepository = studentCourseRepository;
         this.studentExamRepository = studentExamRepository;
         this.studentCourseTransformer = studentCourseTransformer;
@@ -191,7 +191,6 @@ public class StudentCourseService {
                 sc.setCourseName(course.getCourseName());
                 sc.setGenericCourseType(course.getGenericCourseType());
                 sc.setLanguage(course.getLanguage());
-                sc.setWorkExpFlag(course.getWorkExpFlag());
                 sc.setCourseDetails(course);
                 sc.setOriginalCredits(course.getNumCredits());
             }

@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.course.repository.StatusEventRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -44,7 +45,12 @@ public class JetStreamEventHandlerServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     static final String PEN = "123456789";
 

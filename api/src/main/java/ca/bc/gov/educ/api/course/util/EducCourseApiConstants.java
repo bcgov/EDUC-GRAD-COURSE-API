@@ -118,4 +118,7 @@ public class EducCourseApiConstants {
 
     @Value("${nats.maxReconnect}")
     private Integer natsMaxReconnect;
+
+    @Value("${endpoint.keycloak.token-uri}")
+    private String tokenUrl;
 }

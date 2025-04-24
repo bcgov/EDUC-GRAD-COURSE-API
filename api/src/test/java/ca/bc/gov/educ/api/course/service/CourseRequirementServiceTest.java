@@ -5,12 +5,14 @@ import ca.bc.gov.educ.api.course.model.entity.CourseRequirementCodeEntity;
 import ca.bc.gov.educ.api.course.model.entity.CourseRequirementEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRequirementCodeRepository;
 import ca.bc.gov.educ.api.course.repository.CourseRequirementRepository;
+import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
@@ -68,7 +70,12 @@ public class CourseRequirementServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Before
     public void setUp() {
@@ -77,7 +84,9 @@ public class CourseRequirementServiceTest {
 
     @After
     public void tearDown() {
+        /*
 
+         */
     }
 
     @Test
@@ -108,12 +117,13 @@ public class CourseRequirementServiceTest {
         Page<CourseRequirementEntity> pagedResult = new PageImpl<>(Arrays.asList(courseRequirementEntity));
 
         when(courseRequirementRepository.findAll(any(Pageable.class))).thenReturn(pagedResult);
-        when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
+        when(courseService.getCourseInfo("MAIN", "12")).thenReturn(course);
 
         ParameterizedTypeReference<List<GradRuleDetails>> responseType = new ParameterizedTypeReference<List<GradRuleDetails>>() {
         };
 
-        when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity.getRuleCode().getCourseRequirementCode()), List.class)).thenReturn(Arrays.asList(ruleDetails));
+        when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity
+                        .getRuleCode().getCourseRequirementCode()), List.class, courseApiWebClient)).thenReturn(Arrays.asList(ruleDetails));
 
         var result = courseRequirementService.getAllCourseRequirementList(1,5);
         assertThat(result).isNotNull();
@@ -160,7 +170,7 @@ public class CourseRequirementServiceTest {
 
         when(courseRequirementCodeRepository.findById(eq(ruleCodeValue))).thenReturn(Optional.of(courseRequirementCodeEntity));
         when(courseRequirementRepository.findByRuleCode(eq(courseRequirementCodeEntity), any(Pageable.class))).thenReturn(pagedResult);
-        when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
+        when(courseService.getCourseInfo("MAIN", "12")).thenReturn(course);
 
         var result = courseRequirementService.getAllCourseRequirementListByRule(ruleCodeValue, 1, 5);
 
@@ -389,8 +399,9 @@ public class CourseRequirementServiceTest {
         ruleDetails.setRequirementName("Test");
 
         when(courseRequirementRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(courseRequirementEntity));
-        when(courseService.getCourseDetails("MAIN", "12")).thenReturn(course);
-        when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity.getRuleCode().getCourseRequirementCode()), List.class)).thenReturn(Arrays.asList(ruleDetails));
+        when(courseService.getCourseInfo("MAIN", "12")).thenReturn(course);
+        when(restService.get(String.format(constants.getRuleDetailProgramManagementApiUrl(), courseRequirementEntity
+                .getRuleCode().getCourseRequirementCode()), List.class, courseApiWebClient)).thenReturn(Arrays.asList(ruleDetails));
 
         var result = courseRequirementService.getCourseRequirementSearchList("MAIN", "12", "RuleCd");
         assertThat(result).isNotNull();

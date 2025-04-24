@@ -7,6 +7,8 @@ import io.netty.handler.logging.LogLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
@@ -21,6 +23,7 @@ import reactor.netty.resources.ConnectionProvider;
 import java.time.Duration;
 
 @Configuration
+@Profile("!test")
 public class RestWebClient {
 
     EducCourseApiConstants constants;
@@ -34,10 +37,31 @@ public class RestWebClient {
         this.httpClient.warmup().block();
     }
 
-    @Bean
-    public WebClient webClient(OAuth2AuthorizedClientManager authorizedClientManager) {
+    @Primary
+    @Bean("courseApiClient")
+    public WebClient getCourseApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        filter.setDefaultClientRegistrationId("course-api-client");
+        filter.setDefaultClientRegistrationId("grad-course-api-client");
+        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        return WebClient.builder()
+                .uriBuilderFactory(defaultUriBuilderFactory)
+                .filter(setRequestHeaders())
+                .exchangeStrategies(ExchangeStrategies
+                        .builder()
+                        .codecs(codecs -> codecs
+                                .defaultCodecs()
+                                .maxInMemorySize(50 * 1024 * 1024))
+                        .build())
+                .apply(filter.oauth2Configuration())
+                .filter(this.log())
+                .build();
+    }
+
+    @Bean("gradCoregApiClient")
+    public WebClient getCoregGradClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
+        ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
+        filter.setDefaultClientRegistrationId("grad-coreg-api-client");
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         return WebClient.builder()

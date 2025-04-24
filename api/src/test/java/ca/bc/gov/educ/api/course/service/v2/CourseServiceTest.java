@@ -11,6 +11,7 @@ import ca.bc.gov.educ.api.course.util.EducCourseApiUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -23,8 +24,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -51,7 +51,12 @@ public class CourseServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Test
     public void testGetCourseInfoByCourseID_when_itDoesNot_Exist() {
@@ -63,7 +68,7 @@ public class CourseServiceTest {
         course.setNumCredits(4);
 
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), course.getCourseID());
-        when(restService.get(url, Courses.class)).thenReturn(null);
+        when(restService.get(url, Courses.class, courseApiWebClient)).thenReturn(null);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseID());
         assertThat(result).isNull();
@@ -101,7 +106,7 @@ public class CourseServiceTest {
         coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
 
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), course.getCourseID());
-        when(restService.get(url, Courses.class)).thenReturn(coregCourse);
+        when(restService.get(url, Courses.class, coregApiWebClient)).thenReturn(coregCourse);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseID());
         assertThat(result).isNotNull();
@@ -142,7 +147,7 @@ public class CourseServiceTest {
         credit2.setCreditValue("4");
         coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
 
-        when(restService.get(any(), eq(Courses.class))).thenReturn(coregCourse);
+        when(restService.get(anyString(), eq(Courses.class), eq(coregApiWebClient))).thenReturn(coregCourse);
 
         var result = courseServiceV2.getCourseInfo(course.getCourseCode(), course.getCourseLevel());
         assertThat(result).isNotNull();

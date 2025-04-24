@@ -33,7 +33,7 @@ public class ExamSpecialCaseCodeController {
 
     @GetMapping(EducCourseApiConstants.EXAM_SPECIAL_CASE_CODES_MAPPING)
     @PreAuthorize(PermissionsConstants.READ_EXAM_SPECIAL_CASE_CODE)
-    @Operation(summary = "Find All Exam Special Case Codes", description = "Find All Exam Special Case Codes", tags = {"Exam Special Case Codes"})
+    @Operation(summary = "Find All Exam Special Case Codes", description = "Find All Exam Special Case Codes", tags = {"Exam Special Case Code"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ExamSpecialCaseCode>> getExamSpecialCaseCodes() {
         return ResponseEntity.ok().body(examSpecialCaseCodeService.getExamSpecialCaseCodeList());

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -48,7 +49,12 @@ public class CourseRestrictionServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Test
     public void testGetAllCourseRestrictionList() {
@@ -63,8 +69,7 @@ public class CourseRestrictionServiceTest {
 
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getAllCourseRestrictionList();
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).isNotNull().hasSize(1);
         CourseRestriction responseCourseRestriction = result.get(0);
         assertThat(responseCourseRestriction.getCourseRestrictionId()).isEqualTo(courseRestriction.getCourseRestrictionId());
         assertThat(responseCourseRestriction.getMainCourse()).isEqualTo(courseRestriction.getMainCourse());

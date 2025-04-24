@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -55,7 +56,12 @@ public class EventHandlerServiceTest {
     public ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
-    public WebClient webClient;
+    @Qualifier("courseApiClient")
+    public WebClient courseApiWebClient;
+
+    @MockBean
+    @Qualifier("gradCoregApiClient")
+    public WebClient coregApiWebClient;
 
     @Before
     public void setUp() {
@@ -92,13 +98,13 @@ public class EventHandlerServiceTest {
                 new TraxStudentCourse(
                         "131411258", "CLE", "CAREER-LIFE EDUCATION", 4, "", "2021/06", "", null, 100.0, "A", 100.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
                         new Course(
-                                "CLE", "", "CAREER-LIFE EDUCATION", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), " ", "", "3201860", 4
+                                "CLE", "", "CAREER-LIFE EDUCATION", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201860", 4
                         )
                 ),
                 new TraxStudentCourse(
                         "131411258", "CLC", "CAREER-LIFE CONNECTIONS", 4, "", "2023/06", "", null, 95.0, "A", 95.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
                         new Course(
-                                "CLC", "", "CAREER-LIFE CONNECTIONS", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), " ", "", "3201862", 4
+                                "CLC", "", "CAREER-LIFE CONNECTIONS", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201862", 4
                         )
                 )
         );

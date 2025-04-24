@@ -33,7 +33,7 @@ public class FineArtsAppliedSkillsCodeController {
 
     @GetMapping(EducCourseApiConstants.FINE_ART_APPLIED_SKILLS_CODES_MAPPING)
     @PreAuthorize(PermissionsConstants.READ_FINE_ART_APPLIED_SKILLS_CODE)
-    @Operation(summary = "Find All Fine Arts Applied Skills Codes", description = "Find All Fine Arts Applied Skills Codes", tags = {"Fine Arts Applied Skills Codes"})
+    @Operation(summary = "Find All Fine Arts Applied Skills Codes", description = "Find All Fine Arts Applied Skills Codes", tags = {"Fine Arts Applied Skills Code"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<FineArtsAppliedSkillsCode>> getFineArtsAppliedSkillsCodes() {
         return ResponseEntity.ok().body(fineArtsAppliedSkillsCodeService.getFineArtsAppliedSkillsCodeList());
