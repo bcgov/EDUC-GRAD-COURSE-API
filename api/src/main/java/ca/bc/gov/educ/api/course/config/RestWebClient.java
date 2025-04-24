@@ -41,7 +41,7 @@ public class RestWebClient {
     @Bean("courseApiClient")
     public WebClient getCourseApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        filter.setDefaultClientRegistrationId("grad-course-api-client");
+        filter.setDefaultClientRegistrationId("course-api-client");
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         return WebClient.builder()
