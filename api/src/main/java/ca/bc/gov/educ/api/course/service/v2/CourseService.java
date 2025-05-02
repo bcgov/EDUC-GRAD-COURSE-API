@@ -42,7 +42,7 @@ public class CourseService {
     }
     public Course getCourseInfo(String courseCode, String courseLevel) {
         String externalCode = EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(courseCode, courseLevel);
-        log.info("CoReg API lookup by external code: [{}]", externalCode);
+        log.debug("CoReg API lookup by external code: [{}]", externalCode);
         try {
             externalCode = URLEncoder.encode(externalCode, StandardCharsets.UTF_8).replace("+", "%20");
         } catch (Exception e) {
