@@ -140,6 +140,7 @@ public class EducCourseApiUtils {
         course.setLanguage(source.getCourseCharacteristics().getDescription());
         course.setStartDate(DateUtils.toSqlDate(source.getStartDate()));
         course.setEndDate(DateUtils.toSqlDate(source.getEndDate()));
+        course.setCompletionEndDate(source.getCompletionEndDate());
         // Number of Credits
         if (!source.getCourseAllowableCredit().isEmpty()) {
             course.setNumCredits(getMaxCreditValue(source.getCourseAllowableCredit()));
