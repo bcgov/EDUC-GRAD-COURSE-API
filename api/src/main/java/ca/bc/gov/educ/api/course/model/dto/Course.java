@@ -22,6 +22,7 @@ public class Course {
     private String language;    
     private Date startDate;
     private Date endDate;
+	private String completionEndDate;
     private String genericCourseType;
     private String courseID;
 	private Integer numCredits;

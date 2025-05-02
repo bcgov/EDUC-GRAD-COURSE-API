@@ -1,11 +1,13 @@
 package ca.bc.gov.educ.api.course.model.dto;
 
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
+@ToString
 @EqualsAndHashCode(callSuper=false)
 @Component
 public class GradRuleDetails {
@@ -15,11 +17,5 @@ public class GradRuleDetails {
 	private String programCode;	
 	private String optionalProgramCode;
 	private String traxReqNumber;
-	
-	@Override
-	public String toString() {
-		return "GradRuleDetails [ruleCode=" + ruleCode + ", requirementName=" + requirementName + ", programCode="
-				+ programCode + ", traxReqNumber="+traxReqNumber+"]";
-	}
 	
 }

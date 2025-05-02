@@ -38,6 +38,10 @@ public class Courses implements Serializable {
 
     private LocalDateTime endDate;
 
+    private String completionEndDate;
+
+    private String genericCourseType;
+
     @Valid
     private List<CourseCode> courseCode;
 

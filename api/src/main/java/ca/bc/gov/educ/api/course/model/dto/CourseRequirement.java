@@ -20,20 +20,17 @@ public class CourseRequirement extends BaseModel {
     private String courseName;
     private Date startDate;
     private Date endDate;
+    private String completionEndDate;
 
     public String getCourseCode() {
-        if (courseCode != null)
-            courseCode = courseCode.trim();
-        return courseCode;
+        return courseCode != null ? courseCode.trim() : null;
     }
 
     public String getCourseLevel() {
-        if (courseLevel != null)
-            courseLevel = courseLevel.trim();
-        return courseLevel;
+        return courseLevel != null ? courseLevel.trim() : null;
     }
     
     public String getCourseName() {
-    	return courseName != null ? courseName.trim():null;
+        return courseName != null ? courseName.trim() : null;
     }
 }
