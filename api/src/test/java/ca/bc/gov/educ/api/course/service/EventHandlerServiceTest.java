@@ -98,13 +98,13 @@ public class EventHandlerServiceTest {
                 new TraxStudentCourse(
                         "131411258", "CLE", "CAREER-LIFE EDUCATION", 4, "", "2021/06", "", null, 100.0, "A", 100.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
                         new Course(
-                                "CLE", "", "CAREER-LIFE EDUCATION", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201860", 4
+                                "CLE", "", "CAREER-LIFE EDUCATION", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201860", "2018-06-30", 4
                         )
                 ),
                 new TraxStudentCourse(
                         "131411258", "CLC", "CAREER-LIFE CONNECTIONS", 4, "", "2023/06", "", null, 95.0, "A", 95.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
                         new Course(
-                                "CLC", "", "CAREER-LIFE CONNECTIONS", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201862", 4
+                                "CLC", "", "CAREER-LIFE CONNECTIONS", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201862", "2018-06-30", 4
                         )
                 )
         );

@@ -163,6 +163,7 @@ public class CourseRequirementService {
                         cR.setCourseName(course.getCourseName());
                         cR.setStartDate(course.getStartDate());
                         cR.setEndDate(course.getEndDate());
+                        cR.setCompletionEndDate(course.getCompletionEndDate());
                     }
                 });
             }

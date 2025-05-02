@@ -22,18 +22,14 @@ public class AllCourseRequirements extends BaseModel {
     private String traxReqNumber;
     
     public String getCourseName() {
-    	return courseName != null ? courseName.trim():null;
+        return courseName != null ? courseName.trim() : null;
     }
 
     public String getCourseCode() {
-        if (courseCode != null)
-            courseCode = courseCode.trim();
-        return courseCode;
+        return courseCode != null ? courseCode.trim() : null;
     }
 
     public String getCourseLevel() {
-        if (courseLevel != null)
-            courseLevel = courseLevel.trim();
-        return courseLevel;
+        return courseLevel != null ? courseLevel.trim() : null;
     }
 }
