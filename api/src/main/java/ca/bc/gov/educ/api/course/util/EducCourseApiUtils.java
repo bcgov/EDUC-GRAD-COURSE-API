@@ -12,11 +12,12 @@ import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseAllowableCredits;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseCode;
 import ca.bc.gov.educ.api.course.model.dto.coreg.Courses;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.http.HttpHeaders;
 
+@Slf4j
 public class EducCourseApiUtils {
 
     private EducCourseApiUtils() {
@@ -29,40 +30,6 @@ public class EducCourseApiUtils {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(EducCourseApiConstants.DEFAULT_DATE_FORMAT);
         return simpleDateFormat.format(date);
-    }
-
-    public static String formatDate (Date date, String dateFormat) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-        return simpleDateFormat.format(date);
-    }
-
-    public static Date parseDate (String dateString) {
-        if (dateString == null || "".compareTo(dateString) == 0)
-            return null;
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(EducCourseApiConstants.DEFAULT_DATE_FORMAT);
-        Date date = new Date();
-
-        try {
-            date = simpleDateFormat.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return date;
-    }
-
-    public static Date parseDate (String dateString, String dateFormat) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-        Date date = new Date();
-
-        try {
-            date = simpleDateFormat.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return date;
     }
     
     public static String parseDateFromString (String sessionDate) {
@@ -85,18 +52,11 @@ public class EducCourseApiUtils {
             return localDate.getYear() +"/"+ String.format("%02d", localDate.getMonthValue());
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Unable to parse date: {}", sessionDate);
             return null;
         }
     }
 
-	public static HttpHeaders getHeaders (String accessToken)
-    {
-		HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.setBearerAuth(accessToken);
-        return httpHeaders;
-    }
 
     /**
      *
@@ -105,14 +65,14 @@ public class EducCourseApiUtils {
      * @return externalCode (7 or 8 chars)
      */
     public static String getExternalCodeByCourseCodeAndLevel(String courseCode, String courseLevel) {
-        if (StringUtils.isBlank(courseCode) || StringUtils.isBlank(courseLevel)) {
+        if (StringUtils.isBlank(courseCode)) {
             return "";
         }
         String externalCode = StringUtils.rightPad(courseCode, 5, " ") + courseLevel;
         if (externalCode.length() > 7) {
             return StringUtils.substring(externalCode, 0, 8);
         }
-        return externalCode;
+        return StringUtils.trim(externalCode);
     }
 
     /**
