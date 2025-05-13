@@ -77,6 +77,9 @@ public class EducCourseApiConstants {
     public static final String FINE_ART_APPLIED_SKILLS_CODES_MAPPING = "/fineArtsAppliedSkillsCodes";
     public static final String FINE_ART_APPLIED_SKILLS_CODE_MAPPING = "/fineArtsAppliedSkillsCodes/{fineArtsAppliedSkillsCode}";
 
+    //Examinable Course Mappings
+    public static final String GET_EXAMINABLE_COURSES_BY_SEARCH_PARAMS_MAPPING = "/examinablecoursesearch";
+    public static final String GET_ALL_EXAMINABLE_COURSES = "/examinablecourses";
 
     public static final String GET_COURSE_ALGORITHM_DATA_BY_PEN_MAPPING = "/pen/{pen}";
 
