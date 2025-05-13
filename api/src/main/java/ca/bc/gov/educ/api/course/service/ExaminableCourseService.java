@@ -75,7 +75,7 @@ public class ExaminableCourseService {
         return examinableCourseList;
     }
 
-    @Retry(name = "generalgetcall")
+    /*@Retry(name = "generalgetcall")
     public List<ExaminableCourse> getExaminableCourseSearchList(String courseID, String courseName, String courseCode, String courseLevel, Date  examinableStart, Date examinableEnd, Date optionalStart, Date optionalEnd) {
         CriteriaHelper criteria = new CriteriaHelper();
         getSearchCriteria(COURSE_ID, courseID, COURSE_ID, criteria);
@@ -125,7 +125,7 @@ public class ExaminableCourseService {
         }
         return ecList;
     }
-
+*/
     private void getSearchCriteria(String rootElement, String value, String paramterType, CriteriaHelper criteria) {
         if (StringUtils.isNotBlank(value)) {
             switch (paramterType) {

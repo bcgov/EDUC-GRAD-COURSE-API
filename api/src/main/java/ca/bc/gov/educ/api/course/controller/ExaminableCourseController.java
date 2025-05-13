@@ -47,7 +47,7 @@ public class ExaminableCourseController {
         return ResponseEntity.ok().body(examinableCourseService.getAllExaminableCourses());
     }
 
-    @GetMapping(EducCourseApiConstants.GET_EXAMINABLE_COURSES_BY_SEARCH_PARAMS_MAPPING)
+    /*@GetMapping(EducCourseApiConstants.GET_EXAMINABLE_COURSES_BY_SEARCH_PARAMS_MAPPING)
     @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE_RESTRICTION)
     @Operation(summary = "Search for a Examinable Course", description = "Search for a Examinable Course", tags = { "Examinable Course" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
@@ -63,5 +63,5 @@ public class ExaminableCourseController {
             @RequestParam(value = "optionalEnd", required = false) Date optionalEnd) {
         logger.debug("getCoursesSearch : ");
         return response.GET(examinableCourseService.getExaminableCourseSearchList(courseID, courseName, courseCode, courseLevel, examinableStart,examinableEnd,optionalStart,optionalEnd));
-    }
+    }*/
 }
