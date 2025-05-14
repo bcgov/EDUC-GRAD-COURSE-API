@@ -1,12 +1,8 @@
 package ca.bc.gov.educ.api.course.service;
 
-import static lombok.AccessLevel.PRIVATE;
-
-import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
 import ca.bc.gov.educ.api.course.struct.Event;
 import ca.bc.gov.educ.api.course.util.JsonUtilWithJavaTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +23,7 @@ public class EventHandlerService {
      */
     public static final String PAYLOAD_LOG = "payload is :: {}";
 
-    @Getter(PRIVATE)
-    private final StudentCourseRepository studentCourseRepository;
+
     private final TraxStudentCourseService traxStudentCourseService;
 
     /**
@@ -36,8 +31,7 @@ public class EventHandlerService {
      *
      */
     @Autowired
-    public EventHandlerService(StudentCourseRepository studentCourseRepository, TraxStudentCourseService traxStudentCourseService) {
-        this.studentCourseRepository = studentCourseRepository;
+    public EventHandlerService(TraxStudentCourseService traxStudentCourseService) {
         this.traxStudentCourseService = traxStudentCourseService;
     }
 
