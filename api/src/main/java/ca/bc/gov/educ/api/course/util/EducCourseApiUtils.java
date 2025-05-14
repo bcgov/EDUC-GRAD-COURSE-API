@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseAllowableCredits;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseCode;
 import ca.bc.gov.educ.api.course.model.dto.coreg.Courses;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.BeanUtils;
 
 @Slf4j
 public class EducCourseApiUtils {
@@ -81,15 +83,16 @@ public class EducCourseApiUtils {
      * @return Pair of courseCode(5 chars) & courseLevel(2 or 3 chars)
      */
     public static Pair<String, String> getCourseCodeAndLevelByExternalCode(String externalCode) {
-        if (StringUtils.isBlank(externalCode) ||
-            (externalCode.length() != 7 && externalCode.length() != 8)) {
-            return Pair.of("", "");
+        if(StringUtils.isNotBlank(externalCode)) {
+            if(externalCode.length() > 5) {
+                String courseCode = StringUtils.substring(externalCode, 0, 5);
+                String courseLevel = StringUtils.substring(externalCode, 5);
+                return Pair.of(courseCode.trim(), courseLevel.trim());
+            } else {
+                return Pair.of(externalCode.trim(), "");
+            }
         }
-
-        String courseCode = StringUtils.substring(externalCode, 0, 5);
-        String courseLevel = StringUtils.substring(externalCode, 5);
-
-        return Pair.of(courseCode.trim(), courseLevel.trim());
+        return Pair.of("", "");
     }
 
     public static Course convertCoregCourseIntoGradCourse(Courses source) {
@@ -116,6 +119,14 @@ public class EducCourseApiUtils {
             }
         }
         return course;
+    }
+
+    public static CourseDetail convertCoregCourseIntoGradCourseDetail(Courses source) {
+        CourseDetail courseDetail = new CourseDetail();
+        BeanUtils.copyProperties(convertCoregCourseIntoGradCourse(source), courseDetail);
+        courseDetail.setCourseCategory(source.getCourseCategory());
+        courseDetail.setCourseAllowableCredit(source.getCourseAllowableCredit());
+        return courseDetail;
     }
 
     private static Integer getMaxCreditValue(List<CourseAllowableCredits> courseAllowableCredits) {

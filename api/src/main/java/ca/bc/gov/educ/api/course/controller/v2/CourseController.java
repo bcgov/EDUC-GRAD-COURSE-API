@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.course.controller.v2;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.GradValidation;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController("CourseControllerV2")
@@ -59,6 +62,17 @@ public class CourseController {
     public ResponseEntity<Course> getCourseDetails(@PathVariable String courseCode, @PathVariable String courseLevel) {
         log.debug("#getCourseDetails : courseCode={}, courseLevel={}", courseCode, courseLevel);
         return response.GET(courseService.getCourseInfo(courseCode, courseLevel));
+    }
+
+    @PostMapping(EducCourseApiConstants.GET_COURSE_BY_SEARCH_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE)
+    @Operation(summary = "Get Course by IDs",
+            description = "Get Course by IDs", tags = { "Courses" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND")})
+    public ResponseEntity<List<CourseDetail>> getCourseDetails(@RequestBody List<String> courseIDs) {
+        log.debug("#getCourseDetails search : courseIDs={}", courseIDs);
+        return response.GET(courseService.getCourseDetails(courseIDs));
     }
 
 }
