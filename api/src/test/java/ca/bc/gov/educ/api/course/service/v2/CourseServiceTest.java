@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.model.dto.RestResponsePage;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseAllowableCredits;
 import ca.bc.gov.educ.api.course.model.dto.coreg.CourseCharacteristics;
@@ -201,7 +202,8 @@ public class CourseServiceTest {
         credit2.setCourseID(course.getCourseID());
         credit2.setCreditValue("4");
         coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
-
+        CourseSearchRequest courseSearchRequest= new CourseSearchRequest();
+        courseSearchRequest.setCourseIds(List.of(course.getCourseID()));
         when(this.coregApiWebClient.get()).thenReturn(this.requestHeadersUriMock);
         when(this.requestHeadersUriMock.uri(any(String.class), any(Function.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
@@ -210,7 +212,7 @@ public class CourseServiceTest {
 
         when(responseMock.bodyToMono(any(ParameterizedTypeReference.class)))
                 .thenReturn(Mono.just(new RestResponsePage(List.of(coregCourse))));
-        var result = courseServiceV2.getCourseDetails(List.of(course.getCourseID()));
+        var result = courseServiceV2.getCourseDetails(courseSearchRequest);
         assertThat(result).hasSize(1);
     }
 }

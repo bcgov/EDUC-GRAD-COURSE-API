@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.course.controller.v2;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
+import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.GradValidation;
@@ -70,9 +71,9 @@ public class CourseController {
             description = "Get Course by IDs", tags = { "Courses" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND")})
-    public ResponseEntity<List<CourseDetail>> getCourseDetails(@RequestBody List<String> courseIDs) {
-        log.debug("#getCourseDetails search : courseIDs={}", courseIDs);
-        return response.GET(courseService.getCourseDetails(courseIDs));
+    public ResponseEntity<List<CourseDetail>> getCourseDetails(@RequestBody CourseSearchRequest courseSearchRequest) {
+        log.debug("#getCourseDetails search");
+        return response.GET(courseService.getCourseDetails(courseSearchRequest));
     }
 
 }

@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.course.service.v2;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
+import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.model.dto.RestResponsePage;
 import ca.bc.gov.educ.api.course.model.dto.search.*;
 import ca.bc.gov.educ.api.course.model.dto.coreg.Courses;
@@ -70,18 +71,15 @@ public class CourseService {
         return null;
     }
 
-    public List<CourseDetail> getCourseDetails(List<String> courseIDs) {
+    public List<CourseDetail> getCourseDetails(CourseSearchRequest courseSearchRequest) {
         List<CourseDetail> courses = new ArrayList<>();
         int pageNumber = 0;
         int pageSize = 1000;
-        if(!CollectionUtils.isEmpty(courseIDs)) {
-            List<Search> searches = new LinkedList<>();
-            List<SearchCriteria> criteriaList = new ArrayList<>();
-            criteriaList.add(SearchCriteria.builder().condition(Condition.AND).key("courseID").operation(FilterOperation.IN).value(String.join(",",courseIDs)).valueType(ValueType.STRING).build());
-            searches.add(Search.builder().condition(Condition.AND).searchCriteriaList(criteriaList).build());
+        List<Search> searchCriteria = tranformToSearchriteria(courseSearchRequest);
+        if(!CollectionUtils.isEmpty(searchCriteria)) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                String criteriaJSON = objectMapper.writeValueAsString(searches);
+                String criteriaJSON = objectMapper.writeValueAsString(searchCriteria);
                 String encodedURL = URLEncoder.encode(criteriaJSON, StandardCharsets.UTF_8.toString());
                 RestResponsePage<Courses> response = gradCoregApiClient.get().uri(constants.getCourseDetailSearchUrl(),
                                 uri -> uri
@@ -100,6 +98,16 @@ public class CourseService {
             }
         }
         return Collections.emptyList();
+    }
+
+    private List<Search> tranformToSearchriteria(CourseSearchRequest courseSearchRequest) {
+        List<Search> searches = new LinkedList<>();
+        List<SearchCriteria> criteriaList = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(courseSearchRequest.getCourseIds())) {
+            criteriaList.add(SearchCriteria.builder().condition(Condition.AND).key("courseID").operation(FilterOperation.IN).value(String.join(",", courseSearchRequest.getCourseIds())).valueType(ValueType.STRING).build());
+            searches.add(Search.builder().condition(Condition.AND).searchCriteriaList(criteriaList).build());
+        }
+        return searches;
     }
 
 }

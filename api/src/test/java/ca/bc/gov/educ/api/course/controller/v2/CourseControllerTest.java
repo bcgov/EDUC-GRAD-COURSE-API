@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.course.controller.v2;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
+import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.GradValidation;
 import ca.bc.gov.educ.api.course.util.ResponseHelper;
@@ -77,10 +78,11 @@ public class CourseControllerTest {
         course.setCourseName("Test1 Name");
         course.setStartDate(new Date(System.currentTimeMillis() - 10000L));
         course.setEndDate(new Date(System.currentTimeMillis() + 10000L));
-
-        Mockito.when(courseServiceV2.getCourseDetails(List.of(course.getCourseID()))).thenReturn(List.of(course));
-        courseControllerV2.getCourseDetails(List.of(course.getCourseID()));
-        Mockito.verify(courseServiceV2).getCourseDetails(List.of(course.getCourseID()));
+        CourseSearchRequest courseSearchRequest= new CourseSearchRequest();
+        courseSearchRequest.setCourseIds(List.of(course.getCourseID()));
+        Mockito.when(courseServiceV2.getCourseDetails(courseSearchRequest)).thenReturn(List.of(course));
+        courseControllerV2.getCourseDetails(courseSearchRequest);
+        Mockito.verify(courseServiceV2).getCourseDetails(courseSearchRequest);
 
     }
 
