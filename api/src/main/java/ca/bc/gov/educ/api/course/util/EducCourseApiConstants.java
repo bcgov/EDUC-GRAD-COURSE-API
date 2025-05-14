@@ -48,7 +48,9 @@ public class EducCourseApiConstants {
     public static final String GET_STUDENT_COURSES_BY_STUDENT_ID_MAPPING = "/studentid/{studentID}";
     public static final String STUDENT_COURSE_ID_MAPPING = "{studentCourseID}";
     public static final String GET_COURSE_BY_COURSE_ID_MAPPING ="/{courseID}";
-    
+    public static final String GET_COURSE_BY_SEARCH_MAPPING = "/search";
+
+
     public static final String GET_COURSE_BY_SEARCH_PARAMS_MAPPING = "/coursesearch";
     public static final String GET_COURSE_DETAILS_BY_CODE_MAPPING = "/{courseCode}";
     public static final String GET_COURSE_BY_CODE_MAPPING="/{courseCode}/level/{courseLevel}";
@@ -107,6 +109,9 @@ public class EducCourseApiConstants {
 
     @Value("${endpoint.coreg-api.course-info-by-external-code.url}")
     private String courseDetailByExternalCodeUrl;
+
+    @Value("${endpoint.coreg-api.course-info-search.url}")
+    private String courseDetailSearchUrl;
 
     // Splunk LogHelper Enabled
     @Value("${splunk.log-helper.enabled}")

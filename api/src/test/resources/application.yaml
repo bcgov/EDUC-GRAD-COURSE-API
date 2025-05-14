@@ -77,6 +77,8 @@ endpoint:
       url: https://educ-coreg-api-e51986-dev.apps.silver.devops.gov.bc.ca/api/v1/course/information/%s
     course-info-by-external-code:
       url: https://educ-coreg-api-e51986-dev.apps.silver.devops.gov.bc.ca/api/v1/course/information/external/%s
+    course-info-search:
+      url: https://educ-coreg-api-e51986-dev.apps.silver.devops.gov.bc.ca/api/v1/course/information/paginated
 
 #Splunk LogHelper
 splunk:
