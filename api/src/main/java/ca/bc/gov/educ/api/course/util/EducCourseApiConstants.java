@@ -35,6 +35,9 @@ public class EducCourseApiConstants {
     public static final String STUDENT_EXAM_URL_MAPPING = GRAD_COURSE_API_ROOT_MAPPING + "/studentexam";
     public static final String COURSE_ALGORITHM_URL_MAPPING = GRAD_COURSE_API_ROOT_MAPPING + "/course-algorithm";
 
+    //Examinable Courses
+    public static final String GET_ALL_EXAMINABLE_COURSES = "/examinablecourses";
+
     // Service Method Mappings
     public static final String GET_STUDENT_COURSE_BY_PEN_MAPPING = "/pen/{pen}";
     public static final String GET_STUDENT_EXAM_BY_PEN_MAPPING = "/pen/{pen}";
