@@ -96,7 +96,6 @@ public class CourseService {
                 }
                 return courses;
             } catch (Exception e) {
-                e.printStackTrace();
                 log.error(e.getMessage());
             }
         }
