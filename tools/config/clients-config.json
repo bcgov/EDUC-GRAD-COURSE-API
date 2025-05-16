@@ -1,0 +1,35 @@
+[
+  {
+    "clientId": "grad-course-api-client",
+    "scopes": ["READ_EQUIVALENT_OR_CHALLENGE_CODE",
+      "READ_EXAM_SPECIAL_CASE_CODE",
+      "READ_FINE_ART_APPLIED_SKILLS_CODE",
+      "READ_GRAD_COURSE_DATA",
+      "READ_GRAD_COURSE_REQUIREMENT_DATA",
+      "READ_GRAD_COURSE_RESTRICTION_DATA",
+      "READ_GRAD_STUDENT_COURSE_DATA",
+      "READ_GRAD_STUDENT_EXAM_DATA",
+      "UPDATE_GRAD_COURSE_RESTRICTION_DATA",
+      "READ_GRAD_PROGRAM_RULES_DATA"],
+    "settings": {
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  },
+  {
+    "clientId": "grad-coreg-api-client",
+    "scopes": ["COREG_READ_COURSE"],
+    "settings": {
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  }
+]
