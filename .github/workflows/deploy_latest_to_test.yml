@@ -12,6 +12,7 @@ env:
   COREG_NAMESPACE: ${{ vars.COREG_NAMESPACE }}
   KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
   KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+  TARGET_ENV: test
 
   SPRING_BOOT_IMAGE_NAME: educ-grad-course-api
 

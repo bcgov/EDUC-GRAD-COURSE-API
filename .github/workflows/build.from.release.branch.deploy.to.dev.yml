@@ -13,6 +13,7 @@ env:
   COREG_NAMESPACE: ${{ vars.COREG_NAMESPACE }}
   KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
   KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+  TARGET_ENV: dev
 
   # 🖊️ EDIT to change the image registry settings.
   # Registries such as GHCR, Quay.io, and Docker Hub are supported.
