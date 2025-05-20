@@ -3,8 +3,7 @@ package ca.bc.gov.educ.api.course.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -17,19 +16,34 @@ public class ExaminableCourseEntity extends BaseEntity {
 	@Column(name = "EXAMINABLE_COURSE_ID", nullable = false)
     private UUID examinableCourseID;
 
-    @Column(name = "COURSE_ID", nullable = false)
+    @Column(name = "COURSE_CODE", nullable = true)
+    private String courseCode;
+
+    @Column(name = "COURSE_LEVEL", nullable = true)
+    private String courseLevel;
+
+    @Column(name = "COURSE_TITLE", nullable = true)
+    private String courseTitle;
+
+    @Column(name = "COURSE_ID", nullable = true)
     private String courseID;
 
+    @Column(name = "SCHOOL_WEIGHT_PERCENT", nullable = true)
+    private Double schoolWeightPercent;
+
+    @Column(name = "EXAM_WEIGHT_PERCENT", nullable = true)
+    private Double examWeightPercent;
+
     @Column(name = "EXAMINABLE_START", nullable = true)
-    private Date examinableStart;
+    private LocalDate examinableStart;
 
     @Column(name = "EXAMINABLE_END", nullable = true)
-    private Date examinableEnd;
+    private LocalDate examinableEnd;
 
     @Column(name = "OPTIONAL_START", nullable = true)
-    private Date optionalStart;
+    private LocalDate optionalStart;
 
     @Column(name = "OPTIONAL_END", nullable = true)
-    private Date optionalEnd;
+    private LocalDate optionalEnd;
 
 }

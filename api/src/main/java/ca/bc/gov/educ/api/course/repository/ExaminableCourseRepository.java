@@ -15,5 +15,5 @@ import java.util.UUID;
 
 @Repository
 public interface ExaminableCourseRepository extends JpaRepository<ExaminableCourseEntity, UUID> {
-    List<ExaminableCourseEntity> findAll();
+
 }
