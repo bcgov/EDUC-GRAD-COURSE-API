@@ -1,0 +1,21 @@
+meta {
+  name: Search for Examinable Course
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/course/examinablecoursesearch
+  body: none
+  auth: none
+}
+
+params:query {
+  ~courseCode:
+  ~courseLevel:
+  ~courseName:
+  ~examinableStart:
+  ~examinableEnd:
+  ~optionalStart:
+  ~optionalEnd:
+}
