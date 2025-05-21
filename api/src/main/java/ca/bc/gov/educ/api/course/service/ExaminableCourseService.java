@@ -31,12 +31,12 @@ public class ExaminableCourseService {
     public List<ExaminableCourse> getAllExaminableCourses() {
         try {
             List<ExaminableCourse> examinableCourseList  = examinableCourseTransformer.transformToDTO (examinableCourseRepo.findAll());
-            if (examinableCourseList.isEmpty()) {
+            if (examinableCourseList == null || examinableCourseList.isEmpty()) {
                 log.info("No examinable courses found");
                 return Collections.emptyList();
             }
-            return sort(Optional.ofNullable(examinableCourseList).orElseGet(ArrayList::new));
-            } catch (ServiceException e) {
+            return sort(examinableCourseList);
+            } catch (Exception e) {
             log.error("Cannot fetch examinable courses: {}", e.getMessage());
             throw new ServiceException("Error while fetching examinable courses", e);
         }
