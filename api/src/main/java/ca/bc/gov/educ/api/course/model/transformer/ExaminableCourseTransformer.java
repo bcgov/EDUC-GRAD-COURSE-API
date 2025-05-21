@@ -25,18 +25,6 @@ public class ExaminableCourseTransformer {
 
         for (ExaminableCourseEntity ec : examinableCoursesEntities) {
             ExaminableCourse examinableCourse = modelMapper.map(ec, ExaminableCourse.class);
-            examinableCourse.setExaminableStart(
-                    EducCourseApiUtils.parseDateFromString(
-                            ec.getExaminableStart() != null ? ec.getExaminableStart().toString() : null));
-            examinableCourse.setExaminableEnd(
-                    EducCourseApiUtils.parseDateFromString(
-                            ec.getExaminableEnd() != null ? ec.getExaminableEnd().toString() : null));
-            examinableCourse.setOptionalStart(
-                    EducCourseApiUtils.parseDateFromString(
-                            ec.getOptionalStart() != null ? ec.getOptionalStart().toString() : null));
-            examinableCourse.setOptionalEnd(
-                    EducCourseApiUtils.parseDateFromString(
-                            ec.getOptionalEnd() != null ? ec.getOptionalEnd().toString() : null));
             examinableCourseList.add(examinableCourse);
         }
 

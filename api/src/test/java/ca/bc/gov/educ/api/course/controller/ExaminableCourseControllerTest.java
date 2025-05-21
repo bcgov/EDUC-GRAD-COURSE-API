@@ -32,7 +32,6 @@ public class ExaminableCourseControllerTest {
 		List<ExaminableCourse> ecList = new ArrayList<>();
 		ExaminableCourse obj = new ExaminableCourse();
 		obj.setExaminableCourseID(UUID.randomUUID());
-		obj.setCourseID("1234567");
 		obj.setCourseCode("GRADUATION");
 		obj.setCourseLevel("12");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));

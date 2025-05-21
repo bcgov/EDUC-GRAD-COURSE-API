@@ -52,15 +52,23 @@ public class ExaminableCourseServiceTest {
 	public void testGetAllExaminableCourses() {
 		ExaminableCourseEntity ecEntity = new ExaminableCourseEntity();
 		ecEntity.setExaminableCourseID(UUID.randomUUID());
-		ecEntity.setCourseID("1234567");
-		ecEntity.setExaminableStart(new Date(System.currentTimeMillis()).toLocalDate());
-		ecEntity.setOptionalStart(new Date(System.currentTimeMillis()).toLocalDate());
+		ecEntity.setCourseCode("MAT");
+		ecEntity.setCourseLevel("12");
+		ecEntity.setCourseTitle("Mathematics 12");
+		ecEntity.setSchoolWeightPercent(81.0);
+		ecEntity.setExamWeightPercent(35.5);
+		ecEntity.setExaminableStart("2023-01");
+		ecEntity.setOptionalStart("2024-08");
 
 		ExaminableCourse ec = new ExaminableCourse();
-		ec.setCourseID("1234567");
 		ec.setExaminableCourseID(ecEntity.getExaminableCourseID());
-		ec.setExaminableStart(String.valueOf(ecEntity.getExaminableStart()));
-		ec.setOptionalStart(String.valueOf(ecEntity.getOptionalStart()));
+		ec.setCourseCode(ecEntity.getCourseCode());
+		ec.setCourseLevel(ecEntity.getCourseLevel());
+		ec.setCourseTitle(ecEntity.getCourseTitle());
+		ec.setSchoolWeightPercent(ecEntity.getSchoolWeightPercent());
+		ec.setExamWeightPercent(ecEntity.getExamWeightPercent());
+		ec.setExaminableStart(ecEntity.getExaminableStart());
+		ec.setOptionalStart(ecEntity.getOptionalStart());
 
 		when(examinableCourseTransformer.transformToDTO(Arrays.asList(ecEntity)))
 				.thenReturn(Arrays.asList(ec));
@@ -68,7 +76,7 @@ public class ExaminableCourseServiceTest {
 		var result = examinableCourseService.getAllExaminableCourses();
 		assertThat(result).isNotNull().hasSize(1);
 		ExaminableCourse ecDetails = result.get(0);
-		assertThat(ecDetails.getCourseID()).isEqualTo(ecEntity.getCourseID());
 		assertThat(ecDetails.getExaminableCourseID()).isEqualTo(ecEntity.getExaminableCourseID());
+		assertThat(ecDetails.getCourseTitle()).isEqualTo(ecEntity.getCourseTitle());
 	}
 }

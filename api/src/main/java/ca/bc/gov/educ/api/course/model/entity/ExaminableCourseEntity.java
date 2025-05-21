@@ -25,9 +25,6 @@ public class ExaminableCourseEntity extends BaseEntity {
     @Column(name = "COURSE_TITLE", nullable = true)
     private String courseTitle;
 
-    @Column(name = "COURSE_ID", nullable = true)
-    private String courseID;
-
     @Column(name = "SCHOOL_WEIGHT_PERCENT", nullable = true)
     private Double schoolWeightPercent;
 
@@ -35,15 +32,15 @@ public class ExaminableCourseEntity extends BaseEntity {
     private Double examWeightPercent;
 
     @Column(name = "EXAMINABLE_START", nullable = true)
-    private LocalDate examinableStart;
+    private String examinableStart;
 
     @Column(name = "EXAMINABLE_END", nullable = true)
-    private LocalDate examinableEnd;
+    private String examinableEnd;
 
     @Column(name = "OPTIONAL_START", nullable = true)
-    private LocalDate optionalStart;
+    private String optionalStart;
 
     @Column(name = "OPTIONAL_END", nullable = true)
-    private LocalDate optionalEnd;
+    private String optionalEnd;
 
 }

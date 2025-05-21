@@ -19,9 +19,14 @@ public class ExaminableCourseService {
 
     @Autowired
     private ExaminableCourseTransformer examinableCourseTransformer;
-    @Autowired
-    private ExaminableCourse examinableCourse;
 
+
+    /**
+     * This method fetches all examinable courses from the database and transforms them into DTOs.
+     * It also sorts the list of examinable courses by course code and level.
+     *
+     * @return List of ExaminableCourseDTO
+     */
     @Retry(name = "generalgetcall")
     public List<ExaminableCourse> getAllExaminableCourses() {
         try {

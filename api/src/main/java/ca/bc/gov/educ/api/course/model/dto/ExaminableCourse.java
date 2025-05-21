@@ -16,7 +16,6 @@ public class ExaminableCourse extends BaseModel {
 	private String courseCode;
     private String courseLevel;
 	private String courseTitle;
-	private String courseID;
 	private Double schoolWeightPercent;
 	private Double examWeightPercent;
 	private String examinableStart;
