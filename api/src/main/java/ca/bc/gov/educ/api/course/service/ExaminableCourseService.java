@@ -14,11 +14,13 @@ import java.util.*;
 @Slf4j
 public class ExaminableCourseService {
 
-    @Autowired
-    private ExaminableCourseRepository examinableCourseRepo;
+    private final ExaminableCourseRepository examinableCourseRepo;
+    private final ExaminableCourseTransformer examinableCourseTransformer;
 
-    @Autowired
-    private ExaminableCourseTransformer examinableCourseTransformer;
+    public ExaminableCourseService(ExaminableCourseRepository examinableCourseRepo, ExaminableCourseTransformer examinableCourseTransformer) {
+        this.examinableCourseRepo = examinableCourseRepo;
+        this.examinableCourseTransformer = examinableCourseTransformer;
+    }
 
 
     /**

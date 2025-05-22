@@ -24,8 +24,11 @@ import java.util.List;
         security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_COURSE_DATA"})})
 public class ExaminableCourseController {
 
-    @Autowired
-    ExaminableCourseService examinableCourseService;
+    private final ExaminableCourseService examinableCourseService;
+
+    public ExaminableCourseController(ExaminableCourseService examinableCourseService) {
+        this.examinableCourseService = examinableCourseService;
+    }
 
     @GetMapping(EducCourseApiConstants.GET_ALL_EXAMINABLE_COURSES)
     @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE)
