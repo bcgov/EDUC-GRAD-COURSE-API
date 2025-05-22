@@ -1,10 +1,10 @@
 package ca.bc.gov.educ.api.course.service;
 
+import ca.bc.gov.educ.api.course.exception.ServiceException;
 import ca.bc.gov.educ.api.course.model.dto.ExaminableCourse;
 import ca.bc.gov.educ.api.course.model.entity.ExaminableCourseEntity;
 import ca.bc.gov.educ.api.course.model.transformer.ExaminableCourseTransformer;
 import ca.bc.gov.educ.api.course.repository.ExaminableCourseRepository;
-import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -78,5 +80,24 @@ public class ExaminableCourseServiceTest {
 		ExaminableCourse ecDetails = result.get(0);
 		assertThat(ecDetails.getExaminableCourseID()).isEqualTo(ecEntity.getExaminableCourseID());
 		assertThat(ecDetails.getCourseTitle()).isEqualTo(ecEntity.getCourseTitle());
+	}
+
+	@Test
+	public void testGetAllExaminableCourses_TransformerReturnsNullOREmpty() {
+		when(examinableCourseRepository.findAll()).thenReturn(Arrays.asList(new ExaminableCourseEntity()));
+		var result = examinableCourseService.getAllExaminableCourses();
+		when(examinableCourseTransformer.transformToDTO(anyList())).thenReturn(null);
+		assertThat(result).isNotNull().isEmpty();
+
+		when(examinableCourseTransformer.transformToDTO(anyList())).thenReturn(Collections.emptyList());
+		assertThat(result).isNotNull().isEmpty();
+	}
+
+	@Test
+	public void shouldThrowServiceExceptionWhenRepositoryFails() {
+		when(examinableCourseRepository.findAll()).thenThrow(new RuntimeException());
+
+		assertThatThrownBy(examinableCourseService::getAllExaminableCourses)
+				.isInstanceOf(ServiceException.class);
 	}
 }
