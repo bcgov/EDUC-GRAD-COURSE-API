@@ -99,7 +99,7 @@ public class EducCourseApiUtils {
         Course course = new Course();
         course.setCourseID(source.getCourseID());
         course.setCourseName(source.getCourseTitle());
-        course.setGenericCourseType("N/A"); // Setting generic course type later
+        course.setGenericCourseType(source.getGenericCourseType());
         course.setLanguage(source.getCourseCharacteristics().getDescription());
         course.setStartDate(DateUtils.toSqlDate(source.getStartDate()));
         course.setEndDate(DateUtils.toSqlDate(source.getEndDate()));
