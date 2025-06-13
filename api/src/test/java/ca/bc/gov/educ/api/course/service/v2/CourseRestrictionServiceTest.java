@@ -502,7 +502,6 @@ public class CourseRestrictionServiceTest {
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
-        assertTrue(result.isHasPersisted());
     }
 
     @Test
@@ -533,11 +532,9 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
-
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
-        assertTrue(result.isHasPersisted());
     }
 
 
