@@ -20,7 +20,7 @@ public interface CourseRestrictionMapper {
 
     @Mapping(source = "restrictionStartDate",  target = "restrictionStartDate", qualifiedByName = "localDateTimeToString")
     @Mapping(source = "restrictionEndDate",  target = "restrictionEndDate", qualifiedByName = "localDateTimeToString")
-    CourseRestrictionsEntity toEntity(CourseRestriction courseRestriction);
+    CourseRestrictionsEntity toEntity(ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction courseRestriction);
 
     @Named("localDateTimeToString")
     default LocalDateTime localDateTimeFromString(String dateTime) {
