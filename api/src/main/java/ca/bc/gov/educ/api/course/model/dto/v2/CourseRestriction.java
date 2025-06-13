@@ -4,9 +4,7 @@ import ca.bc.gov.educ.api.course.model.dto.BaseModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
@@ -40,4 +38,20 @@ public class CourseRestriction extends BaseModel {
 			message = "Restriction End Date must be in the format yyyy-MM or empty"
 	)
 	String restrictionEndDate;
+
+	public String getRestrictionStartDate() {
+		return restrictionStartDate;
+	}
+
+	public void setRestrictionStartDate(String restrictionStartDate) {
+		this.restrictionStartDate = restrictionStartDate;
+	}
+
+	public String getRestrictionEndDate() {
+		return restrictionEndDate;
+	}
+
+	public void setRestrictionEndDate(String restrictionEndDate) {
+		this.restrictionEndDate = restrictionEndDate;
+	}
 }
