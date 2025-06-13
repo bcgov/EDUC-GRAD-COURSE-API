@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.course.service.v2;
 import ca.bc.gov.educ.api.course.constants.CourseRestrictionValidationIssueTypeCode;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseRestrictionValidationIssue;
+import ca.bc.gov.educ.api.course.model.dto.mapper.CourseRestrictionMapper;
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRestrictionRepository;
@@ -75,6 +76,9 @@ public class CourseRestrictionServiceTest {
     @Mock WebClient.ResponseSpec responseMock;
     @Mock WebClient.RequestBodyUriSpec requestBodyUriMock;
 
+    @MockBean
+    public CourseRestrictionMapper courseRestrictionMapper;
+
     @Test
     public void testGetCourseRestrictionByRestrictionId_Exist() {
         UUID restrictionId = UUID.randomUUID();
@@ -93,6 +97,7 @@ public class CourseRestrictionServiceTest {
         courseRestrictionEntity.setCourseRestrictionId(restrictionId);
 
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionEntity));
+        when(courseRestrictionMapper.toStructure(courseRestrictionEntity)).thenReturn(courseRestriction);
         var result = courseRestrictionServiceV2.getCourseRestrictionById(restrictionId);
         assertThat(result).isNotNull();
     }
@@ -115,6 +120,7 @@ public class CourseRestrictionServiceTest {
         courseRestrictionEntity.setCourseRestrictionId(restrictionId);
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel("MAIN", "01", "RESTRICTED", "01")).thenReturn(Optional.of(courseRestrictionEntity));
+        when(courseRestrictionMapper.toStructure(courseRestrictionEntity)).thenReturn(courseRestriction);
         var result = courseRestrictionServiceV2.getCourseRestriction("MAIN", "01", "RESTRICTED", "01");
         assertThat(result).isNotNull();
     }
@@ -209,7 +215,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
-
+        when(courseRestrictionMapper.toStructure(courseRestrictionsEntity)).thenReturn(courseRestriction);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).hasSize(1);
@@ -269,7 +275,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
-
+        when(courseRestrictionMapper.toStructure(courseRestrictionsEntity)).thenReturn(courseRestriction);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).hasSize(1);
@@ -331,7 +337,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
-
+        when(courseRestrictionMapper.toStructure(courseRestrictionsEntity)).thenReturn(courseRestriction);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).hasSize(1);
@@ -366,7 +372,7 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(mainCourseCode, mainCourseLevel, restrictedCourseCode, restrictedCourseLevel)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
-
+        when(courseRestrictionMapper.toStructure(courseRestrictionsEntity)).thenReturn(courseRestriction);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).hasSize(1);
@@ -488,6 +494,8 @@ public class CourseRestrictionServiceTest {
         courseRestrictionsEntity.setRestrictedCourse(restrictedCourseCode);
         courseRestrictionsEntity.setRestrictedCourseLevel(restrictedCourseLevel);
         courseRestrictionsEntity.setRestrictionStartDate(LocalDate.now().atStartOfDay());
+        courseRestrictionsEntity.setCreateDate(new java.util.Date());
+        courseRestrictionsEntity.setUpdateDate(new java.util.Date());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setMainCourse(mainCourseCode);
@@ -499,9 +507,11 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(mainCourseCode, mainCourseLevel, restrictedCourseCode, restrictedCourseLevel)).thenReturn(Optional.empty());
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
+        when(courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction))).thenReturn(courseRestrictionsEntity);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
+        assertTrue(result.isHasPersisted());
     }
 
     @Test
@@ -521,6 +531,8 @@ public class CourseRestrictionServiceTest {
         courseRestrictionsEntity.setRestrictedCourse(restrictedCourseCode);
         courseRestrictionsEntity.setRestrictedCourseLevel(restrictedCourseLevel);
         courseRestrictionsEntity.setRestrictionStartDate(LocalDate.now().atStartOfDay());
+        courseRestrictionsEntity.setCreateDate(new java.util.Date());
+        courseRestrictionsEntity.setUpdateDate(new java.util.Date());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setMainCourse(mainCourseCode);
@@ -532,9 +544,12 @@ public class CourseRestrictionServiceTest {
         when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
+        when(courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction))).thenReturn(courseRestrictionsEntity);
+        when(courseRestrictionMapper.toStructure(courseRestrictionsEntity)).thenReturn(courseRestriction);
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
+        assertTrue(result.isHasPersisted());
     }
 
 
