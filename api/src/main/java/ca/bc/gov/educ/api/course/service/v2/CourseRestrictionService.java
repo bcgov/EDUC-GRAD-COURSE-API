@@ -72,7 +72,7 @@ public class CourseRestrictionService {
                 courseRestriction.setCourseRestrictionId(existingCourseRestriction.getCourseRestrictionId());
                 courseRestriction.setCreateDate(existingCourseRestriction.getCreateDate());
                 courseRestriction.setCreateUser(existingCourseRestriction.getCreateUser());
-                courseRestrictionRepository.save(courseRestrictionMapper.toEntity(courseRestriction));
+                courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
                 courseRestrictionValidationIssue.setHasPersisted(true);
             }
             return courseRestrictionValidationIssue;
@@ -97,7 +97,7 @@ public class CourseRestrictionService {
             if (hasError) {
                 courseRestrictionValidationIssue.setHasPersisted(false);
             } else {
-                courseRestrictionRepository.save(courseRestrictionMapper.toEntity(courseRestriction));
+                courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
                 courseRestrictionValidationIssue.setHasPersisted(true);
             }
             return courseRestrictionValidationIssue;
