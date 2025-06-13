@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,8 +73,7 @@ public class CourseRestrictionService {
                 courseRestriction.setCourseRestrictionId(existingCourseRestriction.getCourseRestrictionId());
                 courseRestriction.setCreateDate(existingCourseRestriction.getCreateDate());
                 courseRestriction.setCreateUser(existingCourseRestriction.getCreateUser());
-                courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
-                courseRestrictionValidationIssue.setHasPersisted(true);
+                persistCourseRestriction(courseRestriction, courseRestrictionValidationIssue);
             }
             return courseRestrictionValidationIssue;
         } catch (Exception e) {
@@ -97,8 +97,7 @@ public class CourseRestrictionService {
             if (hasError) {
                 courseRestrictionValidationIssue.setHasPersisted(false);
             } else {
-                courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
-                courseRestrictionValidationIssue.setHasPersisted(true);
+                persistCourseRestriction(courseRestriction, courseRestrictionValidationIssue);
             }
             return courseRestrictionValidationIssue;
         } catch (Exception e) {
@@ -106,10 +105,17 @@ public class CourseRestrictionService {
         }
     }
 
+    private void persistCourseRestriction(CourseRestriction courseRestriction, CourseRestrictionValidationIssue courseRestrictionValidationIssue) {
+        CourseRestrictionsEntity savedRestriction = courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
+        BeanUtils.copyProperties(savedRestriction, courseRestrictionValidationIssue);
+        courseRestrictionValidationIssue.setCreateDate(new Date(savedRestriction.getCreateDate().getTime()));
+        courseRestrictionValidationIssue.setUpdateDate(new Date(savedRestriction.getUpdateDate().getTime()));
+        courseRestrictionValidationIssue.setHasPersisted(true);
+    }
+
     private CourseRestrictionRuleData prepareCourseRestrictionRuleData(CourseRestriction courseRestriction, boolean isUpdate) {
         Course mainCourse = courseService.getCourseInfo(courseRestriction.getMainCourse(), courseRestriction.getMainCourseLevel());
         Course restrictedCourse = courseService.getCourseInfo(courseRestriction.getRestrictedCourse(), courseRestriction.getRestrictedCourseLevel());
-
         CourseRestrictionRuleData courseRestrictionRuleData= new CourseRestrictionRuleData();
         courseRestrictionRuleData.setCourseRestriction(courseRestriction);
         courseRestrictionRuleData.setMainCourse(mainCourse);

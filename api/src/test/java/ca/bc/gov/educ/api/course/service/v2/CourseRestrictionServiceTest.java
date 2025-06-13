@@ -403,6 +403,76 @@ public class CourseRestrictionServiceTest {
     }
 
     @Test
+    public void testCreateCourseRestriction_CourseEqualsError() {
+
+        String mainCourseCode = "MAIN";
+        String mainCourseLevel = "01";
+        String mainCourseId = "1111";
+        String restrictedCourseCode = "MAIN";
+        String restrictedCourseLevel = "01";
+        String restrictedCourseId = "2222";
+
+        CourseRestrictionsEntity courseRestrictionsEntity = new CourseRestrictionsEntity();
+        courseRestrictionsEntity.setMainCourse(mainCourseCode);
+        courseRestrictionsEntity.setMainCourseLevel(mainCourseLevel);
+        courseRestrictionsEntity.setRestrictedCourse(restrictedCourseCode);
+        courseRestrictionsEntity.setRestrictedCourseLevel(restrictedCourseLevel);
+        courseRestrictionsEntity.setRestrictionStartDate(LocalDate.now().atStartOfDay());
+
+        CourseRestriction courseRestriction = new CourseRestriction();
+        courseRestriction.setMainCourse(mainCourseCode);
+        courseRestriction.setMainCourseLevel(mainCourseLevel);
+        courseRestriction.setRestrictedCourse(restrictedCourseCode);
+        courseRestriction.setRestrictedCourseLevel(restrictedCourseLevel);
+        courseRestriction.setRestrictionStartDate(LocalDate.now().getYear()+"-"+"01");
+
+        when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(mainCourseCode, mainCourseLevel, restrictedCourseCode, restrictedCourseLevel)).thenReturn(Optional.empty());
+        when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
+        when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
+        CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
+        assertNotNull(result);
+        assertThat(result.getValidationIssues()).hasSize(1);
+        assertTrue(result.getValidationIssues().stream().filter(x -> x.getValidationIssueMessage().equals(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_EQUALS_RESTRICTED_COURSE.getMessage()) && x.getValidationFieldName().equals(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_EQUALS_RESTRICTED_COURSE.getCode())).findFirst().isPresent());
+
+    }
+
+    @Test
+    public void testUpdateCourseRestriction_CourseEqualsError() {
+        UUID restrictionId = UUID.randomUUID();
+
+        String mainCourseCode = "MAIN";
+        String mainCourseLevel = "01";
+        String mainCourseId = "1111";
+        String restrictedCourseCode = "MAIN";
+        String restrictedCourseLevel = "01";
+        String restrictedCourseId = "2222";
+
+        CourseRestrictionsEntity courseRestrictionsEntity = new CourseRestrictionsEntity();
+        courseRestrictionsEntity.setMainCourse(mainCourseCode);
+        courseRestrictionsEntity.setMainCourseLevel(mainCourseLevel);
+        courseRestrictionsEntity.setRestrictedCourse(restrictedCourseCode);
+        courseRestrictionsEntity.setRestrictedCourseLevel(restrictedCourseLevel);
+        courseRestrictionsEntity.setRestrictionStartDate(LocalDate.now().atStartOfDay());
+
+        CourseRestriction courseRestriction = new CourseRestriction();
+        courseRestriction.setMainCourse(mainCourseCode);
+        courseRestriction.setMainCourseLevel(mainCourseLevel);
+        courseRestriction.setRestrictedCourse(restrictedCourseCode);
+        courseRestriction.setRestrictedCourseLevel(restrictedCourseLevel);
+        courseRestriction.setRestrictionStartDate(LocalDate.now().getYear()+"-"+"01");
+
+        when(courseRestrictionRepository.findById(restrictionId)).thenReturn(Optional.of(courseRestrictionsEntity));
+        when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
+        when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
+
+        CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
+        assertNotNull(result);
+        assertThat(result.getValidationIssues()).hasSize(1);
+        assertTrue(result.getValidationIssues().stream().filter(x -> x.getValidationIssueMessage().equals(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_EQUALS_RESTRICTED_COURSE.getMessage()) && x.getValidationFieldName().equals(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_EQUALS_RESTRICTED_COURSE.getCode())).findFirst().isPresent());
+
+    }
+
+    @Test
     public void testCreateCourseRestriction_NoError() {
 
         String mainCourseCode = "MAIN";
@@ -431,7 +501,7 @@ public class CourseRestrictionServiceTest {
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
         assertNotNull(result);
-        assertThat(result.getValidationIssues()).hasSize(0);
+        assertThat(result.getValidationIssues()).isEmpty();
         assertTrue(result.isHasPersisted());
     }
 
@@ -466,7 +536,7 @@ public class CourseRestrictionServiceTest {
 
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
-        assertThat(result.getValidationIssues()).hasSize(0);
+        assertThat(result.getValidationIssues()).isEmpty();
         assertTrue(result.isHasPersisted());
     }
 

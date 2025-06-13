@@ -29,7 +29,7 @@
         <resilience4j.version>1.7.1</resilience4j.version>
         <springdoc.version>1.6.9</springdoc.version>
         <log4j.version>2.18.0</log4j.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <springdoc.version>1.6.9</springdoc.version>
         <nats.version>2.11.0</nats.version>
         <guava.version>33.2.1-jre</guava.version>

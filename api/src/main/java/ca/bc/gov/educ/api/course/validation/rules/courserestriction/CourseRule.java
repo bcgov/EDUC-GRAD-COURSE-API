@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.course.validation.rules.courserestriction;
 
 
 import ca.bc.gov.educ.api.course.constants.CourseRestrictionValidationIssueTypeCode;
+import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.dto.CourseRestrictionRuleData;
 import ca.bc.gov.educ.api.course.model.dto.ValidationIssue;
@@ -33,11 +34,18 @@ public class CourseRule implements CourseRestrictionValidationBaseRule {
         CourseRestriction courseRestriction = courseRestrictionRuleData.getCourseRestriction();
         log.debug("Executing CourseRule :: {}", courseRestriction);
         final List<ValidationIssue> validationIssues = new ArrayList<>();
-        if (courseRestrictionRuleData.getMainCourse() == null) {
+         Course mainCourse = courseRestrictionRuleData.getMainCourse();
+        Course restrictedCourse = courseRestrictionRuleData.getRestrictedCourse();
+        if (mainCourse == null) {
             validationIssues.add(createValidationIssue(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_INVALID));
         }
-        if (courseRestrictionRuleData.getRestrictedCourse() == null) {
+        if (restrictedCourse == null) {
             validationIssues.add(createValidationIssue(CourseRestrictionValidationIssueTypeCode.RESTRICTED_COURSE_INVALID));
+        }
+        if(!validationIssues.isEmpty())
+            return validationIssues;
+        if(mainCourse != null && restrictedCourse != null && mainCourse.getCourseCode().equals(restrictedCourse.getCourseCode()) && mainCourse.getCourseLevel().equals(restrictedCourse.getCourseLevel())) {
+            validationIssues.add(createValidationIssue(CourseRestrictionValidationIssueTypeCode.MAIN_COURSE_EQUALS_RESTRICTED_COURSE));
         }
         return validationIssues;
     }
