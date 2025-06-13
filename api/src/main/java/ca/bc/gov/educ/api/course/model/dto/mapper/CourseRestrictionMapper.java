@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Mapper(uses = {UUIDMapper.class, LocalDateTimeMapper.class, StringMapper.class}, componentModel = "spring")
+@Mapper(uses = {UUIDMapper.class, StringMapper.class}, componentModel = "spring")
 public interface CourseRestrictionMapper {
 
     CourseRestrictionMapper mapper = Mappers.getMapper(CourseRestrictionMapper.class);
