@@ -91,7 +91,7 @@ public class CourseController {
 
     @PostMapping (EducCourseApiConstants.SAVE_COURSE_RESTRICTION)
     @PreAuthorize(PermissionsConstants.UPDATE_GRAD_COURSE_RESTRICTION)
-    @Operation(summary = "Save Course Restriction", description = "Save Course Restriction", tags = { "Course Restrictions" })
+    @Operation(summary = "Save Course Restriction - v2", description = "Save Course Restriction", tags = { "Course Restrictions" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<CourseRestrictionValidationIssue> saveCourseRestriction(@Validated @RequestBody CourseRestriction courseRestriction) {
         logger.debug("Save Course Restriction");
@@ -100,7 +100,7 @@ public class CourseController {
 
     @PutMapping (EducCourseApiConstants.UPDATE_COURSE_RESTRICTION)
     @PreAuthorize(PermissionsConstants.UPDATE_GRAD_COURSE_RESTRICTION)
-    @Operation(summary = "Update Course Restriction", description = "Update Course Restriction", tags = { "Course Restrictions" })
+    @Operation(summary = "Update Course Restriction - v2", description = "Update Course Restriction", tags = { "Course Restrictions" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<CourseRestrictionValidationIssue> updateCourseRestriction(@PathVariable UUID courseRestrictionId, @RequestBody @Valid CourseRestriction courseRestriction) {
         logger.debug("Update Course Restriction");

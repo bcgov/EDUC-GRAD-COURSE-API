@@ -1,0 +1,26 @@
+meta {
+  name: Update Course Restriction - v2
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/api/v2/course/save-course-restriction/:courseRestrictionId
+  body: json
+  auth: none
+}
+
+params:path {
+  courseRestrictionId: 
+}
+
+body:json {
+  {
+    "mainCourse": "",
+    "mainCourseLevel": "",
+    "restrictedCourse": "",
+    "restrictedCourseLevel": "",
+    "restrictionStartDate": "",
+    "restrictionEndDate": ""
+  }
+}
