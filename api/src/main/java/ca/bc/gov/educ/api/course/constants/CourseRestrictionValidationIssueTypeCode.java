@@ -40,7 +40,7 @@ public enum CourseRestrictionValidationIssueTypeCode {
     private final ValidationIssueSeverityCode severityCode;
 
     /**
-     * Instantiates a new Pen request batch student validation issue type code.
+     * Instantiates a new course restriction validation issue type code.
      *
      * @param code the code
      */

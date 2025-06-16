@@ -19,7 +19,7 @@ public enum ValidationIssueSeverityCode {
     @Getter
     private final String code;
     /**
-     * Instantiates a new Pen request batch student validation field code.
+     * Instantiates a new course restriction validation field code.
      *
      * @param code the code
      */

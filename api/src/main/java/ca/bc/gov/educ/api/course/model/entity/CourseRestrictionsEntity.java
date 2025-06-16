@@ -40,21 +40,5 @@ public class CourseRestrictionsEntity extends BaseEntity  {
 	
 	@Column(name = "RESTRICTION_EXPIRY_DATE", nullable = true)
     private LocalDateTime restrictionEndDate;
-
-	public LocalDateTime getRestrictionStartDate() {
-		return restrictionStartDate;
-	}
-
-	public void setRestrictionStartDate(LocalDateTime restrictionStartDate) {
-		this.restrictionStartDate = restrictionStartDate;
-	}
-
-	public LocalDateTime getRestrictionEndDate() {
-		return restrictionEndDate;
-	}
-
-	public void setRestrictionEndDate(LocalDateTime restrictionEndDate) {
-		this.restrictionEndDate = restrictionEndDate;
-	}
 	
 }
