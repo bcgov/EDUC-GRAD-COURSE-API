@@ -64,8 +64,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getAllCourseRestrictionList();
@@ -86,8 +86,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findAll()).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictions();
@@ -111,8 +111,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevel(eq("MAIN"), eq("12"))).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictions("MAIN", "12");
@@ -134,8 +134,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.searchForCourseRestriction(eq(StringUtils.toRootUpperCase(StringUtils.strip("MAIN*", "*"))), eq(StringUtils.toRootUpperCase(StringUtils.strip("1*", "*"))))).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictionsSearchList("MAIN*", "1*");
@@ -157,8 +157,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         CourseList courseList = new CourseList();
         courseList.setCourseCodes(Arrays.asList("MAIN"));
@@ -183,8 +183,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findByMainCourseAndRestrictedCourse(eq("MAIN"), eq("REST"))).thenReturn(Arrays.asList(courseRestriction));
         var result = courseRestrictionService.getCourseRestrictionsByMainCourseAndRestrictedCourse("MAIN", "REST");
@@ -206,8 +206,8 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setMainCourseLevel("12");
         courseRestriction.setRestrictedCourse("REST");
         courseRestriction.setRestrictedCourseLevel("12");
-        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestriction.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestriction.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
                 eq("MAIN"), eq("12"), eq("REST"), eq("12"))).thenReturn(Optional.of(courseRestriction));
@@ -234,8 +234,8 @@ public class CourseRestrictionServiceTest {
         courseRestrictionEntity.setMainCourseLevel("12");
         courseRestrictionEntity.setRestrictedCourse("REST");
         courseRestrictionEntity.setRestrictedCourseLevel("12");
-        courseRestrictionEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestrictionEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestrictionEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestrictionEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
                 eq("MAIN"), eq("12"), eq("REST"), eq("12"))).thenReturn(Optional.empty());
@@ -258,8 +258,8 @@ public class CourseRestrictionServiceTest {
         courseRestrictionEntity.setMainCourseLevel("12");
         courseRestrictionEntity.setRestrictedCourse("REST");
         courseRestrictionEntity.setRestrictedCourseLevel("12");
-        courseRestrictionEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestrictionEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestrictionEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestrictionEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setMainCourse("MAIN");

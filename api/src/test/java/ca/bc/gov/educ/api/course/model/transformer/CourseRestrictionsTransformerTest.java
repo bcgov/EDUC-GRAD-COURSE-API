@@ -36,8 +36,8 @@ public class CourseRestrictionsTransformerTest {
         courseRestrictionsEntity.setMainCourseLevel("12");
         courseRestrictionsEntity.setRestrictedCourse("rest");
         courseRestrictionsEntity.setRestrictedCourseLevel("12");
-        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setCourseRestrictionId(courseRestrictionsEntity.getCourseRestrictionId());
@@ -65,8 +65,8 @@ public class CourseRestrictionsTransformerTest {
         courseRestrictionsEntity.setMainCourseLevel("12");
         courseRestrictionsEntity.setRestrictedCourse("rest");
         courseRestrictionsEntity.setRestrictedCourseLevel("12");
-        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setCourseRestrictionId(courseRestrictionsEntity.getCourseRestrictionId());
@@ -94,8 +94,8 @@ public class CourseRestrictionsTransformerTest {
         courseRestrictionsEntity.setMainCourseLevel("12");
         courseRestrictionsEntity.setRestrictedCourse("rest");
         courseRestrictionsEntity.setRestrictedCourseLevel("12");
-        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L));
-        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L));
+        courseRestrictionsEntity.setRestrictionStartDate(new Date(System.currentTimeMillis() - 10000L).toLocalDate().atStartOfDay());
+        courseRestrictionsEntity.setRestrictionEndDate(new Date(System.currentTimeMillis() + 10000L).toLocalDate().atStartOfDay());
 
         CourseRestriction courseRestriction = new CourseRestriction();
         courseRestriction.setCourseRestrictionId(courseRestrictionsEntity.getCourseRestrictionId());

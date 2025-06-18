@@ -1,23 +1,25 @@
 package ca.bc.gov.educ.api.course.model.entity;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "COURSE_RESTRICTION")
 public class CourseRestrictionsEntity extends BaseEntity  {
-   
+
 	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+			name = "UUID",
+			strategy = "org.hibernate.id.UUIDGenerator")
 	@Column(name = "COURSE_RESTRICTION_ID", nullable = false)
     private UUID courseRestrictionId;
 
@@ -31,12 +33,28 @@ public class CourseRestrictionsEntity extends BaseEntity  {
     private String restrictedCourse; 
 	
 	@Column(name = "RESTRICTED_COURSE_LVL", nullable = true)
-    private String restrictedCourseLevel;   
-	
+    private String restrictedCourseLevel;
+
 	@Column(name = "RESTRICTION_EFFECTIVE_DATE", nullable = false)
-    private Date restrictionStartDate; 
+    private LocalDateTime restrictionStartDate;
 	
 	@Column(name = "RESTRICTION_EXPIRY_DATE", nullable = true)
-    private Date restrictionEndDate;
+    private LocalDateTime restrictionEndDate;
+
+	public LocalDateTime getRestrictionStartDate() {
+		return restrictionStartDate;
+	}
+
+	public void setRestrictionStartDate(LocalDateTime restrictionStartDate) {
+		this.restrictionStartDate = restrictionStartDate;
+	}
+
+	public LocalDateTime getRestrictionEndDate() {
+		return restrictionEndDate;
+	}
+
+	public void setRestrictionEndDate(LocalDateTime restrictionEndDate) {
+		this.restrictionEndDate = restrictionEndDate;
+	}
 	
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,9 +70,9 @@ public class CourseRestrictionsTransformer {
     public CourseRestrictionsEntity transformToEntity(CourseRestriction courseRestrictions) {
         CourseRestrictionsEntity courseRestrictionsEntity = modelMapper.map(courseRestrictions, CourseRestrictionsEntity.class);
         courseRestrictionsEntity.setRestrictionStartDate(
-                courseRestrictions.getRestrictionStartDate() != null ? Date.valueOf(courseRestrictions.getRestrictionStartDate()) : null);
+                courseRestrictions.getRestrictionStartDate() != null ? LocalDateTime.parse(courseRestrictions.getRestrictionStartDate()) : null);
         courseRestrictionsEntity.setRestrictionEndDate(
-                courseRestrictions.getRestrictionEndDate() != null ? Date.valueOf(courseRestrictions.getRestrictionEndDate()) : null);
+                courseRestrictions.getRestrictionEndDate() != null ? LocalDateTime.parse(courseRestrictions.getRestrictionEndDate()) : null);
         return courseRestrictionsEntity;
     }
 }
