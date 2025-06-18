@@ -65,7 +65,7 @@ public class CourseControllerTest {
     @Test
     public void testGetCourseDetailsByCourseCodeAndCourseLevel() {
         // Course
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseID("1234567");
         course.setCourseCode("Test");
         course.setCourseLevel("12");

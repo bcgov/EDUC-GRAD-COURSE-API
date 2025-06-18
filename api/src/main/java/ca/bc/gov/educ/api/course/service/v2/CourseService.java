@@ -55,7 +55,7 @@ public class CourseService {
         }
         return null;
     }
-    public Course getCourseInfo(String courseCode, String courseLevel) {
+    public CourseDetail getCourseInfo(String courseCode, String courseLevel) {
         String externalCode = EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(courseCode, courseLevel);
         log.debug("CoReg API lookup by external code: [{}]", externalCode);
         try {
@@ -66,7 +66,7 @@ public class CourseService {
         String url = String.format(constants.getCourseDetailByExternalCodeUrl(), externalCode);
         Courses course = restService.get(url, Courses.class, gradCoregApiClient);
         if (course != null) {
-            return EducCourseApiUtils.convertCoregCourseIntoGradCourse(course);
+            return EducCourseApiUtils.convertCoregCourseIntoGradCourseDetail(course);
         }
         return null;
     }
