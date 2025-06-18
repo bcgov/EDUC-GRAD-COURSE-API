@@ -67,14 +67,14 @@ public class CourseController {
         return response.GET(courseService.getCourseInfo(courseID));
     }
 
-    @GetMapping(EducCourseApiConstants.GET_COURSE_BY_CODE_MAPPING)
+    @GetMapping()
     @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE)
     @Operation(summary = "Find a Course by Course Code and Course Level",
-            description = "Get a Course by Course Code and Course Level", tags = { "Courses" })
+        description = "Get a Course by Course Code and Course Level", tags = { "Courses" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND")})
-    public ResponseEntity<Course> getCourseDetails(@PathVariable String courseCode, @PathVariable String courseLevel) {
-        log.debug("#getCourseDetails : courseCode={}, courseLevel={}", courseCode, courseLevel);
+        @ApiResponse(responseCode = "404", description = "NOT FOUND")})
+    public ResponseEntity<Course> getCourseDetails(@RequestParam String courseCode, @RequestParam String courseLevel) {
+        log.debug("getCourseDetails: courseCode={}, courseLevel={}", courseCode, courseLevel);
         return response.GET(courseService.getCourseInfo(courseCode, courseLevel));
     }
 
