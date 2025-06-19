@@ -1,52 +1,54 @@
-name: Build & Deploy to DEV from main branch
-
+name: Build & Deploy to DEV and TEST
 env:
-  # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
-  # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
-  # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
+
   OPENSHIFT_SERVER: ${{ vars.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-dev
   COMMON_NAMESPACE: ${{ vars.COMMON_NAMESPACE }}
   GRAD_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}
   BUSINESS_NAMESPACE: ${{ vars.GRAD_BUSINESS_NAMESPACE }}
-  COREG_NAMESPACE: ${{ vars.COREG_NAMESPACE }}
-  KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
-  KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
-  TARGET_ENV: dev
-
-  # 🖊️ EDIT to change the image registry settings.
-  # Registries such as GHCR, Quay.io, and Docker Hub are supported.
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
-
   SPRING_BOOT_IMAGE_NAME: educ-grad-course-api
-
   REPO_NAME: "educ-grad-course-api"
   APP_DOMAIN: ${{ vars.APP_DOMAIN }}
-  BRANCH: "main"
   TAG: "latest"
-  MIN_CPU: "20m"
-  MAX_CPU: "120m"
-  MIN_MEM: "200Mi"
-  MAX_MEM: "1200Mi"
-  MIN_REPLICAS: "3"
-  MAX_REPLICAS: "5"
 
 on:
   # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+  # Runs on workflow dispatch. Running from another branch manually will use the branch 
+  # reference for everything in the script. Update configmaps, etc. all run from that reference branch.
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - 'tools/**'
 
 jobs:
-  openshift-ci-cd:
+  build-and-deploy-dev:
     name: Build and deploy to OpenShift DEV
     runs-on: ubuntu-22.04
     environment: dev
+    env:
+      OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-dev
+      TARGET_ENV: dev
+      KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+      KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+      COREG_NAMESPACE: ${{ vars.COREG_NAMESPACE }}
+      MIN_CPU: "20m"
+      MAX_CPU: "120m"
+      MIN_MEM: "200Mi"
+      MAX_MEM: "1200Mi"
+      MIN_REPLICAS: "3"
+      MAX_REPLICAS: "5"
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - name: Determine image tags
         if: env.TAG == ''
@@ -67,10 +69,6 @@ jobs:
         with:
           image: ${{ env.REPO_NAME }}
           tags: ${{ env.TAG }}
-
-          # If you don't have a Dockerfile/Containerfile, refer to https://github.com/redhat-actions/buildah-build#scratch-build-inputs
-          # Or, perform a source-to-image build using https://github.com/redhat-actions/s2i-build
-          # Otherwise, point this to your Dockerfile/Containerfile relative to the repository root.
           dockerfiles: |
             ./Dockerfile
 
@@ -132,7 +130,7 @@ jobs:
           -p MAX_MEM=${{ env.MAX_MEM }} | oc apply -f -
           
           # UPDATE Configmaps
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ github.ref }}/tools/config/update-configmap.sh \
           | bash /dev/stdin \
           dev \
           ${{ env.REPO_NAME }} \
@@ -144,7 +142,7 @@ jobs:
           ${{ env.COREG_NAMESPACE }}
           
           # OVERRIDE Configmaps
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/override-configmap-dev.sh \
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ github.ref }}/tools/config/override-configmap-dev.sh \
           | bash /dev/stdin \
           dev \
           ${{ env.REPO_NAME }} \
@@ -153,14 +151,108 @@ jobs:
           ${{ env.BUSINESS_NAMESPACE }} \
           ${{ secrets.SPLUNK_TOKEN }} \
           ${{ vars.APP_LOG_LEVEL }}
-          
+
           # Start rollout (if necessary) and follow it
           oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
           
           # Get status, returns 0 if rollout is successful
           oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
 
-      # now hit it with a zap scan
+  deploy-test:
+    name: Build and deploy to OpenShift TEST
+    needs: build-and-deploy-dev
+    runs-on: ubuntu-22.04
+    environment: test
+    env:
+      OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-test
+      TARGET_ENV: test
+      KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+      KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+      COREG_NAMESPACE: ${{ vars.COREG_NAMESPACE }}
+      MIN_CPU: "20m"
+      MAX_CPU: "120m"
+      MIN_MEM: "200Mi"
+      MAX_MEM: "1200Mi"
+      MIN_REPLICAS: "3"
+      MAX_REPLICAS: "5"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install axios
+
+      - name: Create/Update clients
+        run: node ./tools/config/clients-and-scopes.js
+
+      - name: Create/Update secrets
+        run: node ./tools/openshift/fetch-and-create-secrets.js
+
+      - name: Install oc
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: 4
+
+        # https://github.com/redhat-actions/oc-login#readme
+      - name: Deploy
+        run: |
+          set -eux
+          # Login to OpenShift and select project
+          oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
+          oc project ${{ env.OPENSHIFT_NAMESPACE }}
+          # Cancel any rollouts in progress
+          oc rollout cancel deployment/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
+          || true && echo "No rollout in progress"
+          
+          oc tag ${{ env.GRAD_NAMESPACE }}-dev/${{ env.REPO_NAME }}:${{ env.TAG }} \
+          ${{ env.GRAD_NAMESPACE }}-test/${{ env.REPO_NAME }}:${{ env.TAG }}
+          
+          # Process and apply deployment template
+          oc process -f tools/openshift/api.dc.yaml \
+          -p IS_NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} \
+          -p REPO_NAME=${{ env.REPO_NAME }} \
+          -p TAG_NAME=${{ env.TAG }} \
+          -p HOST_ROUTE=${{ env.REPO_NAME }}-${{ env.OPENSHIFT_NAMESPACE }}.${{ env.APP_DOMAIN }} \
+          -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} \
+          -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} \
+          -p MIN_CPU=${{ env.MIN_CPU }} \
+          -p MAX_CPU=${{ env.MAX_CPU }} \
+          -p MIN_MEM=${{ env.MIN_MEM }} \
+          -p MAX_MEM=${{ env.MAX_MEM }} | oc apply -f -
+          
+          # UPDATE Configmaps
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ github.ref }}/tools/config/update-configmap.sh \
+          | bash /dev/stdin \
+          test \
+          ${{ env.REPO_NAME }} \
+          ${{ env.GRAD_NAMESPACE }} \
+          ${{ env.COMMON_NAMESPACE }} \
+          ${{ env.BUSINESS_NAMESPACE }} \
+          ${{ secrets.SPLUNK_TOKEN }} \
+          ${{ vars.APP_LOG_LEVEL }} \
+          ${{ env.COREG_NAMESPACE }}
+
+          # Start rollout (if necessary) and follow it
+          oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
+          
+          # Get status, returns 0 if rollout is successful
+          oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
+
+  zap-scan:
+    name: Zap Scan
+    needs: build-and-deploy-dev
+    runs-on: ubuntu-22.04
+    env:
+      OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-dev
+    steps:
       - name: ZAP Scan
         uses: zaproxy/action-api-scan@v0.9.0
         with:
