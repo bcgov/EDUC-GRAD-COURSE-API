@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
+import ca.bc.gov.educ.api.course.exception.ServiceException;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
@@ -9,7 +10,9 @@ import ca.bc.gov.educ.api.course.model.dto.coreg.Courses;
 import ca.bc.gov.educ.api.course.service.RESTService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.EducCourseApiUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -47,6 +51,7 @@ public class CourseService {
         this.gradCoregApiClient = gradCoregApiClient;
     }
 
+    @Retry(name = "generalgetcall")
     public Course getCourseInfo(String courseID) {
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), courseID);
         Courses course = restService.get(url, Courses.class, gradCoregApiClient);
@@ -55,6 +60,8 @@ public class CourseService {
         }
         return null;
     }
+
+    @Retry(name = "generalgetcall")
     public Course getCourseInfo(String courseCode, String courseLevel) {
         String externalCode = EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(courseCode, courseLevel);
         log.debug("CoReg API lookup by external code: [{}]", externalCode);
@@ -71,6 +78,7 @@ public class CourseService {
         return null;
     }
 
+    @Retry(name = "generalgetcall")
     public List<CourseDetail> getCourseDetails(CourseSearchRequest courseSearchRequest) {
         List<CourseDetail> courses = new ArrayList<>();
         int pageNumber = 0;
@@ -93,8 +101,8 @@ public class CourseService {
                     courses.add(EducCourseApiUtils.convertCoregCourseIntoGradCourseDetail(course));
                 }
                 return courses;
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            }catch (JsonProcessingException | UnsupportedEncodingException e) {
+                throw new ServiceException("Unable to fetch course details", e);
             }
         }
         return Collections.emptyList();

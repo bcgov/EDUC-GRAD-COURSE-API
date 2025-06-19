@@ -2,7 +2,7 @@ package ca.bc.gov.educ.api.course.model.dto.mapper;
 
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
-import io.micrometer.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

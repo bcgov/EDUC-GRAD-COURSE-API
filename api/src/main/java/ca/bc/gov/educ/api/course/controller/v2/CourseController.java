@@ -93,7 +93,7 @@ public class CourseController {
     @PreAuthorize(PermissionsConstants.UPDATE_GRAD_COURSE_RESTRICTION)
     @Operation(summary = "Save Course Restriction - v2", description = "Save Course Restriction", tags = { "Course Restrictions" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<CourseRestrictionValidationIssue> saveCourseRestriction(@Validated @RequestBody CourseRestriction courseRestriction) {
+    public ResponseEntity<CourseRestrictionValidationIssue> saveCourseRestriction(@Valid @RequestBody CourseRestriction courseRestriction) {
         logger.debug("Save Course Restriction");
         return response.GET(courseRestrictionService.saveCourseRestriction(courseRestriction));
     }
