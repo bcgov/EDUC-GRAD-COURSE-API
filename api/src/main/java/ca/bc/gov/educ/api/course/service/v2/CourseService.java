@@ -96,9 +96,10 @@ public class CourseService {
                                         .queryParam(SEARCH_CRITERIA_LIST, encodedURL)
                                         .build())
                         .retrieve().bodyToMono(new ParameterizedTypeReference<RestResponsePage<Courses>>() {}).block();
-                for(Courses course: response.getContent()) {
-
-                    courses.add(EducCourseApiUtils.convertCoregCourseIntoGradCourseDetail(course));
+                if(response != null && response.getContent() != null) {
+                    for(Courses course: response.getContent()) {
+                        courses.add(EducCourseApiUtils.convertCoregCourseIntoGradCourseDetail(course));
+                    }
                 }
                 return courses;
             }catch (JsonProcessingException | UnsupportedEncodingException e) {
