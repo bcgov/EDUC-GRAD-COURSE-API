@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
 import ca.bc.gov.educ.api.course.constants.CourseRestrictionValidationIssueTypeCode;
-import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.model.dto.CourseRestrictionValidationIssue;
 import ca.bc.gov.educ.api.course.model.dto.mapper.CourseRestrictionMapper;
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
@@ -553,8 +553,8 @@ public class CourseRestrictionServiceTest {
     }
 
 
-    private static Course getMainCourse(String courseCode, String courseLevel, String courseId) {
-        Course course = new Course();
+    private static CourseDetail getMainCourse(String courseCode, String courseLevel, String courseId) {
+        CourseDetail course = new CourseDetail();
         course.setCourseID(courseId);
         course.setCourseCode(courseCode);
         course.setCourseLevel(courseLevel);

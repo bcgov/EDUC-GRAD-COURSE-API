@@ -73,8 +73,8 @@ public class CourseController {
         description = "Get a Course by Course Code and Course Level", tags = { "Courses" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "NOT FOUND")})
-    public ResponseEntity<Course> getCourseDetails(@RequestParam String courseCode, @RequestParam String courseLevel) {
-        log.debug("getCourseDetails: courseCode={}, courseLevel={}", courseCode, courseLevel);
+    public ResponseEntity<CourseDetail> getCourseDetails(@RequestParam String courseCode, @RequestParam String courseLevel) {
+        log.debug("#getCourseDetails : courseCode={}, courseLevel={}", courseCode, courseLevel);
         return response.GET(courseService.getCourseInfo(courseCode, courseLevel));
     }
 

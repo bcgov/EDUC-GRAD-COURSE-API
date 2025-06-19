@@ -103,7 +103,7 @@ public class CourseRequirementServiceTest {
         courseRequirementEntity.setCourseLevel("12");
         courseRequirementEntity.setRuleCode(courseRequirementCodeEntity);
 
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseCode("MAIN");
         course.setCourseLevel("12");
         course.setCourseName("MAIN Course");
@@ -155,7 +155,7 @@ public class CourseRequirementServiceTest {
         courseRequirementEntity.setCourseLevel("12");
         courseRequirementEntity.setRuleCode(courseRequirementCodeEntity);
 
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseCode("MAIN");
         course.setCourseLevel("12");
         course.setCourseName("MAIN Course");
@@ -388,7 +388,7 @@ public class CourseRequirementServiceTest {
         courseRequirementEntity.setCourseLevel("12");
         courseRequirementEntity.setRuleCode(courseRequirementCodeEntity);
 
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseCode("MAIN");
         course.setCourseLevel("12");
         course.setCourseName("MAIN Course");
