@@ -16,6 +16,7 @@ public interface CourseRestrictionMapper {
 
     CourseRestrictionMapper mapper = Mappers.getMapper(CourseRestrictionMapper.class);
 
+    @Mapping(source = "courseRestrictionId",  target = "courseRestrictionId")
     CourseRestriction toStructure(CourseRestrictionsEntity entity);
 
     @Mapping(source = "restrictionStartDate",  target = "restrictionStartDate", qualifiedByName = "localDateTimeToString")
