@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
+import ca.bc.gov.educ.api.course.exception.ServiceException;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.model.dto.RestResponsePage;
@@ -32,8 +33,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -209,10 +211,61 @@ public class CourseServiceTest {
         when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
+        // Call your method
 
         when(responseMock.bodyToMono(any(ParameterizedTypeReference.class)))
                 .thenReturn(Mono.just(new RestResponsePage(List.of(coregCourse))));
         var result = courseServiceV2.getCourseDetails(courseSearchRequest);
         assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void testGetCourseDetails_jsonProcessingException_throwsServiceException() throws Exception {
+        Course course = new Course();
+        course.setCourseID("1234567");
+        course.setCourseCode("CH");
+        course.setCourseLevel("12");
+        course.setCourseName("Test Course Name");
+        course.setNumCredits(4);
+
+        Courses coregCourse = new Courses();
+        coregCourse.setCourseID(course.getCourseID());
+        // CourseCharacteristics
+        CourseCharacteristics courseCharacteristics = new CourseCharacteristics();
+        courseCharacteristics.setCode("ENG");
+        courseCharacteristics.setDescription("English");
+        coregCourse.setCourseCharacteristics(courseCharacteristics);
+        // CourseCode
+        CourseCode courseCode = new CourseCode();
+        courseCode.setOriginatingSystem("39");
+        courseCode.setCourseID(course.getCourseID());
+        courseCode.setExternalCode(EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(course.getCourseCode(), course.getCourseLevel()));
+        coregCourse.setCourseCode(Arrays.asList(courseCode));
+        // AllowableCredits
+        CourseAllowableCredits credit1 = new CourseAllowableCredits();
+        credit1.setCourseID(course.getCourseID());
+        credit1.setCreditValue("3");
+        CourseAllowableCredits credit2 = new CourseAllowableCredits();
+        credit2.setCourseID(course.getCourseID());
+        credit2.setCreditValue("4");
+        coregCourse.setCourseAllowableCredit(Arrays.asList(credit1, credit2));
+        CourseSearchRequest courseSearchRequest= new CourseSearchRequest();
+        courseSearchRequest.setCourseIds(List.of(course.getCourseID()));
+        when(this.coregApiWebClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(any(String.class), any(Function.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
+
+        when(responseMock.bodyToMono(any(ParameterizedTypeReference.class)))
+                .thenReturn(Mono.just(new RestResponsePage(List.of(coregCourse))));
+
+        when(this.coregApiWebClient.get())
+                .thenThrow(new ServiceException( "Unable to fetch course details"));
+        ServiceException thrown = assertThrows(ServiceException.class, () -> {
+            courseServiceV2.getCourseDetails(courseSearchRequest);
+        });
+
+        assertEquals("Unable to fetch course details", thrown.getMessage());
     }
 }
