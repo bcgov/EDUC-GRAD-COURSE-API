@@ -41,32 +41,4 @@ public class CourseRestrictionsEntity extends BaseEntity  {
 	@Column(name = "RESTRICTION_EXPIRY_DATE", nullable = true)
     private LocalDateTime restrictionEndDate;
 
-	public UUID getCourseRestrictionId() { return courseRestrictionId; }
-
-	public void setCourseRestrictionId(UUID courseRestrictionId) { this.courseRestrictionId = courseRestrictionId; }
-
-	public String getMainCourse() { return mainCourse; }
-
-	public void setMainCourse(String mainCourse) { this.mainCourse = mainCourse; }
-
-	public String getMainCourseLevel() { return mainCourseLevel; }
-
-	public void setMainCourseLevel(String mainCourseLevel) { this.mainCourseLevel = mainCourseLevel; }
-
-	public String getRestrictedCourse() { return restrictedCourse; }
-
-	public void setRestrictedCourse(String restrictedCourse) { this.restrictedCourse = restrictedCourse; }
-
-	public String getRestrictedCourseLevel() { return restrictedCourseLevel; }
-
-	public void setRestrictedCourseLevel(String restrictedCourseLevel) { this.restrictedCourseLevel = restrictedCourseLevel; }
-
-	public LocalDateTime getRestrictionStartDate() { return restrictionStartDate; }
-
-	public void setRestrictionStartDate(LocalDateTime restrictionStartDate) { this.restrictionStartDate = restrictionStartDate; }
-
-	public LocalDateTime getRestrictionEndDate() { return restrictionEndDate; }
-
-	public void setRestrictionEndDate(LocalDateTime restrictionEndDate) { this.restrictionEndDate = restrictionEndDate; }
-	
 }

@@ -51,7 +51,6 @@ public class CourseService {
         this.gradCoregApiClient = gradCoregApiClient;
     }
 
-    @Retry(name = "generalgetcall")
     public Course getCourseInfo(String courseID) {
         String url = String.format(constants.getCourseDetailByCourseIdUrl(), courseID);
         Courses course = restService.get(url, Courses.class, gradCoregApiClient);
@@ -61,7 +60,6 @@ public class CourseService {
         return null;
     }
 
-    @Retry(name = "generalgetcall")
     public Course getCourseInfo(String courseCode, String courseLevel) {
         String externalCode = EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(courseCode, courseLevel);
         log.debug("CoReg API lookup by external code: [{}]", externalCode);

@@ -18,40 +18,25 @@ import java.util.UUID;
 public class CourseRestriction extends BaseModel {
 
 	@ReadOnlyProperty
-	UUID courseRestrictionId;
+	private UUID courseRestrictionId;
 	@NotBlank(message = "Main Course Code is required and cannot be blank.")
-	String mainCourse;
+	private String mainCourse;
 	@NotBlank(message = "Main Course Level is required and cannot be blank.")
-	String mainCourseLevel;
+	private String mainCourseLevel;
 	@NotBlank(message = "Restricted Course Code is required and cannot be blank.")
-	String restrictedCourse;
+	private String restrictedCourse;
 	@NotBlank(message = "Restricted Course Level is required and cannot be blank.")
-	String restrictedCourseLevel;
+	private String restrictedCourseLevel;
 	@Pattern(
 			regexp = "^$|^\\d{4}-(0[1-9]|1[0-2])$",
 			message = "Restriction Start Date must be in the format yyyy-MM"
 	)
 	@NotBlank(message = "Restriction Start Date is required and cannot be blank.")
-	String restrictionStartDate;
+	private String restrictionStartDate;
 	@Pattern(
 			regexp = "^$|^\\d{4}-(0[1-9]|1[0-2])$",
 			message = "Restriction End Date must be in the format yyyy-MM or empty"
 	)
-	String restrictionEndDate;
+	private String restrictionEndDate;
 
-	public String getRestrictionStartDate() {
-		return restrictionStartDate;
-	}
-
-	public void setRestrictionStartDate(String restrictionStartDate) {
-		this.restrictionStartDate = restrictionStartDate;
-	}
-
-	public String getRestrictionEndDate() {
-		return restrictionEndDate;
-	}
-
-	public void setRestrictionEndDate(String restrictionEndDate) {
-		this.restrictionEndDate = restrictionEndDate;
-	}
 }
