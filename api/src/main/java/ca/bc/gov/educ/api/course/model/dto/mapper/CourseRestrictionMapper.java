@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {UUIDMapper.class, YearMonthToLocalDateTimeMapper.class}, componentModel = "spring")
+@Mapper(uses = {UUIDMapper.class, YearMonthToLocalDateTimeMapper.class})
 public interface CourseRestrictionMapper {
 
     CourseRestrictionMapper mapper = Mappers.getMapper(CourseRestrictionMapper.class);
