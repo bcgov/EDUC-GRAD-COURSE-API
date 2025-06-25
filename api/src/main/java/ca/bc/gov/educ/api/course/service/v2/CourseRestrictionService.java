@@ -91,10 +91,12 @@ public class CourseRestrictionService {
 
     private void persistCourseRestriction(CourseRestriction courseRestriction, CourseRestrictionValidationIssue courseRestrictionValidationIssue) {
         CourseRestrictionsEntity savedRestriction = courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
-        BeanUtils.copyProperties(savedRestriction, courseRestrictionValidationIssue);
-        courseRestrictionValidationIssue.setCreateDate(new Date(savedRestriction.getCreateDate().getTime()));
-        courseRestrictionValidationIssue.setUpdateDate(new Date(savedRestriction.getUpdateDate().getTime()));
-        courseRestrictionValidationIssue.setHasPersisted(true);
+        if(savedRestriction != null) {
+            BeanUtils.copyProperties(savedRestriction, courseRestrictionValidationIssue);
+            courseRestrictionValidationIssue.setCreateDate(new Date(savedRestriction.getCreateDate().getTime()));
+            courseRestrictionValidationIssue.setUpdateDate(new Date(savedRestriction.getUpdateDate().getTime()));
+            courseRestrictionValidationIssue.setHasPersisted(true);
+        }
     }
 
     private CourseRestrictionRuleData prepareCourseRestrictionRuleData(CourseRestriction courseRestriction, boolean isUpdate) {

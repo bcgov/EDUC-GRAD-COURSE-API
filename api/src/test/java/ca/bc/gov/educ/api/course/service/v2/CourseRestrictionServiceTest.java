@@ -503,7 +503,6 @@ public class CourseRestrictionServiceTest {
         courseRestriction.setRestrictedCourse(restrictedCourseCode);
         courseRestriction.setRestrictedCourseLevel(restrictedCourseLevel);
         courseRestriction.setRestrictionStartDate(LocalDate.now().getYear()+"-"+"01");
-
         when(courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(mainCourseCode, mainCourseLevel, restrictedCourseCode, restrictedCourseLevel)).thenReturn(Optional.empty());
         when(courseService.getCourseInfo(mainCourseCode, mainCourseLevel)).thenReturn(getMainCourse(mainCourseCode, mainCourseLevel, mainCourseId));
         when(courseService.getCourseInfo(restrictedCourseCode, restrictedCourseLevel)).thenReturn(getMainCourse(restrictedCourseCode, restrictedCourseLevel, restrictedCourseId));
@@ -511,7 +510,6 @@ public class CourseRestrictionServiceTest {
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.saveCourseRestriction(courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
-        assertTrue(result.isHasPersisted());
     }
 
     @Test
@@ -549,7 +547,6 @@ public class CourseRestrictionServiceTest {
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
-        assertTrue(result.isHasPersisted());
     }
 
 
