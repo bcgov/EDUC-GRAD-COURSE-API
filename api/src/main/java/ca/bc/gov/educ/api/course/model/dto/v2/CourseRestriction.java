@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CourseRestriction extends BaseModel {
 
-	@ReadOnlyProperty
 	private UUID courseRestrictionId;
 	@NotBlank(message = "Main Course Code is required and cannot be blank.")
 	private String mainCourse;

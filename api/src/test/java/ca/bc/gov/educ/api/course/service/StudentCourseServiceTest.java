@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.model.dto.StudentCourse;
 import ca.bc.gov.educ.api.course.model.dto.StudentExam;
 import ca.bc.gov.educ.api.course.model.entity.StudentCourseEntity;
@@ -74,7 +75,7 @@ public class StudentCourseServiceTest {
 
     @Test
     public void testGetStudentCourses() {
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseID("1234567");
         course.setCourseCode("CH");
         course.setCourseLevel("12");
@@ -100,7 +101,7 @@ public class StudentCourseServiceTest {
 
     @Test
     public void testGetStudentCoursesWithExaminableCourse() {
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseID("1234567");
         course.setCourseCode("CH");
         course.setCourseLevel("12");
@@ -173,7 +174,7 @@ public class StudentCourseServiceTest {
 
     @Test
     public void testSaveStudentCourse_when_StudentCourse_isCreated_as_Examinable() {
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseID("1234567");
         course.setCourseCode("CH");
         course.setCourseLevel("12");
@@ -302,7 +303,7 @@ public class StudentCourseServiceTest {
 
     @Test
     public void testSaveStudentCourse_when_StudentCourse_isUpdated_as_Examinable() {
-        Course course = new Course();
+        CourseDetail course = new CourseDetail();
         course.setCourseID("1234567");
         course.setCourseCode("CH");
         course.setCourseLevel("12");
