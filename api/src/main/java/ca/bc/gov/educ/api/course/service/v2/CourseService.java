@@ -1,14 +1,16 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
+import ca.bc.gov.educ.api.course.exception.ServiceException;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseDetail;
 import ca.bc.gov.educ.api.course.model.dto.CourseSearchRequest;
 import ca.bc.gov.educ.api.course.model.dto.RestResponsePage;
-import ca.bc.gov.educ.api.course.model.dto.search.*;
 import ca.bc.gov.educ.api.course.model.dto.coreg.Courses;
+import ca.bc.gov.educ.api.course.model.dto.search.*;
 import ca.bc.gov.educ.api.course.service.RESTService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import ca.bc.gov.educ.api.course.util.EducCourseApiUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,8 +35,8 @@ import java.util.List;
 @Slf4j
 public class CourseService {
 
-    private static final String PAGE_NUMBER="pageNumber";
-    private static final String PAGE_SIZE="pageSize";
+    private static final String PAGE_NUMBER = "pageNumber";
+    private static final String PAGE_SIZE = "pageSize";
     private static final String SEARCH_CRITERIA_LIST = "searchCriteriaList";
 
     private final RESTService restService;
@@ -55,6 +58,7 @@ public class CourseService {
         }
         return null;
     }
+
     public CourseDetail getCourseInfo(String courseCode, String courseLevel) {
         String externalCode = EducCourseApiUtils.getExternalCodeByCourseCodeAndLevel(courseCode, courseLevel);
         log.debug("CoReg API lookup by external code: [{}]", externalCode);
@@ -72,11 +76,10 @@ public class CourseService {
     }
 
     public List<CourseDetail> getCourseDetails(CourseSearchRequest courseSearchRequest) {
-        List<CourseDetail> courses = new ArrayList<>();
         int pageNumber = 0;
         int pageSize = 1000;
         List<Search> searchCriteria = tranformToSearchriteria(courseSearchRequest);
-        if(!CollectionUtils.isEmpty(searchCriteria)) {
+        if (!CollectionUtils.isEmpty(searchCriteria)) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 String criteriaJSON = objectMapper.writeValueAsString(searchCriteria);
@@ -87,14 +90,15 @@ public class CourseService {
                                         .queryParam(PAGE_SIZE, pageSize)
                                         .queryParam(SEARCH_CRITERIA_LIST, encodedURL)
                                         .build())
-                        .retrieve().bodyToMono(new ParameterizedTypeReference<RestResponsePage<Courses>>() {}).block();
-                for(Courses course: response.getContent()) {
+                        .retrieve().bodyToMono(new ParameterizedTypeReference<RestResponsePage<Courses>>() {
+                        }).block();
 
-                    courses.add(EducCourseApiUtils.convertCoregCourseIntoGradCourseDetail(course));
+                if (response != null && !CollectionUtils.isEmpty(response.getContent())) {
+                    return response.getContent().stream()
+                            .map(EducCourseApiUtils::convertCoregCourseIntoGradCourseDetail).toList();
                 }
-                return courses;
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            } catch (JsonProcessingException | UnsupportedEncodingException e) {
+                throw new ServiceException("Unable to fetch course details", e);
             }
         }
         return Collections.emptyList();
@@ -103,7 +107,7 @@ public class CourseService {
     private List<Search> tranformToSearchriteria(CourseSearchRequest courseSearchRequest) {
         List<Search> searches = new LinkedList<>();
         List<SearchCriteria> criteriaList = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(courseSearchRequest.getCourseIds())) {
+        if (!CollectionUtils.isEmpty(courseSearchRequest.getCourseIds())) {
             criteriaList.add(SearchCriteria.builder().condition(Condition.AND).key("courseID").operation(FilterOperation.IN).value(String.join(",", courseSearchRequest.getCourseIds())).valueType(ValueType.STRING).build());
             searches.add(Search.builder().condition(Condition.AND).searchCriteriaList(criteriaList).build());
         }

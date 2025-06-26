@@ -9,9 +9,9 @@ import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRestrictionRepository;
 import ca.bc.gov.educ.api.course.validation.rules.CourseRestrictionRulesProcessor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,21 +23,14 @@ import java.util.UUID;
 
 @Service("courseRestrictionServiceV2")
 @Slf4j
+@AllArgsConstructor
 public class CourseRestrictionService {
+
+    private static final CourseRestrictionMapper courseRestrictionMapper = CourseRestrictionMapper.mapper;
 
     private CourseRestrictionRulesProcessor courseRestrictionRulesProcessor;
     private CourseService courseService;
-
     private CourseRestrictionRepository courseRestrictionRepository;
-    private CourseRestrictionMapper courseRestrictionMapper;
-
-    @Autowired
-    public CourseRestrictionService(CourseRestrictionRulesProcessor courseRestrictionRulesProcessor, CourseService courseService, CourseRestrictionRepository courseRestrictionRepository, CourseRestrictionMapper courseRestrictionMapper) {
-        this.courseRestrictionRulesProcessor = courseRestrictionRulesProcessor;
-        this.courseService = courseService;
-        this.courseRestrictionRepository = courseRestrictionRepository;
-        this.courseRestrictionMapper = courseRestrictionMapper;
-    }
 
     public CourseRestriction getCourseRestriction(String mainCourseCode, String mainCourseLevel, String restrictedCourseCode, String restrictedCourseLevel) {
         Optional<CourseRestrictionsEntity> courseRestrictionsEntity = courseRestrictionRepository.findByMainCourseAndMainCourseLevelAndRestrictedCourseAndRestrictedCourseLevel(
@@ -98,10 +91,12 @@ public class CourseRestrictionService {
 
     private void persistCourseRestriction(CourseRestriction courseRestriction, CourseRestrictionValidationIssue courseRestrictionValidationIssue) {
         CourseRestrictionsEntity savedRestriction = courseRestrictionRepository.saveAndFlush(courseRestrictionMapper.toEntity(courseRestriction));
-        BeanUtils.copyProperties(savedRestriction, courseRestrictionValidationIssue);
-        courseRestrictionValidationIssue.setCreateDate(new Date(savedRestriction.getCreateDate().getTime()));
-        courseRestrictionValidationIssue.setUpdateDate(new Date(savedRestriction.getUpdateDate().getTime()));
-        courseRestrictionValidationIssue.setHasPersisted(true);
+        if(savedRestriction != null) {
+            BeanUtils.copyProperties(savedRestriction, courseRestrictionValidationIssue);
+            courseRestrictionValidationIssue.setCreateDate(new Date(savedRestriction.getCreateDate().getTime()));
+            courseRestrictionValidationIssue.setUpdateDate(new Date(savedRestriction.getUpdateDate().getTime()));
+            courseRestrictionValidationIssue.setHasPersisted(true);
+        }
     }
 
     private CourseRestrictionRuleData prepareCourseRestrictionRuleData(CourseRestriction courseRestriction, boolean isUpdate) {
