@@ -60,7 +60,9 @@ public class ExaminableCourseServiceTest {
 		ecEntity.setSchoolWeightPercent(81.0);
 		ecEntity.setExamWeightPercent(35.5);
 		ecEntity.setExaminableStart("2023-01");
-		ecEntity.setOptionalStart("2024-08");
+		ecEntity.setExamWeightPercentPre1989(35.5);
+		ecEntity.setSchoolWeightPercentPre1989(81.0);
+
 
 		ExaminableCourse ec = new ExaminableCourse();
 		ec.setExaminableCourseID(ecEntity.getExaminableCourseID());
@@ -70,7 +72,8 @@ public class ExaminableCourseServiceTest {
 		ec.setSchoolWeightPercent(ecEntity.getSchoolWeightPercent());
 		ec.setExamWeightPercent(ecEntity.getExamWeightPercent());
 		ec.setExaminableStart(ecEntity.getExaminableStart());
-		ec.setOptionalStart(ecEntity.getOptionalStart());
+		ec.setExamWeightPercentPre1989(35.5);
+		ec.setSchoolWeightPercentPre1989(81.0);
 
 		when(examinableCourseTransformer.transformToDTO(Arrays.asList(ecEntity)))
 				.thenReturn(Arrays.asList(ec));

@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.util.UUID;
 
 @Data
@@ -13,14 +12,15 @@ import java.util.UUID;
 public class ExaminableCourse extends BaseModel {
 
 	private UUID examinableCourseID;
+	private String programYear;
 	private String courseCode;
     private String courseLevel;
 	private String courseTitle;
 	private Double schoolWeightPercent;
 	private Double examWeightPercent;
+	private Double schoolWeightPercentPre1989;
+	private Double examWeightPercentPre1989;
 	private String examinableStart;
 	private String examinableEnd;
-	private String optionalStart;
-    private String optionalEnd;
 
 }
