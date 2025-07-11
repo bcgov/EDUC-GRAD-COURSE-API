@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.TraxStudentCourse;
-import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
 import ca.bc.gov.educ.api.course.struct.Event;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,9 +42,6 @@ public class EventHandlerServiceTest {
     @Mock
     private TraxStudentCourseService traxStudentCourseService;
 
-    @Mock
-    private StudentCourseRepository studentCourseRepository;
-
     @MockBean
     public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
@@ -66,7 +62,7 @@ public class EventHandlerServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        eventHandlerServiceUnderTest = new EventHandlerService(studentCourseRepository, traxStudentCourseService);
+        eventHandlerServiceUnderTest = new EventHandlerService(traxStudentCourseService);
     }
 
     static final String PEN = "123456789";
