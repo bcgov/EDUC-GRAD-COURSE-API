@@ -24,7 +24,7 @@
             src/main/java/ca/bc/gov/educ/api/course/scheduler/**,
             src/main/java/ca/bc/gov/educ/api/course/service/EventHandlerDelegatorService,
             src/main/java/ca/bc/gov/educ/api/course/repository/**,
-            src/main/java/ca/bc/gov/educ/api/course/filter/**
+            src/main/java/ca/bc/gov/educ/api/course/filter/**,
             src/main/java/ca/bc/gov/educ/api/course/controller/APIMetadataController.java
         </sonar.exclusions>
         <sonar.junit.exclusions>
