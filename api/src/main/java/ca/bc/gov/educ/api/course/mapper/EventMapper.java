@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Builder;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -38,12 +39,16 @@ public interface EventMapper {
     }
 
     // ---- Date converters ----
-    default Date map(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    default LocalDateTime map(Date date) {
+        return date == null ? null : LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault()
+        );
     }
 
-    default LocalDateTime map(Date date) {
-        return date == null ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    default Date map(LocalDateTime dateTime) {
+        return dateTime == null ? null : new Date(
+                dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        );
     }
 }
 
