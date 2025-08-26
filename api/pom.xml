@@ -20,6 +20,11 @@
             src/main/java/ca/bc/gov/educ/api/course/util/**,
             src/main/java/ca/bc/gov/educ/api/course/messaging/**,
             src/main/java/ca/bc/gov/educ/api/course/constants/**,
+            src/main/java/ca/bc/gov/educ/api/course/choreographer/**,
+            src/main/java/ca/bc/gov/educ/api/course/scheduler/**,
+            src/main/java/ca/bc/gov/educ/api/course/service/EventHandlerDelegatorService,
+            src/main/java/ca/bc/gov/educ/api/course/repository/**,
+            src/main/java/ca/bc/gov/educ/api/course/filter/**
             src/main/java/ca/bc/gov/educ/api/course/controller/APIMetadataController.java
         </sonar.exclusions>
         <java.version>18</java.version>
