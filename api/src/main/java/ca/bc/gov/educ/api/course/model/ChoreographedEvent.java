@@ -2,13 +2,20 @@ package ca.bc.gov.educ.api.course.model;
 
 import ca.bc.gov.educ.api.course.constants.EventOutcome;
 import ca.bc.gov.educ.api.course.constants.EventType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 /**
  * The type Choreographed event.
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChoreographedEvent {
     /**
      * The Event id.
