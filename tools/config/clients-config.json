@@ -10,7 +10,9 @@
       "READ_GRAD_STUDENT_COURSE_DATA",
       "READ_GRAD_STUDENT_EXAM_DATA",
       "UPDATE_GRAD_COURSE_RESTRICTION_DATA",
-      "READ_GRAD_PROGRAM_RULES_DATA"],
+      "READ_GRAD_PROGRAM_RULES_DATA",
+      "READ_EVENT_HISTORY",
+      "WRITE_EVENT_HISTORY"],
     "settings": {
       "enabled": true,
       "protocol": "openid-connect",

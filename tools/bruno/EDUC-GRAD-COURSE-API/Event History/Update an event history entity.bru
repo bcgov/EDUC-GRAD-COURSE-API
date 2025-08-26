@@ -1,0 +1,35 @@
+meta {
+  name: Update an event history entity
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/api/v1/course/event/history
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "createUser": "",
+    "createDate": "",
+    "updateUser": "",
+    "updateDate": "",
+    "id": "",
+    "event": {
+      "createUser": "",
+      "createDate": "",
+      "updateUser": "",
+      "updateDate": "",
+      "eventId": "",
+      "eventPayload": "",
+      "eventStatus": "",
+      "eventType": "",
+      "eventOutcome": "",
+      "activityCode": ""
+    },
+    "eventHistoryUrl": "",
+    "acknowledgeFlag": ""
+  }
+}

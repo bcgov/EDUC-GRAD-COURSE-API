@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.course.model;
 import ca.bc.gov.educ.api.course.constants.EventOutcome;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import lombok.Data;
+import java.util.UUID;
 
 /**
  * The type Choreographed event.
@@ -12,7 +13,7 @@ public class ChoreographedEvent {
     /**
      * The Event id.
      */
-    String eventID; // the primary key of student event table.
+    UUID eventID; // the primary key of student event table.
     /**
      * The Event type.
      */

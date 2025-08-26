@@ -58,7 +58,7 @@ public class JetStreamEventHandlerServiceTest {
     public void testUpdateEventStatus_givenDataInDB_shouldUpdateStatus() {
         var studentEvent = statusEventRepository.save(createStudentEvent());
         ChoreographedEvent choreographedEvent = new ChoreographedEvent();
-        choreographedEvent.setEventID(studentEvent.getEventId().toString());
+        choreographedEvent.setEventID(studentEvent.getEventId());
         choreographedEvent.setEventOutcome(COURSE_FOUND);
         choreographedEvent.setEventType(GET_STUDENT_COURSE);
         choreographedEvent.setEventPayload(PEN);

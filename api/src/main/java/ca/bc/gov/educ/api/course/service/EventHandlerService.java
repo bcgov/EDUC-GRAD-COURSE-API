@@ -2,8 +2,8 @@ package ca.bc.gov.educ.api.course.service;
 
 import static lombok.AccessLevel.PRIVATE;
 
+import ca.bc.gov.educ.api.course.model.dto.Event;
 import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
-import ca.bc.gov.educ.api.course.struct.Event;
 import ca.bc.gov.educ.api.course.util.JsonUtilWithJavaTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;

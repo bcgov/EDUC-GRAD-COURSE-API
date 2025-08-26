@@ -1,104 +1,138 @@
 package ca.bc.gov.educ.api.course.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import ca.bc.gov.educ.api.course.choreographer.ChoreographEventHandler;
+import ca.bc.gov.educ.api.course.constants.ActivityCode;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
-import ca.bc.gov.educ.api.course.struct.Event;
+import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
+import ca.bc.gov.educ.api.course.model.entity.EventEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.nats.client.Message;
-import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+
+import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@Slf4j
-public class EventHandlerDelegatorServiceTest {
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-    private EventHandlerDelegatorService eventHandlerDelegatorService;
+class EventHandlerDelegatorServiceTest {
 
     @Mock
-    private MessagePublisher messagePublisher;
+    private ChoreographedEventPersistenceService choreographedEventPersistenceService;
+
+    @Mock
+    private ChoreographEventHandler choreographer;
 
     @Mock
     private EventHandlerService eventHandlerService;
 
     @Mock
+    private MessagePublisher messagePublisher;
+
+    @InjectMocks
+    private EventHandlerDelegatorService delegatorService;
+
+    @Mock
     private Message message;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setup() {
         MockitoAnnotations.openMocks(this);
-        eventHandlerDelegatorService = new EventHandlerDelegatorService(messagePublisher, eventHandlerService);
-    }
-
-    static final String PEN = "123456789";
-
-    @Test
-    public void testHandleEvent_synchronousCase() throws Exception {
-        String replyToChannel = "syncChannel";
-        when(message.getReplyTo()).thenReturn(replyToChannel);
-
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .replyTo(replyToChannel)
-                .eventPayload(PEN)
-                .build();
-
-        byte[] dummyResponse = "response".getBytes(StandardCharsets.UTF_8);
-        when(eventHandlerService.handleGetStudentCourseEvent(event)).thenReturn(dummyResponse);
-
-        eventHandlerDelegatorService.handleEvent(event, message);
-
-        verify(messagePublisher).dispatchMessage(replyToChannel, dummyResponse);
     }
 
     @Test
-    public void testHandleEvent_asynchronousCase() throws Exception {
+    void testHandleChoreographyEvent_NewEvent_AcknowledgedAndHandled() throws IOException {
+        ChoreographedEvent choreographedEvent = new ChoreographedEvent();
+        choreographedEvent.setEventID(UUID.randomUUID());
+
+        EventEntity eventEntity = EventEntity.builder().eventId(UUID.randomUUID()).build();
+
+        when(choreographedEventPersistenceService.eventExistsInDB(any()))
+                .thenReturn(Optional.empty());
+        when(choreographedEventPersistenceService.persistEventToDB(any()))
+                .thenReturn(eventEntity);
+        when(message.getSubject()).thenReturn("COREG_EVENTS_TOPIC");
+
+        delegatorService.handleChoreographyEvent(choreographedEvent, message);
+
+        verify(message).ack();
+        verify(choreographer).handleEvent(any());
+    }
+
+    @Test
+    void testHandleChoreographyEvent_ExistingEvent_AcknowledgedOnly() throws IOException {
+        ChoreographedEvent choreographedEvent = new ChoreographedEvent();
+        choreographedEvent.setEventID(UUID.randomUUID());
+
+        when(choreographedEventPersistenceService.eventExistsInDB(any()))
+                .thenReturn(Optional.of(EventEntity.builder().eventId(UUID.randomUUID()).build()));
+        when(message.getSubject()).thenReturn("COREG_EVENTS_TOPIC");
+
+        delegatorService.handleChoreographyEvent(choreographedEvent, message);
+
+        verify(message).ack();
+        verify(choreographer, never()).handleEvent(any());
+    }
+
+    @Test
+    void testHandleEvent_SynchronousEvent() throws JsonProcessingException {
+        var event = new ca.bc.gov.educ.api.course.model.dto.Event();
+        event.setEventType(EventType.GET_STUDENT_COURSE.name());
+        event.setReplyTo("replyChannel");
+
+        byte[] fakeResponse = "response".getBytes();
+        when(eventHandlerService.handleGetStudentCourseEvent(event)).thenReturn(fakeResponse);
+        when(message.getReplyTo()).thenReturn("replyChannel");
+
+        delegatorService.handleEvent(event, message);
+
+        verify(messagePublisher).dispatchMessage("replyChannel", fakeResponse);
+    }
+
+    @Test
+    void testHandleEvent_AsynchronousEvent() throws JsonProcessingException {
+        var event = new ca.bc.gov.educ.api.course.model.dto.Event();
+        event.setEventType(EventType.GET_STUDENT_COURSE.name());
+        event.setReplyTo("eventChannel");
+
+        byte[] fakeResponse = "response".getBytes();
+        when(eventHandlerService.handleGetStudentCourseEvent(event)).thenReturn(fakeResponse);
         when(message.getReplyTo()).thenReturn(null);
 
-        String asyncReplyChannel = "asyncChannel";
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .replyTo(asyncReplyChannel)
-                .eventPayload(PEN)
-                .build();
+        delegatorService.handleEvent(event, message);
 
-        byte[] dummyResponse = "response".getBytes(StandardCharsets.UTF_8);
-        when(eventHandlerService.handleGetStudentCourseEvent(event)).thenReturn(dummyResponse);
-
-        eventHandlerDelegatorService.handleEvent(event, message);
-
-        verify(messagePublisher).dispatchMessage(asyncReplyChannel, dummyResponse);
+        verify(messagePublisher).dispatchMessage("eventChannel", fakeResponse);
     }
 
     @Test
-    public void testHandleEvent_exceptionHandling() throws Exception {
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .replyTo("channel")
-                .eventPayload(PEN)
-                .build();
+    void testSetActivityCode_ValidTopic() throws IOException {
+        ChoreographedEvent choreographedEvent = new ChoreographedEvent();
+        when(message.getSubject()).thenReturn("COREG_EVENTS_TOPIC");
 
-        when(eventHandlerService.handleGetStudentCourseEvent(event))
-                .thenThrow(new RuntimeException("Test Exception"));
+        EventEntity eventEntity = EventEntity.builder().eventId(UUID.randomUUID()).build();
+        when(choreographedEventPersistenceService.eventExistsInDB(any())).thenReturn(Optional.empty());
+        when(choreographedEventPersistenceService.persistEventToDB(any())).thenReturn(eventEntity);
 
-        eventHandlerDelegatorService.handleEvent(event, message);
+        delegatorService.handleChoreographyEvent(choreographedEvent, message);
 
-        verify(messagePublisher, never()).dispatchMessage(anyString(), any(byte[].class));
+        assertEquals(ActivityCode.COREG_EVENT.name(), choreographedEvent.getActivityCode());
+    }
+
+    @Test
+    void testSetActivityCode_InvalidTopic() throws IOException {
+        ChoreographedEvent choreographedEvent = new ChoreographedEvent();
+        when(message.getSubject()).thenReturn("INVALID_TOPIC");
+
+        EventEntity eventEntity = EventEntity.builder().eventId(UUID.randomUUID()).build();
+        when(choreographedEventPersistenceService.eventExistsInDB(any())).thenReturn(Optional.empty());
+        when(choreographedEventPersistenceService.persistEventToDB(any())).thenReturn(eventEntity);
+
+        delegatorService.handleChoreographyEvent(choreographedEvent, message);
+
+        assertNull(choreographedEvent.getActivityCode());
     }
 }

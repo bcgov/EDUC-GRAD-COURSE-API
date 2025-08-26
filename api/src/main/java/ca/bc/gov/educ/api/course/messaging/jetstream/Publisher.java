@@ -73,7 +73,7 @@ public class Publisher {
             choreographedEvent.setEventType(EventType.valueOf(event.getEventType()));
             choreographedEvent.setEventOutcome(EventOutcome.valueOf(event.getEventOutcome()));
             choreographedEvent.setEventPayload(event.getEventPayload());
-            choreographedEvent.setEventID(event.getEventId().toString());
+            choreographedEvent.setEventID(event.getEventId());
             choreographedEvent.setCreateUser(event.getCreateUser());
             choreographedEvent.setUpdateUser(event.getUpdateUser());
             try {
