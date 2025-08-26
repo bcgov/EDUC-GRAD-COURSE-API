@@ -2,92 +2,79 @@ package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.exception.CourseAPIRuntimeException;
 import ca.bc.gov.educ.api.course.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.course.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.course.filter.EventHistoryFilterSpecifics;
+import ca.bc.gov.educ.api.course.mapper.EventHistoryMapper;
 import ca.bc.gov.educ.api.course.model.dto.EventHistory;
+import ca.bc.gov.educ.api.course.model.dto.search.*;
 import ca.bc.gov.educ.api.course.model.entity.EventHistoryEntity;
 import ca.bc.gov.educ.api.course.repository.EventHistoryRepository;
 import ca.bc.gov.educ.api.course.repository.EventRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
-public class EventHistoryServiceTest {
+class EventHistoryServiceTest {
 
-    @Autowired
-    private EventHistoryService eventHistoryService;
+    @InjectMocks
+    private EventHistoryService service;
 
-    @MockBean
+    @Mock
     private EventRepository eventRepository;
 
-    @MockBean
+    @Mock
     private EventHistoryRepository eventHistoryRepository;
 
     @Mock
-    ObjectMapper objectMapper;
+    private EventHistoryMapper mapper;
 
     @Mock
-    ca.bc.gov.educ.api.course.mapper.EventHistoryMapper mapper;
+    private ObjectMapper objectMapper;
 
     @Mock
-    ca.bc.gov.educ.api.course.filter.EventHistoryFilterSpecifics eventHistoryFilterSpecs;
-
-    @MockBean
-    @Qualifier("courseApiClient")
-    public WebClient courseApiWebClient;
-
-    @MockBean
-    @Qualifier("gradCoregApiClient")
-    public WebClient coregApiWebClient;
+    private EventHistoryFilterSpecifics filterSpecs;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testPurgeOldEventAndEventHistoryRecords_success() throws Exception {
+    void purgeOldEventAndEventHistoryRecords_success() throws Exception {
         LocalDateTime date = LocalDateTime.now().minusDays(30);
         doNothing().when(eventRepository).deleteByCreateDateLessThan(date);
-        eventHistoryService.purgeOldEventAndEventHistoryRecords(date);
+
+        assertDoesNotThrow(() -> service.purgeOldEventAndEventHistoryRecords(date));
         verify(eventRepository, times(1)).deleteByCreateDateLessThan(date);
     }
 
     @Test
-    public void testPurgeOldEventAndEventHistoryRecords_exception() {
+    void purgeOldEventAndEventHistoryRecords_exception() {
         LocalDateTime date = LocalDateTime.now().minusDays(30);
         doThrow(new RuntimeException("DB error")).when(eventRepository).deleteByCreateDateLessThan(date);
-        assertThrows(Exception.class, () -> eventHistoryService.purgeOldEventAndEventHistoryRecords(date));
+
+        Exception ex = assertThrows(Exception.class, () -> service.purgeOldEventAndEventHistoryRecords(date));
+        assertTrue(ex.getMessage().contains("DB error"));
     }
 
     @Test
-    public void testUpdateEventHistory_success() {
-        EventHistoryEntity entity = new EventHistoryEntity();
+    void updateEventHistory_success() {
         UUID id = UUID.randomUUID();
+        EventHistoryEntity entity = new EventHistoryEntity();
         entity.setId(id);
         entity.setAcknowledgeFlag("N");
+
         EventHistory dto = new EventHistory();
         dto.setId(id);
         dto.setAcknowledgeFlag("Y");
@@ -96,25 +83,25 @@ public class EventHistoryServiceTest {
         when(eventHistoryRepository.findById(id)).thenReturn(Optional.of(entity));
         when(mapper.toStructure(entity)).thenReturn(dto);
 
-        EventHistory updated = eventHistoryService.updateEventHistory(dto);
+        EventHistory updated = service.updateEventHistory(dto);
 
         assertEquals("Y", updated.getAcknowledgeFlag());
         verify(eventHistoryRepository, times(1)).save(entity);
     }
 
     @Test
-    public void testUpdateEventHistory_notFound() {
-        EventHistory dto = new EventHistory();
+    void updateEventHistory_notFound() {
         UUID id = UUID.randomUUID();
+        EventHistory dto = new EventHistory();
         dto.setId(id);
 
         when(eventHistoryRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> eventHistoryService.updateEventHistory(dto));
+        assertThrows(EntityNotFoundException.class, () -> service.updateEventHistory(dto));
     }
 
     @Test
-    public void testFindAll_success() throws Exception {
+    void findAll_success() throws Exception {
         Specification<EventHistoryEntity> spec = mock(Specification.class);
         Sort.Order order = Sort.Order.asc("id");
         Pageable pageable = PageRequest.of(0, 10, Sort.by(order));
@@ -122,7 +109,7 @@ public class EventHistoryServiceTest {
 
         when(eventHistoryRepository.findAll(spec, pageable)).thenReturn(page);
 
-        CompletableFuture<Page<EventHistoryEntity>> future = eventHistoryService.findAll(spec, 0, 10, List.of(order));
+        CompletableFuture<Page<EventHistoryEntity>> future = service.findAll(spec, 0, 10, List.of(order));
         Page<EventHistoryEntity> result = future.join();
 
         assertEquals(1, result.getTotalElements());
@@ -130,20 +117,142 @@ public class EventHistoryServiceTest {
     }
 
     @Test
-    public void testSetSpecificationAndSortCriteria_invalidJson() {
-        ObjectMapper objectMapper = new ObjectMapper();
+    void setSpecificationAndSortCriteria_invalidJson() throws Exception {
+        ObjectMapper mockObjectMapper = mock(ObjectMapper.class);
         List<Sort.Order> sorts = new ArrayList<>();
+        String invalidJson = "{ invalid json }";
 
-        String invalidJson = "{ invalid json }"; // non-null but malformed
-        String searchJson = null; // can still be null
+        // Force readValue to throw JsonProcessingException
+        when(mockObjectMapper.readValue(eq(invalidJson), any(TypeReference.class)))
+                .thenThrow(new com.fasterxml.jackson.core.JsonProcessingException("Invalid JSON") {});
 
         CourseAPIRuntimeException exception = assertThrows(CourseAPIRuntimeException.class, () ->
-                eventHistoryService.setSpecificationAndSortCriteria(invalidJson, searchJson, objectMapper, sorts)
+                service.setSpecificationAndSortCriteria(invalidJson, null, mockObjectMapper, sorts)
         );
 
-        // check the message contains expected JSON parsing text
-        assertFalse(exception.getMessage().toLowerCase().contains("unrecognized token") ||
-                exception.getMessage().toLowerCase().contains("cannot deserialize"));
+        assertTrue(exception.getMessage().contains("Invalid JSON"));
     }
 
+    @Test
+    void getDefaultSearchCriteria_returnsExpectedSearch() {
+        // Reflection call since it's private
+        Search defaultSearch = (Search) org.springframework.test.util.ReflectionTestUtils
+                .invokeMethod(service, "getDefaultSearchCriteria");
+
+        assertNotNull(defaultSearch);
+        assertEquals(1, defaultSearch.getSearchCriteriaList().size());
+        assertEquals("event.eventType", defaultSearch.getSearchCriteriaList().get(0).getKey());
+    }
+
+    @Test
+    void getTypeSpecification_allTypes() throws Exception {
+        // Mock all type methods
+        when(filterSpecs.getStringTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(filterSpecs.getDateTimeTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(filterSpecs.getLongTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(filterSpecs.getIntegerTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(filterSpecs.getDateTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+
+        when(filterSpecs.getUUIDTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(filterSpecs.getBooleanTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+
+        for (ValueType type : ValueType.values()) {
+            Specification<EventHistoryEntity> spec = (Specification<EventHistoryEntity>)
+                    org.springframework.test.util.ReflectionTestUtils.invokeMethod(service, "getTypeSpecification", "key", FilterOperation.EQUAL, "value", type);
+            assertNotNull(spec, "Specification should not be null for type: " + type);
+        }
+    }
+
+    @Test
+    void getEventHistorySpecification_invalidCriteria_throwsException() {
+        SearchCriteria criteria = new SearchCriteria(); // null key, operation
+        List<SearchCriteria> list = List.of(criteria);
+
+        assertThrows(InvalidParameterException.class,
+                () -> org.springframework.test.util.ReflectionTestUtils.invokeMethod(service,
+                        "getEventHistorySpecification", list));
+    }
+
+    @Test
+    void getSpecifications_combinesSpecificationsCorrectly() {
+        SearchCriteria criteria1 = new SearchCriteria();
+        criteria1.setKey("field1");
+        criteria1.setOperation(FilterOperation.EQUAL);
+        criteria1.setValue("value1");
+        criteria1.setValueType(ValueType.STRING);
+        criteria1.setCondition(Condition.AND);
+
+        SearchCriteria criteria2 = new SearchCriteria();
+        criteria2.setKey("field2");
+        criteria2.setOperation(FilterOperation.EQUAL);
+        criteria2.setValue("value2");
+        criteria2.setValueType(ValueType.STRING);
+        criteria2.setCondition(Condition.OR);
+
+        Search search1 = Search.builder().searchCriteriaList(List.of(criteria1)).condition(Condition.AND).build();
+        Search search2 = Search.builder().searchCriteriaList(List.of(criteria2)).condition(Condition.OR).build();
+
+        // Mock the type specifications
+        when(filterSpecs.getStringTypeSpecification(any(), any(), any()))
+                .thenAnswer(inv -> (Specification<EventHistoryEntity>) (root, query, cb) -> cb.conjunction());
+
+        Specification<EventHistoryEntity> spec = null;
+        spec = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getSpecifications", spec, 0, search1);
+        assertNotNull(spec);
+
+        // Combine with another search using OR
+        spec = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getSpecifications", spec, 1, search2);
+        assertNotNull(spec);
+    }
+
+    @Test
+    void getSpecificationPerGroup_andOrLogic() {
+        SearchCriteria criteriaAnd = new SearchCriteria();
+        criteriaAnd.setCondition(Condition.AND);
+        Specification<EventHistoryEntity> spec1 = (root, query, cb) -> cb.conjunction();
+        Specification<EventHistoryEntity> spec2 = (root, query, cb) -> cb.conjunction();
+
+        // First spec, i = 0
+        Specification<EventHistoryEntity> combined = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getSpecificationPerGroup", null, 0, criteriaAnd, spec1);
+        assertNotNull(combined);
+
+        // Second spec with AND
+        combined = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getSpecificationPerGroup", combined, 1, criteriaAnd, spec2);
+        assertNotNull(combined);
+
+        // OR condition
+        SearchCriteria criteriaOr = new SearchCriteria();
+        criteriaOr.setCondition(Condition.OR);
+        combined = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getSpecificationPerGroup", combined, 2, criteriaOr, spec2);
+        assertNotNull(combined);
+    }
+
+    @Test
+    void getEventHistorySpecification_withValidCriteria() {
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setKey("field");
+        criteria.setOperation(FilterOperation.EQUAL);
+        criteria.setValue("val");
+        criteria.setValueType(ValueType.STRING);
+
+        when(filterSpecs.getStringTypeSpecification(any(), any(), any()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+
+        List<SearchCriteria> list = List.of(criteria);
+        Specification<EventHistoryEntity> spec = (Specification<EventHistoryEntity>) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
+                service, "getEventHistorySpecification", list);
+        assertNotNull(spec);
+    }
 }

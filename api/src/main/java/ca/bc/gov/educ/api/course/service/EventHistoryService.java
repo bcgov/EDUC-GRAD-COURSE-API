@@ -171,6 +171,9 @@ public class EventHistoryService {
             case UUID:
                 schoolEntitySpecification = eventHistoryFilterSpecs.getUUIDTypeSpecification(key, value, filterOperation);
                 break;
+            case BOOLEAN:
+                schoolEntitySpecification = eventHistoryFilterSpecs.getBooleanTypeSpecification(key, value, filterOperation);
+                break;
             default:
                 break;
         }

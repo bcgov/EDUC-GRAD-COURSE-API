@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.course.filter;
 
+import ca.bc.gov.educ.api.course.exception.InvalidParameterException;
 import ca.bc.gov.educ.api.course.model.dto.search.FilterOperation;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -115,6 +116,11 @@ public abstract class BaseFilterSpecs<R> {
    */
   public Specification<R> getUUIDTypeSpecification(String fieldName, String filterValue, FilterOperation filterOperation) {
     return getSpecification(fieldName, filterValue, filterOperation, converters.getFunction(UUID.class), uuidFilterSpecifications);
+  }
+
+  public Specification<R> getBooleanTypeSpecification(String fieldName, String filterValue, FilterOperation filterOperation) {
+    return getSpecification(fieldName, filterValue, filterOperation, converters.getFunction(Boolean.class), uuidFilterSpecifications);
+
   }
 
   private <T extends Comparable<T>> Specification<R> getSpecification(String fieldName,
