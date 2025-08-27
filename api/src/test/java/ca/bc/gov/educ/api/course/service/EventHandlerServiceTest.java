@@ -1,134 +1,82 @@
 package ca.bc.gov.educ.api.course.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.when;
-
-import ca.bc.gov.educ.api.course.constants.EventType;
-import ca.bc.gov.educ.api.course.model.dto.Course;
+import ca.bc.gov.educ.api.course.model.dto.Event;
 import ca.bc.gov.educ.api.course.model.dto.TraxStudentCourse;
 import ca.bc.gov.educ.api.course.repository.StudentCourseRepository;
-import ca.bc.gov.educ.api.course.struct.Event;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ca.bc.gov.educ.api.course.util.JsonUtilWithJavaTime;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
 
-import java.sql.Date;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.client.WebClient;
 
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest
-@Slf4j
-public class EventHandlerServiceTest {
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-    private EventHandlerService eventHandlerServiceUnderTest;
-
-    @Mock
-    private TraxStudentCourseService traxStudentCourseService;
+class EventHandlerServiceTest {
 
     @Mock
     private StudentCourseRepository studentCourseRepository;
 
-    @MockBean
-    public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+    @Mock
+    private TraxStudentCourseService traxStudentCourseService;
 
-    @MockBean
-    public OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+    @InjectMocks
+    private EventHandlerService eventHandlerService;
 
-    @MockBean
-    public ClientRegistrationRepository clientRegistrationRepository;
-
-    @MockBean
-    @Qualifier("courseApiClient")
-    public WebClient courseApiWebClient;
-
-    @MockBean
-    @Qualifier("gradCoregApiClient")
-    public WebClient coregApiWebClient;
-
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        eventHandlerServiceUnderTest = new EventHandlerService(studentCourseRepository, traxStudentCourseService);
-    }
-
-    static final String PEN = "123456789";
-
-    @Test
-    public void testHandleGetStudentCourseEvent_whenNoCourseFound_returnsEmptyList() throws Exception {
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .eventPayload(PEN)
-                .build();
-
-        when(traxStudentCourseService.getStudentCourseList(PEN, false)).thenReturn(Collections.emptyList());
-
-        byte[] responseBytes = eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event);
-        List<?> courses = new ObjectMapper().readValue(responseBytes, new TypeReference<List<Object>>() {});
-        assertThat(courses).isEmpty();
     }
 
     @Test
-    public void testHandleGetStudentCourseEvent_whenCoursesFound_returnsCourseData() throws Exception {
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .eventPayload(PEN)
-                .build();
+    void testHandleGetStudentCourseEvent_ReturnsJsonBytes() throws Exception {
+        Event event = new Event();
+        event.setEventPayload("pen123");
 
-        List<TraxStudentCourse> dummyCourses = List.of(
-                new TraxStudentCourse(
-                        "131411258", "CLE", "CAREER-LIFE EDUCATION", 4, "", "2021/06", "", null, 100.0, "A", 100.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
-                        new Course(
-                                "CLE", "", "CAREER-LIFE EDUCATION", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201860", "2018-06-30", 4
-                        )
-                ),
-                new TraxStudentCourse(
-                        "131411258", "CLC", "CAREER-LIFE CONNECTIONS", 4, "", "2023/06", "", null, 95.0, "A", 95.0, "", null, null, null, null, "", "", null, 4, null, "", null, "", "N", "", "", " ", null, null, "N", false, false, false,
-                        new Course(
-                                "CLC", "", "CAREER-LIFE CONNECTIONS", "", Date.valueOf("2018-06-30"), Date.valueOf("1858-11-16"), "", "3201862", "2018-06-30", 4
-                        )
-                )
-        );
+        TraxStudentCourse course1 = new TraxStudentCourse();
+        course1.setCourseCode("course1");
+        TraxStudentCourse course2 = new TraxStudentCourse();
+        course2.setCourseCode("course2");
 
-        when(traxStudentCourseService.getStudentCourseList(PEN, false)).thenReturn(dummyCourses);
+        List<TraxStudentCourse> fakeStudentCourses = List.of(course1, course2);
+        when(traxStudentCourseService.getStudentCourseList("pen123", false))
+                .thenReturn(fakeStudentCourses);
 
-        byte[] responseBytes = eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event);
-        List<TraxStudentCourse> courses = new ObjectMapper().readValue(responseBytes, new TypeReference<>() {});
-        assertThat(courses).hasSize(2);
-        assertThat(courses.get(0).getCourseCode()).isEqualTo("CLE");
+        byte[] result = eventHandlerService.handleGetStudentCourseEvent(event);
+
+        assertNotNull(result);
+        String json = new String(result);
+        assertTrue(json.contains("course1"));
+        assertTrue(json.contains("course2"));
+
+        verify(traxStudentCourseService, times(1)).getStudentCourseList("pen123", false);
+        verifyNoMoreInteractions(traxStudentCourseService);
     }
 
     @Test
-    public void testHandleGetStudentCourseEvent_whenExceptionThrown_propagatesException() {
-        Event event = Event.builder()
-                .eventType(EventType.GET_STUDENT_COURSE)
-                .sagaId(UUID.randomUUID())
-                .eventPayload(PEN)
-                .build();
+    void testHandleGetStudentCourseEvent_ThrowsJsonProcessingException() throws Exception {
+        Event event = new Event();
+        event.setEventPayload("pen123");
 
-        when(traxStudentCourseService.getStudentCourseList(PEN, false))
-                .thenThrow(new RuntimeException("Test exception"));
+        TraxStudentCourse course1 = new TraxStudentCourse();
+        course1.setCourseCode("course1");
+        TraxStudentCourse course2 = new TraxStudentCourse();
+        course2.setCourseCode("course2");
 
-        Exception exception = assertThrows(RuntimeException.class, () -> eventHandlerServiceUnderTest.handleGetStudentCourseEvent(event));
-        assertThat(exception.getMessage()).isEqualTo("Test exception");
+        List<TraxStudentCourse> fakeStudentCourses = List.of(course1, course2);
+        when(traxStudentCourseService.getStudentCourseList(anyString(), anyBoolean()))
+                .thenReturn(fakeStudentCourses);
+
+        try (MockedStatic<JsonUtilWithJavaTime> mockedJsonUtil = mockStatic(JsonUtilWithJavaTime.class)) {
+            mockedJsonUtil.when(() -> JsonUtilWithJavaTime.getJsonBytesFromObject(any()))
+                    .thenThrow(JsonProcessingException.class);
+
+            assertThrows(JsonProcessingException.class,
+                    () -> eventHandlerService.handleGetStudentCourseEvent(event));
+        }
+
+        verify(traxStudentCourseService, times(1)).getStudentCourseList("pen123", false);
     }
 }

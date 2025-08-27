@@ -2,11 +2,15 @@ package ca.bc.gov.educ.api.course.model.dto.mapper;
 
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {UUIDMapper.class, YearMonthToLocalDateTimeMapper.class})
+@Mapper(
+        uses = {UUIDMapper.class, YearMonthToLocalDateTimeMapper.class},
+        builder = @Builder(disableBuilder = true)
+)
 public interface CourseRestrictionMapper {
 
     CourseRestrictionMapper mapper = Mappers.getMapper(CourseRestrictionMapper.class);

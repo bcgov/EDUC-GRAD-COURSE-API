@@ -16,6 +16,13 @@ import java.util.UUID;
  */
 public interface StatusEventRepository extends JpaRepository<StatusEvent, UUID> {
     /**
+     * Find by event id optional.
+     *
+     * @param eventId the event id
+     * @return the optional
+     */
+    Optional<StatusEvent> findByEventId(UUID eventId);
+    /**
      * Find by saga id optional.
      *
      * @param sagaId the saga id

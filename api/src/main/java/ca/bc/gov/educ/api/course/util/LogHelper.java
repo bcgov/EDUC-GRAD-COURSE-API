@@ -86,18 +86,20 @@ public final class LogHelper {
         }
     }
 
-  /**
-   * the event is a json string.
-   *
-   * @param event the json string
-   */
-  public static void logMessagingEventDetails(final String event) {
-    try {
-      MDC.putCloseable("messageEvent", event);
-      log.info("");
-      MDC.clear();
-    } catch (final Exception exception) {
-      log.error(EXCEPTION, exception);
+    /**
+     * NATS messaging
+     * the event is a json string.
+     *
+     * @param event the json string
+     */
+    public static void logMessagingEventDetails(final String event, final boolean logging) {
+        if (!logging) return;
+        try {
+            MDC.putCloseable("messageEvent", event);
+            log.debug("");
+            MDC.clear();
+        } catch (final Exception exception) {
+            log.error(EXCEPTION, exception);
+        }
     }
-  }
 }

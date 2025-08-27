@@ -86,6 +86,8 @@ public class EducCourseApiConstants {
 
     public static final String GET_COURSE_ALGORITHM_DATA_BY_PEN_MAPPING = "/pen/{pen}";
 
+    public static final String EVENT_HISTORY_MAPPING_V1 = GRAD_COURSE_API_ROOT_MAPPING + "/event/history";
+
     //Attribute Constants
     public static final String COURSE_ID_ATTRIBUTE = "courseID";
     public static final String STUDENT_COURSE_ID_ATTRIBUTE = "studentCourseID";
@@ -103,6 +105,9 @@ public class EducCourseApiConstants {
     public static final String GRAD_COURSE_API = "GRAD-COURSE-API";
     public static final String STREAM_NAME = "GRAD_COURSE_EVENTS";
     public static final String EVENTS_TOPIC_DURABLE = "GRAD-COURSE-API-COURSES-EVENTS-TOPIC-DURABLE";
+
+    public static final String COREG_STREAM_NAME = "COREG_EVENTS";
+    public static final String COREG_EVENTS_TOPIC_DURABLE = "GRAD-COURSE-API-COREG-EVENTS-TOPIC-DURABLE";
 
     //Endpoints
     @Value("${endpoint.grad-program-api.rule-detail.url}")
@@ -130,4 +135,7 @@ public class EducCourseApiConstants {
 
     @Value("${endpoint.keycloak.token-uri}")
     private String tokenUrl;
+
+    @Value("${coreg.searchUrl}")
+    private String coregSearchUrl;
 }

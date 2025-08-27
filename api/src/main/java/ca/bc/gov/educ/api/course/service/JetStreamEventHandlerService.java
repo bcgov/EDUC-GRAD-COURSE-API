@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import java.util.UUID;
 
 import static ca.bc.gov.educ.api.course.constants.EventStatus.MESSAGE_PUBLISHED;
 
@@ -39,7 +38,7 @@ public class JetStreamEventHandlerService {
     @Transactional
     public void updateEventStatus(ChoreographedEvent choreographedEvent) {
         if (choreographedEvent != null && choreographedEvent.getEventID() != null) {
-            var eventID = UUID.fromString(choreographedEvent.getEventID());
+            var eventID = choreographedEvent.getEventID();
             var eventOptional = StatusEventRepository.findById(eventID);
             if (eventOptional.isPresent()) {
                 var gradCourseEvent = eventOptional.get();

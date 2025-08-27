@@ -161,3 +161,6 @@ splunk:
 nats:
   url: ${NATS_URL}
   maxReconnect: ${NATS_MAX_RECONNECT}
+
+coreg:
+  searchUrl: ${COREG_SEARCH_URL}

@@ -13,4 +13,5 @@ public enum Topics {
      * Grad course events topic.
      */
     GRAD_COURSE_EVENTS_TOPIC,
+    COREG_EVENTS_TOPIC
 }
