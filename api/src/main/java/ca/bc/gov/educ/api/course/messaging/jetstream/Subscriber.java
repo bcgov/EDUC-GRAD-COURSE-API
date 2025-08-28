@@ -95,13 +95,10 @@ public class Subscriber {
                                 .build())
                         .build();
 
-                // Dispatcher ensures async message handling
-                val dispatcher = natsConnection.createDispatcher();
-
                 // Queue group + durable
                 natsConnection.jetStream().subscribe(
                         topic,
-                        //qName,                 // queue group (load balance if multiple subscribers)
+                        qName,
                         dispatcher,
                         this::onMessage,
                         autoAck,
