@@ -138,4 +138,7 @@ public class EducCourseApiConstants {
 
     @Value("${coreg.searchUrl}")
     private String coregSearchUrl;
+
+    @Value("${coreg.shouldConsumeEventsFlag}")
+    private boolean coregShouldConsumeEventsFlag;
 }

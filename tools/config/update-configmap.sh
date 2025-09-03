@@ -68,6 +68,7 @@ oc create -n "$GRAD_NAMESPACE"-"$envValue" configmap "$APP_NAME"-config-map \
   --from-literal=NATS_URL=$NATS_URL \
   --from-literal=ENABLE_COMPRESSION="true" \
   --from-literal=COREG_SEARCH_URL="https://www.bced.gov.bc.ca/datacollections/course_registry_web_search/run-details.php?courseCode=%s" \
+  --from-literal=COREG_SHOULD_CONSUME_EVENTS_FLAG="true" \
   --dry-run=client -o yaml | oc apply -f -
 
 echo Creating config map "$APP_NAME"-flb-sc-config-map

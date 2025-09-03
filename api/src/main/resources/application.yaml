@@ -164,3 +164,4 @@ nats:
 
 coreg:
   searchUrl: ${COREG_SEARCH_URL}
+  shouldConsumeEventsFlag: ${COREG_SHOULD_CONSUME_EVENTS_FLAG}
