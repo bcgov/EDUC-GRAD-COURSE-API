@@ -2,7 +2,6 @@ package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.choreographer.ChoreographEventHandler;
 import ca.bc.gov.educ.api.course.constants.ActivityCode;
-import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.constants.Topics;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
@@ -14,8 +13,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Objects;
-
 import static ca.bc.gov.educ.api.course.service.EventHandlerService.PAYLOAD_LOG;
 
 
@@ -92,14 +89,31 @@ public class EventHandlerDelegatorService {
         byte[] response;
         boolean isSynchronous = message.getReplyTo() != null;
         try {
-            if (Objects.requireNonNull(event.getEventType()).compareTo(EventType.GET_STUDENT_COURSE.name()) == 0) {
-                log.debug("received GET_STUDENT_COURSE event");
-                log.trace(PAYLOAD_LOG, event.getEventPayload());
-                response = eventHandlerService.handleGetStudentCourseEvent(event);
-                log.debug(RESPONDING_BACK_TO_NATS_ON_CHANNEL, message.getReplyTo() != null ? message.getReplyTo() : event.getReplyTo());
-                publishToNATS(event, message, isSynchronous, response);
-            } else {
-                log.info("silently ignoring other events :: {}", event);
+            switch (event.getEventType()) {
+                case "GET_STUDENT_COURSE":
+                    log.debug("received GET_STUDENT_COURSE event");
+                    log.trace(PAYLOAD_LOG, event.getEventPayload());
+                    response = eventHandlerService.handleGetStudentCourseEvent(event);
+                    log.debug(RESPONDING_BACK_TO_NATS_ON_CHANNEL, message.getReplyTo() != null ? message.getReplyTo() : event.getReplyTo());
+                    publishToNATS(event, message, isSynchronous, response);
+                    break;
+                case "GET_COURSE_REQUIREMENTS":
+                    log.debug("received GET_COURSE_REQUIREMENTS");
+                    log.trace(PAYLOAD_LOG, event.getEventPayload());
+                    response = eventHandlerService.handleGetCourseRequirementsByCourseIDEvent(event);
+                    log.debug(RESPONDING_BACK_TO_NATS_ON_CHANNEL, message.getReplyTo() != null ? message.getReplyTo() : event.getReplyTo());
+                    publishToNATS(event, message, isSynchronous, response);
+                    break;
+                case "GET_COURSE_RESTRICTIONS":
+                    log.debug("received GET_COURSE_RESTRICTIONS event");
+                    log.trace(PAYLOAD_LOG, event.getEventPayload());
+                    response = eventHandlerService.handleGetCourseRestrictionsByCourseIDEvent(event);
+                    log.debug(RESPONDING_BACK_TO_NATS_ON_CHANNEL, message.getReplyTo() != null ? message.getReplyTo() : event.getReplyTo());
+                    publishToNATS(event, message, isSynchronous, response);
+                    break;
+                default:
+                    log.info("silently ignoring other events :: {}", event);
+                    break;
             }
         } catch (final Exception e) {
             log.error("Exception", e);

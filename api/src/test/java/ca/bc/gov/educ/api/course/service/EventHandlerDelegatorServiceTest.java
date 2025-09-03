@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.course.constants.ActivityCode;
 import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
+import ca.bc.gov.educ.api.course.model.dto.Event;
 import ca.bc.gov.educ.api.course.model.entity.EventEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.nats.client.Message;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -134,5 +136,81 @@ class EventHandlerDelegatorServiceTest {
         delegatorService.handleChoreographyEvent(choreographedEvent, message);
 
         assertNull(choreographedEvent.getActivityCode());
+    }
+
+    @Test
+    public void testHandleEvent_courseRequirementsSynchronousCase() throws Exception {
+        String replyToChannel = "syncChannel";
+        when(message.getReplyTo()).thenReturn(replyToChannel);
+
+        Event event = new Event();
+        event.setEventType("GET_COURSE_REQUIREMENTS");
+        event.setEventId(UUID.randomUUID());
+        event.setReplyTo(replyToChannel);
+        event.setEventPayload("[\"CLE\",\"CLC\"]");
+
+        byte[] dummyResponse = "requirements_response".getBytes(StandardCharsets.UTF_8);
+        when(eventHandlerService.handleGetCourseRequirementsByCourseIDEvent(any())).thenReturn(dummyResponse);
+
+        delegatorService.handleEvent(event, message);
+
+        verify(messagePublisher).dispatchMessage(replyToChannel, dummyResponse);
+    }
+
+    @Test
+    public void testHandleEvent_courseRequirementsAsynchronousCase() throws Exception {
+        when(message.getReplyTo()).thenReturn(null);
+
+        String asyncReplyChannel = "asyncChannel";
+        Event event = new Event();
+        event.setEventType("GET_COURSE_REQUIREMENTS");
+        event.setEventId(UUID.randomUUID());
+        event.setReplyTo(asyncReplyChannel);
+        event.setEventPayload("[\"CLE\",\"CLC\"]");
+
+        byte[] dummyResponse = "requirements_response".getBytes(StandardCharsets.UTF_8);
+        when(eventHandlerService.handleGetCourseRequirementsByCourseIDEvent(event)).thenReturn(dummyResponse);
+
+        delegatorService.handleEvent(event, message);
+
+        verify(messagePublisher).dispatchMessage(asyncReplyChannel, dummyResponse);
+    }
+
+    @Test
+    public void testHandleEvent_courseRestrictionsSynchronousCase() throws Exception {
+        String replyToChannel = "syncChannel";
+        when(message.getReplyTo()).thenReturn(replyToChannel);
+
+        Event event = new Event();
+        event.setEventType("GET_COURSE_RESTRICTIONS");
+        event.setEventId(UUID.randomUUID());
+        event.setReplyTo(replyToChannel);
+        event.setEventPayload("[\"CLE\",\"CLC\"]");
+
+        byte[] dummyResponse = "restrictions_response".getBytes(StandardCharsets.UTF_8);
+        when(eventHandlerService.handleGetCourseRestrictionsByCourseIDEvent(event)).thenReturn(dummyResponse);
+
+        delegatorService.handleEvent(event, message);
+
+        verify(messagePublisher).dispatchMessage(replyToChannel, dummyResponse);
+    }
+
+    @Test
+    public void testHandleEvent_courseRestrictionsAsynchronousCase() throws Exception {
+        when(message.getReplyTo()).thenReturn(null);
+
+        String asyncReplyChannel = "asyncChannel";
+        Event event = new Event();
+        event.setEventType("GET_COURSE_RESTRICTIONS");
+        event.setEventId(UUID.randomUUID());
+        event.setReplyTo(asyncReplyChannel);
+        event.setEventPayload("[\"CLE\",\"CLC\"]");
+
+        byte[] dummyResponse = "restrictions_response".getBytes(StandardCharsets.UTF_8);
+        when(eventHandlerService.handleGetCourseRestrictionsByCourseIDEvent(event)).thenReturn(dummyResponse);
+
+        delegatorService.handleEvent(event, message);
+
+        verify(messagePublisher).dispatchMessage(asyncReplyChannel, dummyResponse);
     }
 }
