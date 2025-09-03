@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.course.constants.EventType;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
 import ca.bc.gov.educ.api.course.model.entity.EventEntity;
+import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.nats.client.Message;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,10 @@ class EventHandlerDelegatorServiceTest {
 
     @Mock
     private MessagePublisher messagePublisher;
-
+    
+    @Mock
+    private EducCourseApiConstants constants;
+    
     @InjectMocks
     private EventHandlerDelegatorService delegatorService;
 
