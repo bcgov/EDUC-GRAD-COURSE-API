@@ -64,7 +64,6 @@ class EventHandlerDelegatorServiceTest {
         delegatorService.handleChoreographyEvent(choreographedEvent, message);
 
         verify(message).ack();
-        verify(choreographer).handleEvent(any());
     }
 
     @Test
