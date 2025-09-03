@@ -139,7 +139,7 @@ class EventHandlerDelegatorServiceTest {
     }
 
     @Test
-    public void testHandleEvent_courseRequirementsSynchronousCase() throws Exception {
+    void testHandleEvent_courseRequirementsSynchronousCase() throws Exception {
         String replyToChannel = "syncChannel";
         when(message.getReplyTo()).thenReturn(replyToChannel);
 
@@ -158,7 +158,7 @@ class EventHandlerDelegatorServiceTest {
     }
 
     @Test
-    public void testHandleEvent_courseRequirementsAsynchronousCase() throws Exception {
+    void testHandleEvent_courseRequirementsAsynchronousCase() throws Exception {
         when(message.getReplyTo()).thenReturn(null);
 
         String asyncReplyChannel = "asyncChannel";
@@ -177,7 +177,7 @@ class EventHandlerDelegatorServiceTest {
     }
 
     @Test
-    public void testHandleEvent_courseRestrictionsSynchronousCase() throws Exception {
+    void testHandleEvent_courseRestrictionsSynchronousCase() throws Exception {
         String replyToChannel = "syncChannel";
         when(message.getReplyTo()).thenReturn(replyToChannel);
 
@@ -196,7 +196,7 @@ class EventHandlerDelegatorServiceTest {
     }
 
     @Test
-    public void testHandleEvent_courseRestrictionsAsynchronousCase() throws Exception {
+    void testHandleEvent_courseRestrictionsAsynchronousCase() throws Exception {
         when(message.getReplyTo()).thenReturn(null);
 
         String asyncReplyChannel = "asyncChannel";
