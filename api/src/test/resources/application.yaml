@@ -93,3 +93,4 @@ nats:
 
 coreg:
   searchUrl: https://www.bced.gov.bc.ca/datacollections/course_registry_web_search/run-details.php?courseCode=%s
+  shouldConsumeEventsFlag: true

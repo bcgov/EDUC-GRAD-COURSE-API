@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.course.constants.Topics;
 import ca.bc.gov.educ.api.course.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
 import ca.bc.gov.educ.api.course.model.dto.Event;
+import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
 import io.nats.client.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class EventHandlerDelegatorService {
     private final ChoreographedEventPersistenceService choreographedEventPersistenceService;
     private final ChoreographEventHandler choreographer;
     private final EventHandlerService eventHandlerService;
+    private final EducCourseApiConstants constants;
 
     /**
      * The constant RESPONDING_BACK_TO_NATS_ON_CHANNEL.
@@ -47,10 +49,11 @@ public class EventHandlerDelegatorService {
      * @param messagePublisher
      */
     @Autowired
-    public EventHandlerDelegatorService(final ChoreographedEventPersistenceService choreographedEventPersistenceService, final ChoreographEventHandler choreographer, EventHandlerService eventHandlerService, MessagePublisher messagePublisher) {
+    public EventHandlerDelegatorService(final ChoreographedEventPersistenceService choreographedEventPersistenceService, final ChoreographEventHandler choreographer, EventHandlerService eventHandlerService, EducCourseApiConstants constants, MessagePublisher messagePublisher) {
         this.choreographedEventPersistenceService = choreographedEventPersistenceService;
         this.choreographer = choreographer;
         this.eventHandlerService = eventHandlerService;
+        this.constants = constants;
         this.messagePublisher = messagePublisher;
     }
 
@@ -69,7 +72,7 @@ public class EventHandlerDelegatorService {
         // set the activity code early in the process
         setActivityCode(choreographedEvent, message);
 
-        if(!this.choreographedEventPersistenceService.eventExistsInDB(choreographedEvent).isPresent()) {
+        if(constants.isCoregShouldConsumeEventsFlag() && !this.choreographedEventPersistenceService.eventExistsInDB(choreographedEvent).isPresent()) {
             final var persistedEvent = this.choreographedEventPersistenceService.persistEventToDB(choreographedEvent);
             if(persistedEvent != null) {
                 message.ack(); // acknowledge to Jet Stream that api got the message and it is now in DB.
