@@ -47,7 +47,7 @@ public class MessageSubscriber {
     public void subscribe() {
         String queue = GRAD_COURSE_API_TOPIC.toString().replace("_", "-");
         var dispatcher = connection.createDispatcher(onMessage());
-        //dispatcher.subscribe(GRAD_COURSE_API_TOPIC.toString(), queue);
+        dispatcher.subscribe(GRAD_COURSE_API_TOPIC.toString(), queue);
     }
 
     /**
