@@ -27,4 +27,16 @@ public enum EventType {
         }
         throw new IllegalArgumentException("Unknown code: " + code);
     }
+
+    public static boolean isValid(String value) {
+        if (value == null) {
+            return false;
+        }
+        try {
+            EventType.valueOf(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
