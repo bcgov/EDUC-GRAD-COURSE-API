@@ -1,9 +1,10 @@
 package ca.bc.gov.educ.api.course.messaging.jetstream;
 
+import ca.bc.gov.educ.api.course.exception.IgnoreEventException;
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
 import ca.bc.gov.educ.api.course.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
-import ca.bc.gov.educ.api.course.util.JsonUtil;
+import ca.bc.gov.educ.api.course.util.EventUtils;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.nats.client.*;
 import io.nats.client.api.ConsumerConfiguration;
@@ -123,7 +124,7 @@ public class Subscriber {
         log.debug("Received message subject={} seq={}", message.getSubject(), message.metaData().consumerSequence());
         try {
             val eventString = new String(message.getData());
-            final ChoreographedEvent event = JsonUtil.getJsonObjectFromString(ChoreographedEvent.class, eventString);
+            final ChoreographedEvent event = EventUtils.getChoreographedEventIfValid(eventString);
 
             if (event.getEventPayload() == null) {
                 message.ack();
@@ -139,6 +140,9 @@ public class Subscriber {
                     log.error("Error processing message", e);
                 }
             });
+        } catch (final IgnoreEventException ex) {
+            log.warn("Ignoring event with type :: {} :: and event outcome :: {}", ex.getEventType(), ex.getEventOutcome());
+            message.ack();
         } catch (Exception ex) {
             log.error("Exception parsing message", ex);
         }
