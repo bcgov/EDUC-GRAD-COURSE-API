@@ -81,6 +81,9 @@ public class EventEntity {
   @Column(name = "EVENT_OUTCOME")
   private String eventOutcome;
 
+  @Column(name = "AFFECTED_TABLE")
+  private String affectedTable;
+
   @JsonIgnore
   @OneToOne(cascade = CascadeType.ALL, mappedBy = "event")
   private EventHistoryEntity eventHistoryEntity;

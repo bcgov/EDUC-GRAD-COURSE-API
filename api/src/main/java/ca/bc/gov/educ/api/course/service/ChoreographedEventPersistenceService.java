@@ -1,9 +1,13 @@
 package ca.bc.gov.educ.api.course.service;
 
 import ca.bc.gov.educ.api.course.model.ChoreographedEvent;
+import ca.bc.gov.educ.api.course.model.dto.CourseRegistryEventDTO;
+import ca.bc.gov.educ.api.course.model.dto.coreg.CoregEventPayload;
 import ca.bc.gov.educ.api.course.model.entity.EventEntity;
 import ca.bc.gov.educ.api.course.repository.EventRepository;
 import ca.bc.gov.educ.api.course.repository.StatusEventRepository;
+import ca.bc.gov.educ.api.course.util.JsonUtilWithJavaTime;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +43,19 @@ public class ChoreographedEventPersistenceService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public EventEntity persistEventToDB(final ChoreographedEvent choreographedEvent) {
+    CoregEventPayload coregPayload = null;
+    try {
+      coregPayload = JsonUtilWithJavaTime.getJsonObjectFromString(CoregEventPayload.class, choreographedEvent.getEventPayload());
+    }catch (JsonProcessingException e) {
+      //this is ok
+    }
+    
     final EventEntity eventEntity = EventEntity.builder()
               .eventType(choreographedEvent.getEventType().toString())
               .eventId(choreographedEvent.getEventID())
               .eventOutcome(choreographedEvent.getEventOutcome().toString())
               .eventPayload(choreographedEvent.getEventPayload())
+              .affectedTable(coregPayload != null ? coregPayload.getAffectedTable() : null)
               .eventStatus(DB_COMMITTED.toString())
               .createUser(StringUtils.isBlank(choreographedEvent.getCreateUser()) ? DEFAULT_CREATED_BY : choreographedEvent.getCreateUser())
               .updateUser(StringUtils.isBlank(choreographedEvent.getUpdateUser()) ? DEFAULT_UPDATED_BY : choreographedEvent.getUpdateUser())

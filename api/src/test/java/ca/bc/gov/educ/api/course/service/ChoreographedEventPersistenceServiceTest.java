@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.course.model.StatusEvent;
 import ca.bc.gov.educ.api.course.model.entity.EventEntity;
 import ca.bc.gov.educ.api.course.repository.EventRepository;
 import ca.bc.gov.educ.api.course.repository.StatusEventRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -108,7 +109,7 @@ class ChoreographedEventPersistenceServiceTest {
     }
 
     @Test
-    void testPersistEventToDB_defaultsSet() {
+    void testPersistEventToDB_defaultsSet() throws JsonProcessingException {
         UUID eventId = UUID.randomUUID();
         // given
         ChoreographedEvent choreographedEvent = ChoreographedEvent.builder()
@@ -142,7 +143,7 @@ class ChoreographedEventPersistenceServiceTest {
     }
 
     @Test
-    void testPersistEventToDB_withProvidedUsers() {
+    void testPersistEventToDB_withProvidedUsers() throws JsonProcessingException {
         UUID eventId = UUID.randomUUID();
         // given
         ChoreographedEvent choreographedEvent = ChoreographedEvent.builder()
