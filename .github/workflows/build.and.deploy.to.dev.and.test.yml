@@ -41,8 +41,8 @@ jobs:
       MAX_CPU: "120m"
       MIN_MEM: "200Mi"
       MAX_MEM: "1200Mi"
-      MIN_REPLICAS: "3"
-      MAX_REPLICAS: "5"
+      MIN_REPLICAS: "1"
+      MAX_REPLICAS: "2"
 
     steps:
       - name: Check out repository
@@ -173,8 +173,8 @@ jobs:
       MAX_CPU: "120m"
       MIN_MEM: "200Mi"
       MAX_MEM: "1200Mi"
-      MIN_REPLICAS: "3"
-      MAX_REPLICAS: "5"
+      MIN_REPLICAS: "1"
+      MAX_REPLICAS: "2"
 
     steps:
       - name: Check out repository
