@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.course.service.v2;
 
+import ca.bc.gov.educ.api.course.exception.CourseAPIRuntimeException;
 import ca.bc.gov.educ.api.course.model.dto.Course;
 import ca.bc.gov.educ.api.course.model.dto.CourseRestrictionRuleData;
 import ca.bc.gov.educ.api.course.model.dto.CourseRestrictionValidationIssue;
@@ -171,7 +172,7 @@ public class CourseRestrictionService {
                             csvPrinter.flush();
                         } catch (IOException e) {
                             log.error("Error writing CSV row", e);
-                            throw new RuntimeException("Failed to write CSV row", e);
+                            throw new CourseAPIRuntimeException("Failed to write CSV row: " + e);
                         }
                     });
 

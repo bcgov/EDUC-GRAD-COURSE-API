@@ -599,7 +599,7 @@ public class CourseRestrictionServiceTest {
 
             @Override
             public void setWriteListener(WriteListener writeListener) {
-
+                // for mocking
             }
         };
 
