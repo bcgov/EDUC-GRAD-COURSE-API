@@ -7,8 +7,12 @@ import ca.bc.gov.educ.api.course.model.dto.mapper.CourseRestrictionMapper;
 import ca.bc.gov.educ.api.course.model.dto.v2.CourseRestriction;
 import ca.bc.gov.educ.api.course.model.entity.CourseRestrictionsEntity;
 import ca.bc.gov.educ.api.course.repository.CourseRestrictionRepository;
+import ca.bc.gov.educ.api.course.repository.CourseRestrictionRepositoryStream;
 import ca.bc.gov.educ.api.course.service.RESTService;
 import ca.bc.gov.educ.api.course.util.EducCourseApiConstants;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,15 +27,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -55,6 +63,9 @@ public class CourseRestrictionServiceTest {
 
     @MockBean
     public CourseRestrictionRepository courseRestrictionRepository;
+
+    @MockBean
+    public CourseRestrictionRepositoryStream courseRestrictionRepositoryStream;
 
     @MockBean
     public OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
@@ -547,6 +558,72 @@ public class CourseRestrictionServiceTest {
         CourseRestrictionValidationIssue result = courseRestrictionServiceV2.updateCourseRestriction(restrictionId, courseRestriction);
         assertNotNull(result);
         assertThat(result.getValidationIssues()).isEmpty();
+    }
+
+    @Test
+    public void testGenerateCourseRestrictionsReportStream() throws IOException {
+        CourseRestrictionsEntity restriction1 = new CourseRestrictionsEntity();
+        restriction1.setCourseRestrictionId(UUID.randomUUID());
+        restriction1.setMainCourse("MAIN");
+        restriction1.setMainCourseLevel("12");
+        restriction1.setRestrictedCourse("RESTRICTED");
+        restriction1.setRestrictedCourseLevel("11");
+        restriction1.setRestrictionStartDate(LocalDateTime.of(2020, 1, 1, 0, 0));
+        restriction1.setRestrictionEndDate(LocalDateTime.of(2025, 12, 31, 0, 0));
+
+        CourseRestrictionsEntity restriction2 = new CourseRestrictionsEntity();
+        restriction2.setCourseRestrictionId(UUID.randomUUID());
+        restriction2.setMainCourse("TEST");
+        restriction2.setMainCourseLevel("10");
+        restriction2.setRestrictedCourse("BLOCK");
+        restriction2.setRestrictedCourseLevel("09");
+        restriction2.setRestrictionStartDate(LocalDateTime.of(2021, 6, 1, 0, 0));
+        restriction2.setRestrictionEndDate(LocalDateTime.of(2099, 12, 31, 0, 0));
+
+        List<CourseRestrictionsEntity> restrictions = List.of(restriction1, restriction2);
+
+        when(courseRestrictionRepositoryStream.streamAll()).thenReturn(restrictions.stream());
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ServletOutputStream servletOutputStream = new ServletOutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                outputStream.write(b);
+            }
+
+            @Override
+            public boolean isReady() {
+                return true;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener writeListener) {
+
+            }
+        };
+
+        when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+        courseRestrictionServiceV2.generateCourseRestrictionsReportStream(response);
+
+        verify(response).setContentType("text/csv");
+        verify(response).setHeader(eq("Content-Disposition"), contains("CourseRestrictions_"));
+
+        String csvContent = outputStream.toString();
+        assertThat(csvContent).isNotEmpty();
+        assertThat(csvContent).contains("Course Code Main");
+        assertThat(csvContent).contains("Course Level Main");
+        assertThat(csvContent).contains("MAIN");
+        assertThat(csvContent).contains("12");
+        assertThat(csvContent).contains("RESTRICTED");
+        assertThat(csvContent).contains("11");
+        assertThat(csvContent).contains("2020-01-01");
+        assertThat(csvContent).contains("2025-12-31");
+        assertThat(csvContent).contains("TEST");
+        assertThat(csvContent).contains("10");
+
+        verify(courseRestrictionRepositoryStream, times(1)).streamAll();
     }
 
 
