@@ -68,6 +68,7 @@ public class EducCourseApiConstants {
     public static final String GET_COURSE_RESTRICTIONS_BY_CODE_AND_LEVEL_MAPPING = "/course-restriction";
     public static final String GET_COURSE_RESTRICTIONS_BY_COURSE_LIST_MAPPING = "/course-restriction/course-list";
     public static final String GET_COURSE_RESTRICTION_BY_CODE_AND_LEVEL_AND_RESTRICTED_CODE_AND_LEVEL_MAPPING = "/get-course-restriction";
+    public static final String DOWNLOAD_COURSE_RESTRICTIONS_CSV = "/course-restrictions/download";
     public static final String SAVE_COURSE_RESTRICTION = "/save-course-restriction";
     public static final String UPDATE_COURSE_RESTRICTION = "/save-course-restriction/{courseRestrictionId}";
     public static final String CHECK_COURSE_REQUIREMENT_EXISTENCE = "/check-course-requirement";
