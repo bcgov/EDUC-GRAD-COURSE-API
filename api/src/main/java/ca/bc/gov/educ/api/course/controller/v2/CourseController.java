@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -25,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -107,4 +108,12 @@ public class CourseController {
         return response.GET(courseRestrictionService.updateCourseRestriction(courseRestrictionId, courseRestriction));
     }
 
+    @GetMapping(EducCourseApiConstants.DOWNLOAD_COURSE_RESTRICTIONS_CSV)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_COURSE_RESTRICTION)
+    @Operation(summary = "Download Course Restrictions as CSV - v2", description = "Download all Course Restrictions as a CSV file", tags = { "Course Restrictions" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public void downloadCourseRestrictionsCSV(HttpServletResponse response) throws IOException {
+        logger.debug("Download Course Restrictions CSV");
+        courseRestrictionService.generateCourseRestrictionsReportStream(response);
+    }
 }

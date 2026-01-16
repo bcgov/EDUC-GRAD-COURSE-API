@@ -9,6 +9,7 @@ import ca.bc.gov.educ.api.course.service.v2.CourseRestrictionService;
 import ca.bc.gov.educ.api.course.service.v2.CourseService;
 import ca.bc.gov.educ.api.course.util.GradValidation;
 import ca.bc.gov.educ.api.course.util.ResponseHelper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -19,12 +20,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
@@ -143,6 +145,15 @@ public class CourseControllerTest {
         ResponseEntity<CourseRestrictionValidationIssue> actual = courseControllerV2.updateCourseRestriction(courseRestrictionId, courseRestriction);
         assertThat(actual).isEqualTo(expectedResponse);
 
+    }
+
+    @Test
+    public void testDownloadCourseRestrictionsCSV() throws IOException {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        courseControllerV2.downloadCourseRestrictionsCSV(response);
+
+        verify(courseRestrictionServiceV2, times(1)).generateCourseRestrictionsReportStream(response);
     }
 
 }
